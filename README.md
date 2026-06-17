@@ -1,6 +1,6 @@
 # tirx-kernels
 
-High-performance GPU kernels written in [TIRx](https://github.com/mlc-ai/tir).
+High-performance GPU kernels written in [TIRx](https://github.com/apache/tvm).
 
 ## Kernels
 
