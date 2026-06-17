@@ -1,3 +1,5 @@
+exclude: ^(\.txdev/|\.claude/)
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
@@ -14,3 +16,20 @@ repos:
         args: [--fix]
       - id: ruff-format
         types_or: [python, pyi, jupyter]
+
+  # ---------- C/C++: clang-format ----------
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v19.1.6
+    hooks:
+      - id: clang-format
+        types_or: [c, c++, cuda]
+
+  # ---------- Rust: cargo fmt ----------
+  - repo: local
+    hooks:
+      - id: cargo-fmt-nymph-rust
+        name: cargo fmt (nymph-rust)
+        entry: bash -lc 'PATH="$HOME/.cargo/bin:$PATH"; cargo fmt --manifest-path tirx_kernels/experimental/nymph-rust/Cargo.toml'
+        language: system
+        files: ^tirx_kernels/experimental/nymph-rust/.*\.rs$
+        pass_filenames: false

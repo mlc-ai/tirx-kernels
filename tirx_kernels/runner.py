@@ -61,8 +61,6 @@ def run_kernel_bench(
     warmup: int | None = None,
     repeat: int | None = None,
     timer: str | None = None,
-    rounds: int | None = None,
-    round_cooldown_s: float | None = None,
 ):
     """Run a kernel's benchmark.
 
@@ -87,10 +85,6 @@ def run_kernel_bench(
             bench_kwargs["repeat"] = repeat
         if timer is not None:
             bench_kwargs["timer"] = timer
-        if rounds is not None:
-            bench_kwargs["rounds"] = rounds
-        if round_cooldown_s is not None:
-            bench_kwargs["round_cooldown_s"] = round_cooldown_s
         result = run_bench_fn(**bench_kwargs)
         if not isinstance(result, dict):
             result = {}

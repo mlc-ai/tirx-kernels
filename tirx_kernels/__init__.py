@@ -14,41 +14,4 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-"""TIRX kernel library.
-
-Private or experimental kernels can be layered on top of the released package by
-setting ``TIRX_KERNELS_OVERLAY_PATHS`` to one or more ``tirx_kernels`` package
-directories, separated by ``os.pathsep``.
-"""
-
-from __future__ import annotations
-
-import os
-from pathlib import Path
-
-_OVERLAY_ENV = "TIRX_KERNELS_OVERLAY_PATHS"
-
-
-def _iter_overlay_paths() -> list[Path]:
-    paths = []
-    raw = os.environ.get(_OVERLAY_ENV, "")
-    for item in raw.split(os.pathsep):
-        item = item.strip()
-        if not item:
-            continue
-        path = Path(item).expanduser()
-        if path.is_dir():
-            paths.append(path.resolve())
-    return paths
-
-
-def _append_overlay_paths() -> None:
-    seen = {str(Path(item).resolve()) for item in __path__}
-    for path in _iter_overlay_paths():
-        text = str(path)
-        if text not in seen:
-            __path__.append(text)
-            seen.add(text)
-
-
-_append_overlay_paths()
+"""TIRX kernel library."""

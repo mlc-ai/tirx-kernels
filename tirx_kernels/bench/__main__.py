@@ -32,20 +32,20 @@ from tirx_kernels.runner import run_kernel_bench
 def _gpu_lock():
     """Per-physical-GPU advisory lock around the GPU-measurement phase.
 
-    Enabled by BENCH_SUITE_GPU_LOCK=1 (set by bench_suite run.py when it overcommits
+    Enabled by TIR_BENCH_GPU_LOCK=1 (set by tir-bench run.py when it overcommits
     CPU workers): many bench subprocesses import + compile in parallel, but only
     one measures per physical GPU at a time. Keyed by CUDA_VISIBLE_DEVICES; a
     no-op for standalone runs or a multi-GPU mask.
     """
-    if os.environ.get("BENCH_SUITE_GPU_LOCK") != "1":
+    if os.environ.get("TIR_BENCH_GPU_LOCK") != "1":
         return contextlib.nullcontext()
     gpu = os.environ.get("CUDA_VISIBLE_DEVICES", "")
     if not gpu or "," in gpu:
         return contextlib.nullcontext()
     from tvm_ffi.utils import FileLock
 
-    lock_dir = os.environ.get("BENCH_SUITE_LOCK_DIR") or tempfile.gettempdir()
-    return FileLock(os.path.join(lock_dir, f"bench_suite-gpu-{gpu}.lock"))
+    lock_dir = os.environ.get("TIR_BENCH_LOCK_DIR") or tempfile.gettempdir()
+    return FileLock(os.path.join(lock_dir, f"tir-bench-gpu-{gpu}.lock"))
 
 
 def main():
@@ -78,15 +78,6 @@ def main():
         choices=("proton", "event"),
         default=None,
         help="Override the kernel module's benchmark timer",
-    )
-    parser.add_argument(
-        "--rounds", type=int, default=None, help="Override the kernel module's benchmark rounds"
-    )
-    parser.add_argument(
-        "--round-cooldown",
-        type=float,
-        default=None,
-        help="Override seconds between benchmark rounds",
     )
     parser.add_argument(
         "--impls",
@@ -135,8 +126,6 @@ def main():
                         warmup=args.warmup,
                         repeat=args.repeat,
                         timer=args.timer,
-                        rounds=args.rounds,
-                        round_cooldown_s=args.round_cooldown,
                     )
                 results.append(result)
             except SkipTest as exc:

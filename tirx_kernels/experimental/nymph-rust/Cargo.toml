@@ -1,0 +1,36 @@
+# Cargo.toml — the package manifest.
+[package]
+name = "nymph"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+# Python extension name (avoids clashing with the Python `nymph` package). The
+# Rust lib is referred to as `nymph_rs::` from main.rs / integration tests.
+name = "nymph_rs"
+# cdylib = the Python extension (.so); rlib = still usable as a normal Rust lib.
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# PyO3 is OPTIONAL and gated behind the `python` feature, so `cargo test` builds
+# pure Rust (no libpython needed). maturin builds with the feature on.
+# abi3-py39 = use the stable ABI (forward-compatible, works on Python 3.9 .. 3.14+).
+pyo3 = { version = "0.25", optional = true, features = ["extension-module", "abi3-py39"] }
+# numpy<->ndarray bridge for the interpret() binding (inputs/outputs).
+numpy = { version = "0.25", optional = true, features = ["half"] }
+# The interpreter's vectorized cohort math (the numpy-equivalent layer).
+ndarray = "0.16"
+# f16 / bf16 rounding (the `half` crate's IEEE round-to-nearest-even).
+half = "2"
+# The MMA matmul goes through OpenBLAS cblas_sgemm (linked in build.rs) — see
+# src/interpreter/blas.rs.
+# Data-parallel loops (input dtype rounding over 100M+ elements).
+rayon = "1"
+
+[features]
+python = ["dep:pyo3", "dep:numpy"]
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+debug = 1  # line-table debug info for profiling (perf); negligible runtime cost

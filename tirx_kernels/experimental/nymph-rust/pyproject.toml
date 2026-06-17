@@ -1,0 +1,16 @@
+# maturin config — builds the Rust crate into a Python extension module.
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "nymph_rs"
+version = "0.1.0"
+requires-python = ">=3.9"
+
+[tool.maturin]
+# Build with the `python` feature on (enables the PyO3 dependency).
+features = ["python"]
+# Mixed Rust/Python: the compiled extension lands inside the `nymph_rs` package
+# next to the Python builder + kernels under python/.
+python-source = "python"

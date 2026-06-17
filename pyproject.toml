@@ -4,44 +4,23 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tirx-kernels"
-version = "0.1.1"
-description = "High-performance GPU kernels (GEMM, DeepGEMM, and FlashAttention4) written in TIRx"
-readme = "README.md"
-license = "Apache-2.0"
+version = "0.1.0"
+description = "TIRX kernel library — test and benchmark infrastructure for TIR compiler kernels"
 requires-python = ">=3.10"
-authors = [{ name = "MLC AI" }]
-keywords = ["tirx", "tvm", "gpu", "kernels", "gemm", "flash-attention"]
-classifiers = [
-  "Development Status :: 3 - Alpha",
-  "Intended Audience :: Developers",
-  "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
-  "Topic :: Scientific/Engineering :: Artificial Intelligence",
-]
-# Runtime deps are NOT on PyPI and must be installed separately:
-#   - tvm.tirx (the TIRx compiler)  — required by every kernel
-#   - torch                          — required by every kernel
-#   - deep_gemm                      — optional, FP8 GEMM/deepgemm references
-#   - flashinfer                     — optional, nvfp4_gemm quantization/baseline
-# See README.md "External dependencies". They are imported lazily so
-# `import tirx_kernels` and registry discovery work without them.
-dependencies = []
-
-[project.urls]
-Homepage = "https://github.com/mlc-ai/tirx-kernels"
-Repository = "https://github.com/mlc-ai/tirx-kernels"
-Issues = "https://github.com/mlc-ai/tirx-kernels/issues"
+# tvm, torch, triton are runtime dependencies managed externally (not on PyPI)
+dependencies = ["z3-solver>=4.12"]
 
 [tool.setuptools.packages.find]
 include = ["tirx_kernels*"]
 
 [tool.pytest.ini_options]
-# Repo root on sys.path so `import tirx_kernels` resolves without an
-# editable install. TIRx itself (`tvm.tirx`) is user-installed and must
-# stay on the environment (e.g. PYTHONPATH=/home/<user>/tir/python).
+# Repo root on sys.path so pytest imports the tirx_kernels package
+# without requiring PYTHONPATH each time. TIR (`tvm.tirx`) and external
+# deps like deep_gemm are user-installed and must stay on the env.
 pythonpath = ["."]
+markers = [
+  "nymph_perf: benchmark-sized or full-matrix Nymph GPU gates; skipped by default, run with --run-nymph-perf",
+]
 
 [tool.ruff]
 line-length = 100
@@ -71,6 +50,12 @@ unfixable = []
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E402", "F401", "F403", "F405"]
 "tirx_kernels/**/*.py" = ["E501", "E741", "F821", "F823", "F841", "F842"]
+"tirx_kernels/experimental/nymph-rust/python/nymph_rs/kernels/**/*.py" = [
+  "E702",
+  "RUF002",
+  "RUF003",
+  "UP038",
+]
 
 [tool.ruff.lint.isort]
 known-first-party = ["tvm", "tirx_kernels"]

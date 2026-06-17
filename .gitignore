@@ -1,15 +1,14 @@
+.local/
+.claude/settings.local.json
+
 __pycache__/
 *.pyc
+tirx_kernels.egg-info/
+tools/cpusim/examples/bench_gen/
+.porting/
 
-# build / packaging artifacts
-*.egg-info/
-build/
-dist/
+# eval harness outputs
+/eval_harness_runs/
 
-# tooling caches
-.ruff_cache/
-.pytest_cache/
-.venv/
-
-# local-only settings
-.local/
+# /file-bug skill backlog — transient per-machine bug folders
+/bugs/
