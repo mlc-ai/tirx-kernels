@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tirx-kernels"
+version = "0.1.0"
+description = "High-performance GPU kernels (GEMM + FlashAttention4) written in TIRx"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+# Runtime deps are NOT on PyPI and must be installed separately:
+#   - tvm.tirx (the TIRx compiler)  — required by every kernel
+#   - torch                          — required by every kernel
+#   - deep_gemm                      — optional, fp8_blockwise_gemm reference/baseline
+#   - flashinfer                     — optional, nvfp4_gemm quantization/baseline
+# See README.md "External dependencies". They are imported lazily so
+# `import tirx_kernels` and registry discovery work without them.
+dependencies = []
+
+[tool.setuptools.packages.find]
+include = ["tirx_kernels*"]
+
+[tool.pytest.ini_options]
+# Repo root on sys.path so `import tirx_kernels` resolves without an
+# editable install. TIRx itself (`tvm.tirx`) is user-installed and must
+# stay on the environment (e.g. PYTHONPATH=/home/<user>/tir/python).
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+indent-width = 4
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+  "E",   # pycodestyle errors
+  "F",   # pyflakes
+  "I",   # isort
+  "UP",  # pyupgrade
+  "RUF", # ruff-specific rules
+]
+ignore = [
+  # pyupgrade (style preference or low-value)
+  "UP028", # yield-in-for-loop
+  "UP030", # format-literals
+  "UP031", # printf-string-formatting
+  # ruff (preview rules, not yet stable)
+  "RUF043", # pytest-raises-ambiguous-pattern
+  "RUF059", # unused-unpacked-variable
+]
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402", "F401", "F403", "F405"]
+"tirx_kernels/**/*.py" = ["E501", "E741", "F821", "F823", "F841", "F842"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["tvm", "tirx_kernels"]
+split-on-trailing-comma = false
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = true
+line-ending = "auto"
+docstring-code-format = false
+docstring-code-line-length = "dynamic"

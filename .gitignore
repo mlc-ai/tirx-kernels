@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+
+# build / packaging artifacts
+*.egg-info/
+build/
+dist/
+
+# tooling caches
+.ruff_cache/
+.pytest_cache/
+
+# local-only settings
+.local/
