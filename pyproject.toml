@@ -12,7 +12,7 @@ requires-python = ">=3.10"
 # Runtime deps are NOT on PyPI and must be installed separately:
 #   - tvm.tirx (the TIRx compiler)  — required by every kernel
 #   - torch                          — required by every kernel
-#   - deep_gemm                      — optional, fp8_blockwise_gemm reference/baseline
+#   - deep_gemm                      — optional, fp8 GEMM data/baselines
 #   - flashinfer                     — optional, nvfp4_gemm quantization/baseline
 # See README.md "External dependencies". They are imported lazily so
 # `import tirx_kernels` and registry discovery work without them.

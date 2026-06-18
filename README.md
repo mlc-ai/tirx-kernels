@@ -4,12 +4,13 @@ High-performance GPU kernels written in [TIRx](https://github.com/apache/tvm).
 
 ## Kernels
 
-| Name                 | dtype             | Arch    |
-| -------------------- | ----------------- | ------- |
-| `fp16_bf16_gemm`     | fp16 / bf16       | sm_100a |
-| `fp8_blockwise_gemm` | fp8 (blockwise)   | sm_100a |
-| `nvfp4_gemm`         | nvfp4             | sm_100a |
-| `flash_attention4`   | bf16              | sm_100a |
+| Name                          | dtype           | Arch    |
+| ----------------------------- | --------------- | ------- |
+| `fp16_bf16_gemm`              | fp16 / bf16     | sm_100a |
+| `fp8_blockwise_gemm`          | fp8 (blockwise) | sm_100a |
+| `grouped_fp8_gemm_contiguous` | fp8 (m-grouped) | sm_100a |
+| `nvfp4_gemm`                  | nvfp4           | sm_100a |
+| `flash_attention4`            | bf16            | sm_100a |
 
 ## Installation
 
@@ -29,7 +30,7 @@ them — they are only needed to actually compile/run a kernel:
 | ---------------- | ---------------------------------- | ------------------------------------------------------ |
 | `tvm.tirx`       | all kernels (compile + run)        | The TIRx compiler. Put it on `PYTHONPATH`, e.g. `/path/to/tir/python`. |
 | `torch`          | all kernels                        | CUDA build matching your GPU.                          |
-| `deep_gemm`      | `fp8_blockwise_gemm` data/baseline | Used for fp8 quantization helpers and the reference.   |
+| `deep_gemm`      | fp8 GEMM data/baselines            | Used for fp8 quantization helpers and references.      |
 | `flashinfer`     | `nvfp4_gemm` data/baseline         | Used for nvfp4 quantization and the baseline.          |
 
 ## Usage
