@@ -3,113 +3,16 @@ from __future__ import annotations
 # ruff: noqa: E402,I001
 
 import math
-import random
 
-import deep_gemm
-import torch
-from deep_gemm.testing import calc_diff
-from deep_gemm.utils.math import align, per_block_cast_to_fp8, per_token_cast_to_fp8
-
-import tvm
 from tvm.backend.loader import load
 
 load("cuda")
 
 from tvm.script import tirx as T
 from tvm.script.tirx import tile as Tx
-from tvm.tirx.bench import bench, tensor_bytes
 from tvm.tirx.cuda.operator.tile_primitive.tma_utils import SwizzleMode
 from tvm.tirx.lang.pipeline import MBarrier, Pipeline, PipelineState
 from tvm.tirx.lang.tile_scheduler import ClusterPersistentScheduler2D
-
-
-KERNEL_META = {"name": "grouped_fp8_gemm_contiguous", "category": "gemm", "compute_capability": 10}
-CONFIGS = [
-    {
-        "num_groups": 4,
-        "expected_m_per_group": 256,
-        "N": 512,
-        "K": 512,
-        "seed": 1,
-        "label": "small_g4_m256_n512_k512",
-    },
-    {
-        "num_groups": 8,
-        "expected_m_per_group": 256,
-        "N": 1024,
-        "K": 512,
-        "seed": 2,
-        "label": "small_g8_m256_n1024_k512",
-    },
-]
-BENCH_CONFIGS = [
-    {
-        "num_groups": 4,
-        "expected_m_per_group": 8192,
-        "N": 6144,
-        "K": 7168,
-        "seed": 1,
-        "label": "large_g4_m8192_n6144_k7168",
-    },
-    {
-        "num_groups": 4,
-        "expected_m_per_group": 8192,
-        "N": 7168,
-        "K": 3072,
-        "seed": 2,
-        "label": "large_g4_m8192_n7168_k3072",
-    },
-    {
-        "num_groups": 4,
-        "expected_m_per_group": 8192,
-        "N": 4096,
-        "K": 4096,
-        "seed": 3,
-        "label": "large_g4_m8192_n4096_k4096",
-    },
-    {
-        "num_groups": 4,
-        "expected_m_per_group": 8192,
-        "N": 4096,
-        "K": 2048,
-        "seed": 4,
-        "label": "large_g4_m8192_n4096_k2048",
-    },
-    {
-        "num_groups": 8,
-        "expected_m_per_group": 4096,
-        "N": 6144,
-        "K": 7168,
-        "seed": 5,
-        "label": "large_g8_m4096_n6144_k7168",
-    },
-    {
-        "num_groups": 8,
-        "expected_m_per_group": 4096,
-        "N": 7168,
-        "K": 3072,
-        "seed": 6,
-        "label": "large_g8_m4096_n7168_k3072",
-    },
-    {
-        "num_groups": 8,
-        "expected_m_per_group": 4096,
-        "N": 4096,
-        "K": 4096,
-        "seed": 7,
-        "label": "large_g8_m4096_n4096_k4096",
-    },
-    {
-        "num_groups": 8,
-        "expected_m_per_group": 4096,
-        "N": 4096,
-        "K": 2048,
-        "seed": 8,
-        "label": "large_g8_m4096_n4096_k2048",
-    },
-]
-
-DIFF_THRESHOLD = 0.002
 
 
 def _align(value: int, alignment: int) -> int:
@@ -123,10 +26,10 @@ def _swizzle_mode(block_size: int, elem_size: int) -> int:
     raise AssertionError("unreachable swizzle mode")
 
 
-def _deepgemm_num_stages(
+def _num_smem_stages(
     *, swap_ab: bool, block_m: int, block_n: int, load_block_m: int, load_block_n: int
 ) -> int:
-    """Match DeepGEMM SM100 shared-memory stage count for FP8 grouped GEMM."""
+    """Compute the SM100 shared-memory stage count for the grouped FP8 schedule."""
 
     block_k = 128
     swizzle_cd = _swizzle_mode(block_n, 2)
@@ -145,124 +48,6 @@ def _deepgemm_num_stages(
     smem_capacity = 232448
     num_stages = (smem_capacity - smem_cd - smem_barriers - smem_tmem_ptr) // smem_per_stage
     return min(num_stages, 32)
-
-
-def _pack_ue8m0_rows_to_words(sf: torch.Tensor) -> torch.Tensor:
-    """Pack [rows, k_blocks] UE8M0 float scales into [k_words, rows] uint32."""
-
-    rows, k_blocks = sf.shape
-    del rows
-    if sf.dtype != torch.float32:
-        raise TypeError(f"expected float32 scales, got {sf.dtype}")
-    if k_blocks % 4 != 0:
-        raise ValueError(f"k_blocks={k_blocks} must be divisible by 4")
-    sf_u8 = (sf.view(torch.int32) >> 23).to(torch.uint8).contiguous()
-    return sf_u8.view(torch.uint32).T.contiguous()
-
-
-def _pack_b_scales_for_tir(sfb: torch.Tensor, n: int) -> torch.Tensor:
-    """Pack B block scales from [ceil(N/128), k_blocks] into [k_words, N]."""
-
-    _, k_blocks = sfb.shape
-    if k_blocks % 4 != 0:
-        raise ValueError(f"k_blocks={k_blocks} must be divisible by 4")
-    sf_u8 = (sfb.view(torch.int32) >> 23).to(torch.uint8).contiguous()
-    sf_rows = sf_u8.repeat_interleave(128, dim=0)[:n, :].contiguous()
-    return sf_rows.view(torch.uint32).T.contiguous()
-
-
-def _make_deepgemm_prepacked_scales(
-    sfa: torch.Tensor, sfb: torch.Tensor, m: int, n: int, k: int, num_groups: int
-) -> tuple[torch.Tensor, torch.Tensor]:
-    recipe = (1, 128)
-    sfb_rows = sfb.repeat_interleave(128, dim=1)[:, :n, :].contiguous()
-    sfa_deep = deep_gemm.transform_sf_into_required_layout(sfa, m, k, recipe)
-    sfb_deep = deep_gemm.transform_sf_into_required_layout(sfb_rows, n, k, recipe, num_groups)
-    return sfa_deep, sfb_deep
-
-
-def _make_actual_ms(
-    num_groups: int, expected_m_per_group: int, seed: int, alignment: int
-) -> tuple[list[int], list[int]]:
-    random.seed(seed)
-    actual = [int(expected_m_per_group * random.uniform(0.7, 1.3)) for _ in range(num_groups)]
-    aligned = [align(m, alignment) for m in actual]
-    return actual, aligned
-
-
-def prepare_data(
-    num_groups: int,
-    expected_m_per_group: int,
-    N: int,
-    K: int,
-    *,
-    seed: int = 0,
-    device: str = "cuda",
-) -> dict:
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-
-    alignment = deep_gemm.get_theoretical_mk_alignment_for_contiguous_layout()
-    deep_gemm.set_mk_alignment_for_contiguous_layout(alignment)
-    actual_ms, aligned_ms = _make_actual_ms(num_groups, expected_m_per_group, seed, alignment)
-
-    M = sum(aligned_ms)
-    if K % 128 != 0:
-        raise ValueError(f"K={K} must be divisible by 128")
-
-    A_bf16 = torch.randn((M, K), device=device, dtype=torch.bfloat16)
-    B_bf16 = torch.randn((num_groups, N, K), device=device, dtype=torch.bfloat16)
-    grouped_layout = torch.empty((M,), device=device, dtype=torch.int32)
-    ref = torch.empty((M, N), device=device, dtype=torch.bfloat16)
-
-    start = 0
-    for group, (actual_m, aligned_m) in enumerate(zip(actual_ms, aligned_ms)):
-        actual_end = start + actual_m
-        aligned_end = start + aligned_m
-        grouped_layout[start:actual_end] = group
-        grouped_layout[actual_end:aligned_end] = -1
-        A_bf16[actual_end:aligned_end] = 0
-        ref[start:aligned_end] = (A_bf16[start:aligned_end].float() @ B_bf16[group].float().T).to(
-            torch.bfloat16
-        )
-        start = aligned_end
-
-    A_fp8, sfa = per_token_cast_to_fp8(A_bf16, use_ue8m0=True)
-    B_fp8_groups = []
-    sfb_groups = []
-    for group in range(num_groups):
-        B_fp8_group, sfb_group = per_block_cast_to_fp8(B_bf16[group], use_ue8m0=True)
-        B_fp8_groups.append(B_fp8_group)
-        sfb_groups.append(sfb_group)
-    B_fp8 = torch.stack(B_fp8_groups)
-    sfb = torch.stack(sfb_groups)
-
-    SFA = _pack_ue8m0_rows_to_words(sfa)
-    SFB = torch.stack([_pack_b_scales_for_tir(sfb[group], N) for group in range(num_groups)])
-    sfa_deep, sfb_deep = _make_deepgemm_prepacked_scales(sfa, sfb, M, N, K, num_groups)
-
-    return {
-        "M": M,
-        "N": N,
-        "K": K,
-        "num_groups": num_groups,
-        "expected_m_per_group": expected_m_per_group,
-        "actual_ms": actual_ms,
-        "aligned_ms": aligned_ms,
-        "A": (A_fp8, sfa),
-        "B": (B_fp8, sfb),
-        "A_deepgemm_fast": (A_fp8, sfa_deep),
-        "B_deepgemm_fast": (B_fp8, sfb_deep),
-        "A_fp8": A_fp8,
-        "B_fp8": B_fp8,
-        "SFA": SFA,
-        "SFB": SFB,
-        "D_deepgemm": torch.empty((M, N), device=device, dtype=torch.bfloat16),
-        "D_tir": torch.empty((M, N), device=device, dtype=torch.bfloat16),
-        "grouped_layout": grouped_layout,
-        "ref": ref,
-        "alignment": alignment,
-    }
 
 
 @T.jit
@@ -620,20 +405,20 @@ def _kernel(
     T.cuda.cluster_sync()
 
 
-def tir_kernel(num_groups: int, M: int, N: int, K: int):
-    """Specialize DeepGEMM's SM100 m-grouped contiguous FP8 layout."""
+def grouped_fp8_gemm_contiguous(num_groups: int, M: int, N: int, K: int):
+    """Return the SM100 m-grouped contiguous FP8 GEMM PrimFunc."""
 
     swap_ab = True
-    dg_block_m = 240
-    dg_block_n = 128
+    block_m = 240
+    block_n = 128
     log_m = 1
-    log_n = 2 if (N // dg_block_n) % 2 == 0 else 1
-    smem_pipe_depth = _deepgemm_num_stages(
+    log_n = 2 if (N // block_n) % 2 == 0 else 1
+    smem_pipe_depth = _num_smem_stages(
         swap_ab=swap_ab,
-        block_m=dg_block_m,
-        block_n=dg_block_n,
-        load_block_m=dg_block_m // log_n,
-        load_block_n=dg_block_n,
+        block_m=block_m,
+        block_n=block_n,
+        load_block_m=block_m // log_n,
+        load_block_n=block_n,
     )
     return _kernel.specialize(
         NUM_GROUPS=num_groups,
@@ -641,154 +426,9 @@ def tir_kernel(num_groups: int, M: int, N: int, K: int):
         N=N,
         K=K,
         SWAP_AB=swap_ab,
-        DG_BLOCK_M=dg_block_m,
-        DG_BLOCK_N=dg_block_n,
+        DG_BLOCK_M=block_m,
+        DG_BLOCK_N=block_n,
         SMEM_DEPTH=smem_pipe_depth,
         LOGICAL_M_CLUSTER=log_m,
         LOGICAL_N_CLUSTER=log_n,
     )
-
-
-def get_kernel(num_groups: int, M: int, N: int, K: int, **kwargs):
-    return tir_kernel(num_groups, M, N, K)
-
-
-def _compile_tir(num_groups: int, M: int, N: int, K: int):
-    target = tvm.target.Target("cuda")
-    with target:
-        return tvm.compile(
-            tvm.IRModule({"main": tir_kernel(num_groups, M, N, K)}),
-            target=target,
-            tir_pipeline="tirx",
-        )
-
-
-def _make_tir_callable(ex, data: dict):
-    A = data["A_fp8"]
-    B = data["B_fp8"]
-    SFA = data["SFA"]
-    SFB = data["SFB"]
-    D = data["D_tir"]
-    grouped_layout = data["grouped_layout"]
-
-    def kernel_fn():
-        ex.mod(A, B, SFA, SFB, D, grouped_layout)
-
-    return kernel_fn
-
-
-def setup(data: dict, num_groups: int, M: int, N: int, K: int):
-    assert int(data["alignment"]) == 240
-    ex = _compile_tir(num_groups, M, N, K)
-    kernel_fn = _make_tir_callable(ex, data)
-    kernel_fn()
-    return kernel_fn
-
-
-def setup_deep_gemm(data: dict, *, use_prepacked_scales: bool = True):
-    A = data["A_deepgemm_fast"] if use_prepacked_scales else data["A"]
-    B = data["B_deepgemm_fast"] if use_prepacked_scales else data["B"]
-    D = data["D_deepgemm"]
-    grouped_layout = data["grouped_layout"]
-    recipe = (1, 1, 128) if use_prepacked_scales else None
-
-    def kernel_fn():
-        deep_gemm.m_grouped_fp8_gemm_nt_contiguous(A, B, D, grouped_layout, recipe=recipe)
-
-    kernel_fn()
-    return kernel_fn
-
-
-def _check(tag: str, out: torch.Tensor, ref: torch.Tensor) -> float:
-    diff = calc_diff(out, ref)
-    if diff >= DIFF_THRESHOLD:
-        raise AssertionError(f"{tag} diff {diff:.6f} >= {DIFF_THRESHOLD}")
-    return diff
-
-
-def run_test(
-    num_groups: int = 4,
-    expected_m_per_group: int = 256,
-    N: int = 512,
-    K: int = 512,
-    seed: int = 1,
-    **kwargs,
-):
-    data = prepare_data(num_groups, expected_m_per_group, N, K, seed=seed)
-    M = data["M"]
-    setup_deep_gemm(data, use_prepacked_scales=True)
-    setup(data, num_groups, M, N, K)
-    _check("deepgemm", data["D_deepgemm"], data["ref"])
-    _check("tir", data["D_tir"], data["ref"])
-
-
-def run_bench(
-    num_groups: int = 4,
-    expected_m_per_group: int = 8192,
-    N: int = 4096,
-    K: int = 2048,
-    seed: int = 1,
-    *,
-    warmup: int = 10,
-    repeat: int = 30,
-    timer: str = "event",
-    deepgemm_fp32_scales: bool = False,
-    **kwargs,
-):
-    use_prepacked_scales = not deepgemm_fp32_scales
-    sample = prepare_data(num_groups, expected_m_per_group, N, K, seed=seed)
-    M = sample["M"]
-    if int(sample["alignment"]) != 240:
-        raise AssertionError(
-            f"expected DeepGEMM contiguous alignment 240, got {sample['alignment']}"
-        )
-
-    ex = _compile_tir(num_groups, M, N, K)
-    tir_sample = _make_tir_callable(ex, sample)
-    setup_deep_gemm(sample, use_prepacked_scales=use_prepacked_scales)
-    tir_sample()
-    _check("deepgemm", sample["D_deepgemm"], sample["ref"])
-    _check("tir", sample["D_tir"], sample["ref"])
-
-    def make_input():
-        data = prepare_data(num_groups, expected_m_per_group, N, K, seed=seed)
-        case = {
-            "data": data,
-            "tir": _make_tir_callable(ex, data),
-            "deepgemm": setup_deep_gemm(data, use_prepacked_scales=use_prepacked_scales),
-        }
-        input_bytes = tensor_bytes(
-            data["A_fp8"],
-            data["B_fp8"],
-            data["SFA"],
-            data["SFB"],
-            data["grouped_layout"],
-            data["D_tir"],
-        )
-        return case, input_bytes
-
-    result = bench(
-        {"deepgemm": lambda case: case["deepgemm"](), "tir": lambda case: case["tir"]()},
-        make_input,
-        warmup=warmup,
-        repeat=repeat,
-        timer=timer,
-        proton_name="grouped_fp8_gemm_contiguous",
-        cooldown_s=0.0,
-    )
-    result.update(
-        {
-            "M": M,
-            "N": N,
-            "K": K,
-            "num_groups": num_groups,
-            "actual_ms": sample["actual_ms"],
-            "aligned_ms": sample["aligned_ms"],
-            "deepgemm_scale_mode": "prepacked-int32" if use_prepacked_scales else "fp32-api",
-            "tir_launches": 1,
-        }
-    )
-    impls = result.get("impls", {})
-    if impls.get("deepgemm", 0) > 0 and "tir" in impls:
-        result["ratio"] = impls["tir"] / impls["deepgemm"]
-    return result
