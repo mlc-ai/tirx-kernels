@@ -2,10 +2,6 @@
 
 High-performance GPU kernels written in [TIRx](https://github.com/apache/tvm).
 
-> **Official PyPI package:** install only from [`tirx-kernels`](https://pypi.org/project/tirx-kernels/)
-> published by this repository ([mlc-ai/tirx-kernels](https://github.com/mlc-ai/tirx-kernels)).
-> Do not use similarly named packages from other publishers.
-
 ## Kernels
 
 | Name                 | dtype             | Arch    |
