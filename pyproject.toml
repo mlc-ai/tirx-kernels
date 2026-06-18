@@ -4,11 +4,22 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tirx-kernels"
-version = "0.1.0"
+version = "0.0.0"
 description = "High-performance GPU kernels (GEMM + FlashAttention4) written in TIRx"
 readme = "README.md"
-license = { text = "Apache-2.0" }
+license = "Apache-2.0"
 requires-python = ">=3.10"
+authors = [{ name = "MLC AI" }]
+keywords = ["tirx", "tvm", "gpu", "kernels", "gemm", "flash-attention"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 # Runtime deps are NOT on PyPI and must be installed separately:
 #   - tvm.tirx (the TIRx compiler)  — required by every kernel
 #   - torch                          — required by every kernel
@@ -17,6 +28,11 @@ requires-python = ">=3.10"
 # See README.md "External dependencies". They are imported lazily so
 # `import tirx_kernels` and registry discovery work without them.
 dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/mlc-ai/tirx-kernels"
+Repository = "https://github.com/mlc-ai/tirx-kernels"
+Issues = "https://github.com/mlc-ai/tirx-kernels/issues"
 
 [tool.setuptools.packages.find]
 include = ["tirx_kernels*"]
