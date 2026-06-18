@@ -9,6 +9,7 @@ dist/
 # tooling caches
 .ruff_cache/
 .pytest_cache/
+.venv/
 
 # local-only settings
 .local/
