@@ -8,7 +8,7 @@ from unittest import SkipTest
 import torch
 
 from tvm.script import tirx as T
-from tvm.tirx.cuda.operator.tile_primitive.tma_utils import SwizzleMode
+from tvm.backend.cuda.operator.tile_primitive.tma_utils import SwizzleMode
 from tvm.tirx.lang.pipeline import MBarrier, TCGen05Bar, TMABar
 
 B_H = 64
@@ -2007,9 +2007,11 @@ def run_bench(
     def make_input() -> tuple[dict[str, Any], int]:
         case = prepare_data(**kwargs)
         launches = _build_tirx_launches(case)
-        bench_case = {"launches": launches}
+        case["launches"] = launches
         input_bytes = tensor_bytes(*_tirx_benchmark_tensors(case, launches))
-        return bench_case, input_bytes
+        return case, input_bytes
+
+    from tirx_kernels.attention._flashmla_bench import flashmla_reference_builder
 
     return bench(
         {"tirx": lambda case: _run_tirx_launches(ex, case["launches"])},
@@ -2018,6 +2020,7 @@ def run_bench(
         repeat=repeat,
         timer=timer,
         proton_name=KERNEL_META["name"],
+        references={"flashmla": flashmla_reference_builder},
     )
 
 

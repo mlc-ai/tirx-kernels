@@ -25,7 +25,7 @@ import tempfile
 import traceback
 from unittest import SkipTest
 
-from tirx_kernels.registry import discover_kernels
+from tirx_kernels.registry import discover_kernels, load_kernel
 from tirx_kernels.runner import run_kernel_bench
 
 
@@ -96,16 +96,22 @@ def main():
     if args.json or args.json_file:
         os.environ["TIRX_BENCH_JSON"] = "1"
 
-    all_kernels = discover_kernels(min_compute_capability=args.cc)
-
     if args.kernel:
-        if args.kernel not in all_kernels:
+        try:
+            mod = load_kernel(args.kernel)
+        except KeyError:
+            print(f"ERROR: kernel '{args.kernel}' not found.", file=sys.stderr)
+            sys.exit(1)
+        if args.cc is not None and mod.KERNEL_META.get("compute_capability") != args.cc:
             print(
-                f"ERROR: kernel '{args.kernel}' not found. Available: {sorted(all_kernels.keys())}",
+                f"ERROR: kernel '{args.kernel}' compute_capability="
+                f"{mod.KERNEL_META.get('compute_capability')} != filter {args.cc}",
                 file=sys.stderr,
             )
             sys.exit(1)
-        all_kernels = {args.kernel: all_kernels[args.kernel]}
+        all_kernels = {args.kernel: mod}
+    else:
+        all_kernels = discover_kernels(min_compute_capability=args.cc)
 
     # Each kernel's run_bench() manages its own ProtonContext session.
     # No global proton session needed.

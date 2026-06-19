@@ -30,7 +30,7 @@ _DTYPE_MAP = {"fp16": tvm.DataType("float16"), "bf16": tvm.DataType("bfloat16")}
 def _swizzle_for_row_bytes(row_bytes):
     """Pick the MMA-shared swizzle atom matching the tile row width (the 128/64/32B
     swizzle is selected from the row byte width)."""
-    from tvm.tirx.cuda.operator.tile_primitive.tma_utils import SwizzleMode
+    from tvm.backend.cuda.operator.tile_primitive.tma_utils import SwizzleMode
 
     if row_bytes % 128 == 0:
         return SwizzleMode.SWIZZLE_128B_ATOM

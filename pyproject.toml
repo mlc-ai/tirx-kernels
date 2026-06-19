@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "TIRX kernel library — test and benchmark infrastructure for TIR compiler kernels"
 requires-python = ">=3.10"
 # tvm, torch, triton are runtime dependencies managed externally (not on PyPI)
-dependencies = ["z3-solver>=4.12"]
+dependencies = ["pyyaml>=6.0"]
 
 [tool.setuptools.packages.find]
 include = ["tirx_kernels*"]

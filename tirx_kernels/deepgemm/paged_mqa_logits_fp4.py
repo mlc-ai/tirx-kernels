@@ -26,7 +26,7 @@ from unittest import SkipTest
 import torch
 
 from tvm.ir.type import PointerType, PrimType
-from tvm.tirx.cuda.op import cuda_func_call
+from tvm.backend.cuda.op import cuda_func_call
 
 _DEEP_GEMM_MODULE_NAME = "deep_gemm"
 _SM100_SMEM_CAPACITY = 232448
@@ -489,7 +489,7 @@ def prepare_data(**kwargs: Any) -> dict[str, Any]:
 
 def get_kernel(**kwargs: Any):
     from tvm.script import tirx as T
-    from tvm.tirx.cuda.operator.tile_primitive.gemm_async.tcgen05 import sf_tmem_layout
+    from tvm.backend.cuda.operator.tile_primitive.gemm_async.tcgen05 import sf_tmem_layout
     from tvm.tirx.layout import S, TCol, TileLayout, TLane
 
     config = _make_config(**kwargs)
@@ -2204,7 +2204,7 @@ def run_test(**kwargs: Any) -> None:
 
 
 def run_bench(**kwargs: Any) -> dict[str, Any]:
-    from tvm.tirx.bench import bench, tensor_bytes
+    from tvm.tirx.bench import bench, bench_impls_mode, tensor_bytes
 
     warmup = kwargs.pop("warmup", 10)
     repeat = kwargs.pop("repeat", 30)
@@ -2238,7 +2238,26 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
     funcs_tirx_first = {"tirx": lambda case: _run_tirx_invocation(case[0], case[1])}
     funcs_deepgemm_first = {"tirx": lambda case: _run_tirx_invocation(case[0], case[1])}
 
-    if benchmark_order_mode == "tirx_first":
+    if bench_impls_mode() == "baseline":
+        result = bench(
+            funcs_tirx_first,
+            make_input,
+            warmup=warmup,
+            repeat=repeat,
+            timer=timer,
+            proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
+            references={"deepgemm": _deepgemm},
+        )
+    elif bench_impls_mode() == "ours":
+        result = bench(
+            funcs_tirx_first,
+            make_input,
+            warmup=warmup,
+            repeat=repeat,
+            timer=timer,
+            proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
+        )
+    elif benchmark_order_mode == "tirx_first":
         result = bench(
             funcs_tirx_first,
             make_input,
@@ -2280,7 +2299,9 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
         result = {
             "impls": {
                 "tirx": (tirx_first["impls"]["tirx"] + deepgemm_first["impls"]["tirx"]) / 2,
-                "deepgemm": (tirx_first["impls"]["deepgemm"] + deepgemm_first["impls"]["deepgemm"])
+                "deepgemm": (
+                    tirx_first["impls"]["deepgemm"] + deepgemm_first["impls"]["deepgemm"]
+                )
                 / 2,
             },
             "errors": {**tirx_first.get("errors", {}), **deepgemm_first.get("errors", {})},

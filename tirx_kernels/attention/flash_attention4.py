@@ -769,9 +769,9 @@ def _kernel(
                 # and therefore the PV MMA. The reverse (sScale slot reuse)
                 # direction stays on softmax_corr.empty.
                 if STATS_BAR_PAIRWISE:
-                    tvm.tirx.cuda.op.ptx_bar_arrive(1 + wg_id * 4 + warp_id, 64)
+                    tvm.backend.cuda.op.ptx_bar_arrive(1 + wg_id * 4 + warp_id, 64)
                 else:
-                    tvm.tirx.cuda.op.ptx_bar_arrive(1 + wg_id, 256)
+                    tvm.backend.cuda.op.ptx_bar_arrive(1 + wg_id, 256)
                 profiler.start(ProfileEventType.Softmax_FMA, tid_in_wg == 0)
                 Tx.wg.fma(s_chunk, s_chunk, scale_log2, -row_max_scaled)
                 profiler.end(ProfileEventType.Softmax_FMA, tid_in_wg == 0)
@@ -920,20 +920,20 @@ def _kernel(
                 if tid_in_wg < BLK_M:
                     sScale[ROW_SUM_BASE + tid_in_wg + wg_id * BLK_M] = row_sum[0]
                 if STATS_BAR_PAIRWISE:
-                    tvm.tirx.cuda.op.ptx_bar_arrive(1 + wg_id * 4 + warp_id, 64)
+                    tvm.backend.cuda.op.ptx_bar_arrive(1 + wg_id * 4 + warp_id, 64)
                 else:
-                    tvm.tirx.cuda.op.ptx_bar_arrive(1 + wg_id, 256)
+                    tvm.backend.cuda.op.ptx_bar_arrive(1 + wg_id, 256)
         if wg_id == 2:
             T.ptx.setmaxnreg(False, 64)
             if STATS_BAR_PAIRWISE:
-                tvm.tirx.cuda.op.ptx_bar_sync(1 + 0 * 4 + warp_id, 64)
+                tvm.backend.cuda.op.ptx_bar_sync(1 + 0 * 4 + warp_id, 64)
             else:
-                tvm.tirx.cuda.op.ptx_bar_sync(1 + 0, 256)
+                tvm.backend.cuda.op.ptx_bar_sync(1 + 0, 256)
             softmax_corr.empty.arrive(0)
             if STATS_BAR_PAIRWISE:
-                tvm.tirx.cuda.op.ptx_bar_sync(1 + 1 * 4 + warp_id, 64)
+                tvm.backend.cuda.op.ptx_bar_sync(1 + 1 * 4 + warp_id, 64)
             else:
-                tvm.tirx.cuda.op.ptx_bar_sync(1 + 1, 256)
+                tvm.backend.cuda.op.ptx_bar_sync(1 + 1, 256)
             phase_q ^= 1
             corr_trip_count: T.let = (
                 get_n_block_max(m_block_idx, is_causal, SEQ_LEN_KV, SEQ_LEN_Q, SEQ_Q_PER_TILE)
@@ -943,9 +943,9 @@ def _kernel(
             for i_kv in T.serial(corr_trip_count - 1, unroll=False):
                 for i_q in T.unroll(2):
                     if STATS_BAR_PAIRWISE:
-                        tvm.tirx.cuda.op.ptx_bar_sync(1 + i_q * 4 + warp_id, 64)
+                        tvm.backend.cuda.op.ptx_bar_sync(1 + i_q * 4 + warp_id, 64)
                     else:
-                        tvm.tirx.cuda.op.ptx_bar_sync(1 + i_q, 256)
+                        tvm.backend.cuda.op.ptx_bar_sync(1 + i_q, 256)
                     profiler.start(ProfileEventType.Correction, tid_in_wg == 0)
                     acc_scale: T.f32
                     should_rescale: T.i32
@@ -978,9 +978,9 @@ def _kernel(
             if not EPI_ON_SOFTMAX:
                 for i_q in T.unroll(2):
                     if STATS_BAR_PAIRWISE:
-                        tvm.tirx.cuda.op.ptx_bar_sync(1 + i_q * 4 + warp_id, 64)
+                        tvm.backend.cuda.op.ptx_bar_sync(1 + i_q * 4 + warp_id, 64)
                     else:
-                        tvm.tirx.cuda.op.ptx_bar_sync(1 + i_q, 256)
+                        tvm.backend.cuda.op.ptx_bar_sync(1 + i_q, 256)
                     row_sum: T.let = sScale[ROW_SUM_BASE + tid_in_wg + i_q * BLK_M]
                     softmax_corr.empty.arrive(i_q)
                     o_ready.wait(i_q, phase_tmem)

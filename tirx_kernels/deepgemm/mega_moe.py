@@ -1531,8 +1531,8 @@ def get_kernel(
     emit_nvl_barrier_timeout_printf: bool = True,
 ):
     from tvm.script import tirx as T
-    from tvm.tirx.cuda.operator.tile_primitive.gemm_async.tcgen05 import sf_tmem_layout
-    from tvm.tirx.cuda.operator.tile_primitive.tma_utils import SwizzleMode, mma_shared_layout
+    from tvm.backend.cuda.operator.tile_primitive.gemm_async.tcgen05 import sf_tmem_layout
+    from tvm.backend.cuda.operator.tile_primitive.tma_utils import SwizzleMode, mma_shared_layout
     from tvm.tirx.layout import S, TCol, TileLayout, TLane
 
     runtime_config = MegaMoeConfig(

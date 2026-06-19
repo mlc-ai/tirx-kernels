@@ -1975,18 +1975,22 @@ def run_bench(
     ex = compile_kernel(prim_func)
 
     def make_input() -> tuple[dict[str, Any], int]:
-        bench_case = prepare_data(**kwargs)
-        launches = _build_tirx_launches(bench_case)
-        input_bytes = tensor_bytes(*_tirx_benchmark_tensors(bench_case, launches))
-        return {"launches": launches}, input_bytes
+        case = prepare_data(**kwargs)
+        launches = _build_tirx_launches(case)
+        case["launches"] = launches
+        input_bytes = tensor_bytes(*_tirx_benchmark_tensors(case, launches))
+        return case, input_bytes
+
+    from tirx_kernels.attention._flashmla_bench import flashmla_reference_builder
 
     return bench(
-        {"tirx": lambda bench_case: _run_tirx_launches(ex, bench_case["launches"])},
+        {"tirx": lambda case: _run_tirx_launches(ex, case["launches"])},
         make_input,
         warmup=warmup,
         repeat=repeat,
         timer=timer,
         proton_name=KERNEL_META["name"],
+        references={"flashmla": flashmla_reference_builder},
     )
 
 

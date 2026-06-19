@@ -68,9 +68,9 @@ def run_kernel_bench(
     if available, otherwise runs ``run_test`` without timing.
     """
     if registry is None:
-        from tirx_kernels.registry import discover_kernels
+        from tirx_kernels.registry import load_kernel
 
-        registry = discover_kernels()
+        registry = {kernel_name: load_kernel(kernel_name)}
 
     mod = registry[kernel_name]
     params = {k: v for k, v in config.items() if k != "label"}
