@@ -27,7 +27,7 @@ them — they are only needed to actually compile/run a kernel:
 
 | Dependency       | Needed by                          | Notes                                                  |
 | ---------------- | ---------------------------------- | ------------------------------------------------------ |
-| `tvm.tirx`       | all kernels (compile + run)        | The TIRx compiler. Put it on `PYTHONPATH`, e.g. `/path/to/tir/python`. |
+| `tvm.tirx`       | all kernels (compile + run)        | The TIRx compiler. `pip install -e /path/to/tvm` or put `${TVM_PATH}/python` on `PYTHONPATH`. |
 | `torch`          | all kernels                        | CUDA build matching your GPU.                          |
 | `deep_gemm`      | `fp8_blockwise_gemm` data/baseline | Used for fp8 quantization helpers and the reference.   |
 | `flashinfer`     | `nvfp4_gemm` data/baseline         | Used for nvfp4 quantization and the baseline.          |

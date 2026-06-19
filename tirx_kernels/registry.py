@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import importlib
 import logging
-import os
 import pkgutil
 from pathlib import Path
 from types import ModuleType
@@ -28,103 +27,57 @@ from types import ModuleType
 import tirx_kernels
 
 _log = logging.getLogger(__name__)
-_STRICT = os.environ.get("TIRX_KERNELS_STRICT", "").lower() in ("1", "true", "yes")
 
-_BASE_CATEGORIES = ("gemm", "attention")
-_EXTRA_CATEGORIES_ENV = "TIRX_KERNELS_EXTRA_CATEGORIES"
+# CLI / package infra — not kernel categories.
+_SKIP_CATEGORIES = frozenset({"bench", "test", "tir_bench", "experimental"})
 
 
-def _package_roots() -> list[Path]:
-    roots: list[Path] = []
-    seen: set[str] = set()
-    for raw in getattr(tirx_kernels, "__path__", []):
-        path = Path(str(raw)).resolve()
-        if not path.is_dir():
+def _kernels_root() -> Path:
+    return Path(tirx_kernels.__file__).resolve().parent
+
+
+def discover_categories() -> list[str]:
+    """Return sorted category subpackage names under the installed ``tirx_kernels`` package."""
+    root = _kernels_root()
+    out: list[str] = []
+    for child in sorted(root.iterdir()):
+        if child.name.startswith("_") or child.name in _SKIP_CATEGORIES or not child.is_dir():
             continue
-        text = str(path)
-        if text not in seen:
-            roots.append(path)
-            seen.add(text)
-    return roots
+        if (child / "__init__.py").is_file():
+            out.append(child.name)
+    return out
 
 
-def _category_paths(category: str) -> list[Path]:
-    paths = []
-    for root in _package_roots():
-        path = root / category
-        if path.is_dir():
-            paths.append(path)
-    return paths
-
-
-def _discover_categories() -> list[str]:
-    categories = set(_BASE_CATEGORIES)
-    raw_extra = os.environ.get(_EXTRA_CATEGORIES_ENV, "")
-    for item in raw_extra.split(","):
-        item = item.strip()
-        if item:
-            categories.add(item)
-    for root in _package_roots():
-        for child in root.iterdir():
-            if child.name.startswith("_") or not child.is_dir():
-                continue
-            if (child / "__init__.py").is_file():
-                categories.add(child.name)
-    return sorted(categories)
-
-
-def _ensure_category_package_path(category: str, paths: list[Path]) -> bool:
-    try:
-        pkg = importlib.import_module(f"tirx_kernels.{category}")
-    except Exception as e:
-        if _STRICT:
-            raise
-        _log.warning("tirx_kernels: failed to import category %s: %s", category, e)
-        return False
-    pkg_path = getattr(pkg, "__path__", None)
-    if pkg_path is None:
-        return True
-    seen = {str(Path(item).resolve()) for item in pkg_path}
-    for path in paths:
-        text = str(path.resolve())
-        if text not in seen:
-            pkg_path.append(text)
-            seen.add(text)
-    return True
-
-
-def _scan_category(category: str) -> dict[str, ModuleType]:
+def _scan_category(category: str, *, strict: bool) -> dict[str, ModuleType]:
     """Import all modules in tirx_kernels/<category>/ that expose KERNEL_META."""
-    result = {}
-    pkg_paths = _category_paths(category)
-    if not pkg_paths:
-        return result
-    if not _ensure_category_package_path(category, pkg_paths):
+    result: dict[str, ModuleType] = {}
+    pkg_path = _kernels_root() / category
+    if not pkg_path.is_dir():
         return result
     pkg_name = f"tirx_kernels.{category}"
-    seen_modules: set[str] = set()
-    for pkg_path in pkg_paths:
-        for _, mod_name, is_pkg in pkgutil.iter_modules([str(pkg_path)]):
-            if mod_name.startswith("_") or is_pkg or mod_name in seen_modules:
-                continue
-            seen_modules.add(mod_name)
-            try:
-                mod = importlib.import_module(f"{pkg_name}.{mod_name}")
-            except Exception as e:
-                if _STRICT:
-                    raise
-                _log.warning("tirx_kernels: failed to import %s.%s: %s", pkg_name, mod_name, e)
-                continue
-            meta = getattr(mod, "KERNEL_META", None)
-            if meta is not None and isinstance(meta, dict) and "name" in meta:
-                result[meta["name"]] = mod
+    for _importer, mod_name, is_pkg in pkgutil.iter_modules([str(pkg_path)]):
+        if mod_name.startswith("_") or is_pkg:
+            continue
+        try:
+            mod = importlib.import_module(f"{pkg_name}.{mod_name}")
+        except Exception as e:
+            if strict:
+                raise
+            _log.warning("tirx_kernels: failed to import %s.%s: %s", pkg_name, mod_name, e)
+            continue
+        meta = getattr(mod, "KERNEL_META", None)
+        if meta is not None and isinstance(meta, dict) and "name" in meta:
+            result[meta["name"]] = mod
     return result
 
 
 def discover_kernels(
-    *, min_compute_capability: int | None = None, category: str | None = None
+    *,
+    min_compute_capability: int | None = None,
+    category: str | None = None,
+    strict: bool = False,
 ) -> dict[str, ModuleType]:
-    """Return ``{name: module}`` for all registered kernels.
+    """Return ``{name: module}`` for all registered kernels in the installed package.
 
     Parameters
     ----------
@@ -134,11 +87,14 @@ def discover_kernels(
         won't run on sm90a, etc.)
     category : str, optional
         If given, only scan this category subdirectory.
+    strict : bool, optional
+        If True, raise on the first kernel module import failure instead of
+        logging a warning and continuing.
     """
-    categories = [category] if category else _discover_categories()
+    categories = [category] if category else discover_categories()
     result: dict[str, ModuleType] = {}
     for cat in categories:
-        result.update(_scan_category(cat))
+        result.update(_scan_category(cat, strict=strict))
     if min_compute_capability is not None:
         result = {
             name: mod
@@ -159,9 +115,18 @@ if __name__ == "__main__":
     )
     parser.add_argument("--category", type=str, default=None)
     parser.add_argument("--cc", type=int, default=None, help="Compute capability filter")
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Raise on the first kernel import failure (for CI import gates)",
+    )
     args = parser.parse_args()
 
-    all_kernels = discover_kernels(min_compute_capability=args.cc, category=args.category)
+    all_kernels = discover_kernels(
+        min_compute_capability=args.cc,
+        category=args.category,
+        strict=args.strict,
+    )
 
     if args.format == "json":
         out = []

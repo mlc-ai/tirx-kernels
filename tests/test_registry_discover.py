@@ -14,4 +14,20 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-"""TIRX kernel library."""
+from __future__ import annotations
+
+from tirx_kernels.registry import discover_categories, discover_kernels
+
+
+def test_discover_categories_includes_kernel_dirs() -> None:
+    categories = discover_categories()
+    assert "gemm" in categories
+    assert "attention" in categories
+    assert "bench" not in categories
+    assert "tir_bench" not in categories
+
+
+def test_discover_kernels_finds_known_gemm() -> None:
+    kernels = discover_kernels(category="gemm")
+    assert "fp16_bf16_gemm" in kernels
+    assert "nvfp4_gemm" in kernels
