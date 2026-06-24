@@ -561,7 +561,7 @@ def run_test(M=1024, N=1024, K=1024):
 
 
 def run_bench(
-    M=1024, N=1024, K=1024, *, warmup=10, repeat=30, timer="proton", kernel_fair: bool | None = None
+    M=1024, N=1024, K=1024, *, warmup=10, repeat=30, timer="proton", kernel_fair: bool | None = None, **kwargs
 ):
     """Benchmark DeepGEMM main kernel against the TIRx kernel."""
     import torch
@@ -614,6 +614,7 @@ def run_bench(
         timer=timer,
         proton_name="fp8_blockwise_gemm",
         references={"deepgemm": _deepgemm},
+        **kwargs,
     )
     result["kernel_fair"] = kernel_fair
     return result

@@ -1,14 +1,14 @@
 {
-  "timestamp": "20",
-  "label": "ours-x5-full",
+  "timestamp": "1",
+  "label": "10d2b82a-dirty",
   "git": {
-    "tir": "ca00cdc7-dirty",
-    "tirx-kernels": "a6c9c52e",
+    "tir": "4657e44b-dirty",
+    "tirx-kernels": "df166c15-dirty",
     "tirx-bench-ci": null
   },
   "kernel_tree": {
-    "tir:python/tvm/tirx": "a40833ee28bdea9f6c0adacda4be0d75e85fe0f2",
-    "tirx-kernels:tirx_kernels": "0426270065b97a9e78012abeb0e898bf6d1c1a28"
+    "tir:python/tvm/tirx": "b9ad64064a4412a85da39956664f376edf0f9a94",
+    "tirx-kernels:tirx_kernels": "959baad116cc23d6611ae0efd7822e422ab519d5"
   },
   "baselines": {
     "torch": {
@@ -49,15 +49,12 @@
   "probe": {
     "enabled": true,
     "usable": [
+      "0",
       "1",
       "2",
-      "3",
-      "4",
-      "5"
+      "3"
     ],
-    "failed": {
-      "0": "Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions."
-    }
+    "failed": {}
   },
   "results": [
     {
@@ -66,16 +63,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0389894
+        "tirx": 39.2354
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -84,16 +76,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.050475
+        "tirx": 80.4018
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -102,16 +89,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.039427000000000004
+        "tirx": 39.6526
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -120,16 +102,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0509426
+        "tirx": 50.7154
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -138,16 +115,11 @@
       "label": "s2048_skv4096_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0397562
+        "tirx": 39.3834
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -156,16 +128,11 @@
       "label": "s2048_skv4096_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.051267599999999997
+        "tirx": 81.5792
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -174,16 +141,11 @@
       "label": "s2048_skv4096_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0388298
+        "tirx": 39.0028
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -192,16 +154,11 @@
       "label": "s2048_skv4096_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0498002
+        "tirx": 49.5616
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -210,16 +167,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0675274
+        "tirx": 67.507
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -228,16 +180,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.1035804
+        "tirx": 103.563
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -246,16 +193,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0684638
+        "tirx": 110.479
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -264,16 +206,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.10546860000000001
+        "tirx": 105.21479999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -282,16 +219,11 @@
       "label": "s2048_skv8192_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.06900840000000001
+        "tirx": 68.8436
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -300,16 +232,11 @@
       "label": "s2048_skv8192_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.10572720000000001
+        "tirx": 105.53779999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -318,16 +245,11 @@
       "label": "s2048_skv8192_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0667706
+        "tirx": 107.69299999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -336,16 +258,11 @@
       "label": "s2048_skv8192_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.10290300000000001
+        "tirx": 102.7128
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -354,16 +271,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0681656
+        "tirx": 109.3508
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -372,16 +284,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0681976
+        "tirx": 68.2424
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -390,16 +297,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.06885279999999999
+        "tirx": 68.7912
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -408,16 +310,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.06901560000000001
+        "tirx": 110.4498
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -426,16 +323,11 @@
       "label": "s4096_skv4096_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0690902
+        "tirx": 110.6046
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -444,16 +336,11 @@
       "label": "s4096_skv4096_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0693238
+        "tirx": 69.2744
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -462,16 +349,11 @@
       "label": "s4096_skv4096_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0672236
+        "tirx": 67.061
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -480,16 +362,11 @@
       "label": "s4096_skv4096_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0673452
+        "tirx": 107.56519999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -498,16 +375,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.1220242
+        "tirx": 121.52319999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -516,16 +388,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.1750808
+        "tirx": 175.08939999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -534,16 +401,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.12338
+        "tirx": 123.32979999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -552,16 +414,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.177703
+        "tirx": 177.34740000000002
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -570,16 +427,11 @@
       "label": "s4096_skv8192_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.14249
+        "tirx": 123.50339999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -588,16 +440,11 @@
       "label": "s4096_skv8192_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.1780644
+        "tirx": 177.87879999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -606,16 +453,11 @@
       "label": "s4096_skv8192_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.119994
+        "tirx": 120.13479999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -624,16 +466,11 @@
       "label": "s4096_skv8192_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.17265239999999998
+        "tirx": 172.2564
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -642,16 +479,11 @@
       "label": "b16_n1_mp128_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0039686
+        "tirx": 3.9768
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -660,16 +492,11 @@
       "label": "b16_n1_mp128_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0043506000000000005
+        "tirx": 4.2434
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -678,16 +505,11 @@
       "label": "b16_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0044437999999999995
+        "tirx": 4.4558
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -696,16 +518,11 @@
       "label": "b16_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0044254
+        "tirx": 4.4556000000000004
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -714,16 +531,11 @@
       "label": "b16_n1_mp1_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.003757
+        "tirx": 3.6808
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -732,16 +544,11 @@
       "label": "b16_n1_mp1_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037654
+        "tirx": 3.6698
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -750,16 +557,11 @@
       "label": "b16_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0034779999999999998
+        "tirx": 3.4882
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -768,16 +570,11 @@
       "label": "b16_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0035148
+        "tirx": 3.4631999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -786,16 +583,11 @@
       "label": "b16_n1_mp32_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0038364
+        "tirx": 3.738
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -804,16 +596,11 @@
       "label": "b16_n1_mp32_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037492000000000003
+        "tirx": 3.6862
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -822,16 +609,11 @@
       "label": "b16_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0038602000000000003
+        "tirx": 3.8657999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -840,16 +622,11 @@
       "label": "b16_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0038676
+        "tirx": 3.8034
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -858,16 +635,11 @@
       "label": "b16_n1_mp8_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036878
+        "tirx": 6.386399999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -876,16 +648,11 @@
       "label": "b16_n1_mp8_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037978
+        "tirx": 6.389199999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -894,16 +661,11 @@
       "label": "b16_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036064
+        "tirx": 6.291399999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -912,16 +674,11 @@
       "label": "b16_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036502
+        "tirx": 6.286599999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -930,16 +687,11 @@
       "label": "b1_n1_mp128_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036904
+        "tirx": 3.7254
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -948,16 +700,11 @@
       "label": "b1_n1_mp128_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037630000000000003
+        "tirx": 3.6771999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -966,16 +713,11 @@
       "label": "b1_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036894000000000002
+        "tirx": 3.715
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -984,16 +726,11 @@
       "label": "b1_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037506
+        "tirx": 3.7276
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1002,16 +739,11 @@
       "label": "b1_n1_mp1_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036320000000000002
+        "tirx": 3.4148
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1020,16 +752,11 @@
       "label": "b1_n1_mp1_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0034886
+        "tirx": 6.023599999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1038,16 +765,11 @@
       "label": "b1_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0034662
+        "tirx": 3.4168
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1056,16 +778,11 @@
       "label": "b1_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0034926000000000002
+        "tirx": 3.4617999999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1074,16 +791,11 @@
       "label": "b1_n1_mp32_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037826
+        "tirx": 3.6045999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1092,16 +804,11 @@
       "label": "b1_n1_mp32_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0038234
+        "tirx": 3.624
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1110,16 +817,11 @@
       "label": "b1_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036948000000000003
+        "tirx": 3.6414
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1128,16 +830,11 @@
       "label": "b1_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0035988
+        "tirx": 3.5565999999999995
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1146,16 +843,11 @@
       "label": "b1_n1_mp8_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037092
+        "tirx": 6.3572
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1164,16 +856,11 @@
       "label": "b1_n1_mp8_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037828000000000002
+        "tirx": 6.375
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1182,16 +869,11 @@
       "label": "b1_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0038294
+        "tirx": 6.304399999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1200,16 +882,11 @@
       "label": "b1_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037084
+        "tirx": 6.3126
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1218,16 +895,11 @@
       "label": "b2_n1_mp128_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037174000000000005
+        "tirx": 3.7332
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1236,16 +908,11 @@
       "label": "b2_n1_mp128_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037920000000000002
+        "tirx": 3.6651999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1254,16 +921,11 @@
       "label": "b2_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037719999999999997
+        "tirx": 3.7216
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1272,16 +934,11 @@
       "label": "b2_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036994
+        "tirx": 3.830199999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1290,16 +947,11 @@
       "label": "b2_n1_mp1_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.003502
+        "tirx": 3.4286
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1308,16 +960,11 @@
       "label": "b2_n1_mp1_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.003474
+        "tirx": 3.4154
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1326,16 +973,11 @@
       "label": "b2_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0034916
+        "tirx": 3.3979999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1344,16 +986,11 @@
       "label": "b2_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0034788
+        "tirx": 3.3822
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1362,16 +999,11 @@
       "label": "b2_n1_mp32_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037584
+        "tirx": 3.6369999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1380,16 +1012,11 @@
       "label": "b2_n1_mp32_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036940000000000002
+        "tirx": 3.6174
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1398,16 +1025,11 @@
       "label": "b2_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036968
+        "tirx": 3.6081999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1416,16 +1038,11 @@
       "label": "b2_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037332000000000003
+        "tirx": 3.5759999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1434,16 +1051,11 @@
       "label": "b2_n1_mp8_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.003722
+        "tirx": 6.3675999999999995
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1452,16 +1064,11 @@
       "label": "b2_n1_mp8_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037186000000000003
+        "tirx": 3.7333999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1470,16 +1077,11 @@
       "label": "b2_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036784
+        "tirx": 6.3074
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1488,16 +1090,11 @@
       "label": "b2_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036604000000000003
+        "tirx": 6.301799999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1506,16 +1103,11 @@
       "label": "b4_n1_mp128_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037778
+        "tirx": 3.7094
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1524,16 +1116,11 @@
       "label": "b4_n1_mp128_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037796
+        "tirx": 3.6109999999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1542,16 +1129,11 @@
       "label": "b4_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.003869
+        "tirx": 3.8944000000000005
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1560,16 +1142,11 @@
       "label": "b4_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.003866
+        "tirx": 3.8777999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1578,16 +1155,11 @@
       "label": "b4_n1_mp1_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0034976
+        "tirx": 3.4212
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1596,16 +1168,11 @@
       "label": "b4_n1_mp1_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0035038
+        "tirx": 3.5404
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1614,16 +1181,11 @@
       "label": "b4_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0034634
+        "tirx": 3.4181999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1632,16 +1194,11 @@
       "label": "b4_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.003485
+        "tirx": 3.4202
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1650,16 +1207,11 @@
       "label": "b4_n1_mp32_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036846
+        "tirx": 3.5879999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1668,16 +1220,11 @@
       "label": "b4_n1_mp32_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037018000000000003
+        "tirx": 3.6441999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1686,16 +1233,11 @@
       "label": "b4_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.003713
+        "tirx": 3.6037999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1704,16 +1246,11 @@
       "label": "b4_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037046
+        "tirx": 3.5195999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1722,16 +1259,11 @@
       "label": "b4_n1_mp8_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.003693
+        "tirx": 6.3654
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1740,16 +1272,11 @@
       "label": "b4_n1_mp8_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036964000000000003
+        "tirx": 3.5906
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1758,16 +1285,11 @@
       "label": "b4_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.003671
+        "tirx": 6.2764
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1776,16 +1298,11 @@
       "label": "b4_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036452000000000003
+        "tirx": 6.268
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1794,16 +1311,11 @@
       "label": "b8_n1_mp128_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037666
+        "tirx": 3.8752
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1812,16 +1324,11 @@
       "label": "b8_n1_mp128_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0038680000000000003
+        "tirx": 3.829
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1830,16 +1337,11 @@
       "label": "b8_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.003918
+        "tirx": 3.9526
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1848,16 +1350,11 @@
       "label": "b8_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.003912
+        "tirx": 3.9379999999999993
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1866,16 +1363,11 @@
       "label": "b8_n1_mp1_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.003489
+        "tirx": 3.4828
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1884,16 +1376,11 @@
       "label": "b8_n1_mp1_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.003526
+        "tirx": 3.5313999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1902,16 +1389,11 @@
       "label": "b8_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0034496
+        "tirx": 3.4484
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1920,16 +1402,11 @@
       "label": "b8_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0035052
+        "tirx": 3.4498
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1938,16 +1415,11 @@
       "label": "b8_n1_mp32_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0038028000000000003
+        "tirx": 3.6408
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1956,16 +1428,11 @@
       "label": "b8_n1_mp32_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037186000000000003
+        "tirx": 3.6391999999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1974,16 +1441,11 @@
       "label": "b8_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036238
+        "tirx": 3.625
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1992,16 +1454,11 @@
       "label": "b8_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037704
+        "tirx": 3.5734
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2010,16 +1467,11 @@
       "label": "b8_n1_mp8_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037284
+        "tirx": 6.349600000000001
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2028,16 +1480,11 @@
       "label": "b8_n1_mp8_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037800000000000004
+        "tirx": 3.726
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2046,16 +1493,11 @@
       "label": "b8_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036526
+        "tirx": 6.353399999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2064,16 +1506,11 @@
       "label": "b8_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036316
+        "tirx": 6.3622
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2082,16 +1519,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0414896
+        "tirx": 40.9786
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2100,16 +1532,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.054278
+        "tirx": 83.30239999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2118,16 +1545,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.041819
+        "tirx": 41.142399999999995
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2136,16 +1558,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0540114
+        "tirx": 83.7042
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2154,16 +1571,11 @@
       "label": "s2048_skv4096_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0414356
+        "tirx": 40.614200000000004
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2172,16 +1584,11 @@
       "label": "s2048_skv4096_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.053675200000000006
+        "tirx": 81.9182
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2190,16 +1597,11 @@
       "label": "s2048_skv4096_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.041075
+        "tirx": 40.4332
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2208,16 +1610,11 @@
       "label": "s2048_skv4096_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.053328600000000004
+        "tirx": 81.9472
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2226,16 +1623,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0715752
+        "tirx": 71.53
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2244,16 +1636,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.10824
+        "tirx": 107.61999999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2262,16 +1649,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.07122200000000001
+        "tirx": 72.24239999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2280,16 +1662,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.108903
+        "tirx": 107.7216
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2298,16 +1675,11 @@
       "label": "s2048_skv8192_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.07187919999999999
+        "tirx": 71.10959999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2316,16 +1688,11 @@
       "label": "s2048_skv8192_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.1092794
+        "tirx": 109.2234
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2334,16 +1701,11 @@
       "label": "s2048_skv8192_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0707836
+        "tirx": 71.2186
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2352,16 +1714,11 @@
       "label": "s2048_skv8192_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.10964800000000001
+        "tirx": 110.42699999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2370,16 +1727,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0712758
+        "tirx": 70.6464
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2388,16 +1740,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.07185620000000001
+        "tirx": 112.0268
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2406,16 +1753,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0721446
+        "tirx": 70.578
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2424,16 +1766,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0713048
+        "tirx": 112.6074
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2442,16 +1779,11 @@
       "label": "s4096_skv4096_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.07062
+        "tirx": 70.324
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2460,16 +1792,11 @@
       "label": "s4096_skv4096_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0707624
+        "tirx": 110.0212
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2478,16 +1805,11 @@
       "label": "s4096_skv4096_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.07036099999999999
+        "tirx": 70.48479999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2496,16 +1818,11 @@
       "label": "s4096_skv4096_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.0702874
+        "tirx": 110.50359999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2514,16 +1831,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.126771
+        "tirx": 126.1058
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2532,16 +1844,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.183662
+        "tirx": 184.9082
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2550,16 +1857,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.1348768
+        "tirx": 126.87119999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2568,16 +1870,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.1849586
+        "tirx": 183.9772
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2586,16 +1883,11 @@
       "label": "s4096_skv8192_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.1264058
+        "tirx": 126.52139999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2604,16 +1896,11 @@
       "label": "s4096_skv8192_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.1856378
+        "tirx": 185.7446
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2622,16 +1909,11 @@
       "label": "s4096_skv8192_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 0.1274738
+        "tirx": 126.7194
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2640,16 +1922,11 @@
       "label": "s4096_skv8192_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 0.183962
+        "tirx": 183.6748
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2658,16 +1935,11 @@
       "label": "b16_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0044464000000000005
+        "tirx": 4.4475999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2676,16 +1948,11 @@
       "label": "b16_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0044738
+        "tirx": 7.3332
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2694,16 +1961,11 @@
       "label": "b16_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036358
+        "tirx": 3.6641999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2712,16 +1974,11 @@
       "label": "b16_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036648
+        "tirx": 6.409
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2730,16 +1987,11 @@
       "label": "b16_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0038826
+        "tirx": 3.9808
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2748,16 +2000,11 @@
       "label": "b16_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0039284
+        "tirx": 3.9661999999999993
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2766,16 +2013,11 @@
       "label": "b16_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.00369
+        "tirx": 6.4222
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2784,16 +2026,11 @@
       "label": "b16_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036496
+        "tirx": 3.6732
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2802,16 +2039,11 @@
       "label": "b1_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.003712
+        "tirx": 3.7243999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2820,16 +2052,11 @@
       "label": "b1_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036432
+        "tirx": 3.7358
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2838,16 +2065,11 @@
       "label": "b1_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036238000000000004
+        "tirx": 3.5696
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2856,16 +2078,11 @@
       "label": "b1_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036642
+        "tirx": 3.7136
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2874,16 +2091,11 @@
       "label": "b1_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036906
+        "tirx": 6.3596
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2892,16 +2104,11 @@
       "label": "b1_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036334
+        "tirx": 3.6346
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2910,16 +2117,11 @@
       "label": "b1_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037816000000000004
+        "tirx": 3.7693999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2928,16 +2130,11 @@
       "label": "b1_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036308
+        "tirx": 6.3596
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2946,16 +2143,11 @@
       "label": "b2_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037624
+        "tirx": 3.5761999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2964,16 +2156,11 @@
       "label": "b2_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036376
+        "tirx": 3.7368
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2982,16 +2169,11 @@
       "label": "b2_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.003737
+        "tirx": 3.6056
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3000,16 +2182,11 @@
       "label": "b2_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036536
+        "tirx": 3.6362
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3018,16 +2195,11 @@
       "label": "b2_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037236
+        "tirx": 3.6848
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3036,16 +2208,11 @@
       "label": "b2_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036196
+        "tirx": 3.5322
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3054,16 +2221,11 @@
       "label": "b2_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037638
+        "tirx": 6.3602
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3072,16 +2234,11 @@
       "label": "b2_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036492
+        "tirx": 6.4018
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3090,16 +2247,11 @@
       "label": "b4_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0039264
+        "tirx": 6.4292
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3108,16 +2260,11 @@
       "label": "b4_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037426
+        "tirx": 3.9215999999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3126,16 +2273,11 @@
       "label": "b4_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037234
+        "tirx": 6.3671999999999995
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3144,16 +2286,11 @@
       "label": "b4_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036136000000000002
+        "tirx": 3.5741999999999994
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3162,16 +2299,11 @@
       "label": "b4_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.003638
+        "tirx": 3.6487999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3180,16 +2312,11 @@
       "label": "b4_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036136000000000002
+        "tirx": 3.6508
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3198,16 +2325,11 @@
       "label": "b4_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036024
+        "tirx": 3.6803999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3216,16 +2338,11 @@
       "label": "b4_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0035692000000000002
+        "tirx": 6.381799999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3234,16 +2351,11 @@
       "label": "b8_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0039958
+        "tirx": 4.0332
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3252,16 +2364,11 @@
       "label": "b8_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0042156
+        "tirx": 4.2886
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3270,16 +2377,11 @@
       "label": "b8_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036516
+        "tirx": 3.7812
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3288,16 +2390,11 @@
       "label": "b8_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036450000000000002
+        "tirx": 3.7053999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3306,16 +2403,11 @@
       "label": "b8_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036596
+        "tirx": 6.439
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3324,16 +2416,11 @@
       "label": "b8_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0037382
+        "tirx": 3.635
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3342,16 +2429,11 @@
       "label": "b8_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036638
+        "tirx": 3.6957999999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3360,16 +2442,11 @@
       "label": "b8_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 0.0036698
+        "tirx": 6.417199999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3378,16 +2455,11 @@
       "label": "m137_n24_k7680_s16",
       "status": "ok",
       "impls": {
-        "tirx": 0.0051284
+        "tirx": 5.0398
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3396,16 +2468,11 @@
       "label": "m13_n24_k7168_s1",
       "status": "ok",
       "impls": {
-        "tirx": 0.0205754
+        "tirx": 20.505599999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3414,16 +2481,11 @@
       "label": "m4096_n24_k28672_s16",
       "status": "ok",
       "impls": {
-        "tirx": 0.056324400000000004
+        "tirx": 56.2996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3432,16 +2494,11 @@
       "label": "m4096_n24_k7168_s1",
       "status": "ok",
       "impls": {
-        "tirx": 0.0218324
+        "tirx": 21.733999999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3450,16 +2507,11 @@
       "label": "s1024_h32kv16",
       "status": "ok",
       "impls": {
-        "tir": 0.019835000000000002
+        "tir": 19.596199999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3468,16 +2520,11 @@
       "label": "s1024_h32kv16_causal",
       "status": "ok",
       "impls": {
-        "tir": 0.0198062
+        "tir": 19.8554
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3486,16 +2533,11 @@
       "label": "s1024_h32kv32",
       "status": "ok",
       "impls": {
-        "tir": 0.020143
+        "tir": 19.9942
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3504,16 +2546,11 @@
       "label": "s1024_h32kv32_causal",
       "status": "ok",
       "impls": {
-        "tir": 0.020534
+        "tir": 31.010399999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3522,16 +2559,11 @@
       "label": "s1024_h32kv4",
       "status": "ok",
       "impls": {
-        "tir": 0.019347200000000002
+        "tir": 19.293
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3540,16 +2572,11 @@
       "label": "s1024_h32kv4_causal",
       "status": "ok",
       "impls": {
-        "tir": 0.0182756
+        "tir": 18.4692
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3558,16 +2585,11 @@
       "label": "s1024_h32kv8",
       "status": "ok",
       "impls": {
-        "tir": 0.0198278
+        "tir": 29.6066
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3576,16 +2598,11 @@
       "label": "s1024_h32kv8_causal",
       "status": "ok",
       "impls": {
-        "tir": 0.0188354
+        "tir": 29.590799999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3594,16 +2611,11 @@
       "label": "s2048_h32kv16",
       "status": "ok",
       "impls": {
-        "tir": 0.056192
+        "tir": 87.7968
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3612,16 +2624,11 @@
       "label": "s2048_h32kv16_causal",
       "status": "ok",
       "impls": {
-        "tir": 0.0361308
+        "tir": 35.812799999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3630,16 +2637,11 @@
       "label": "s2048_h32kv32",
       "status": "ok",
       "impls": {
-        "tir": 0.058019
+        "tir": 58.03999999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3648,16 +2650,11 @@
       "label": "s2048_h32kv32_causal",
       "status": "ok",
       "impls": {
-        "tir": 0.0386612
+        "tir": 38.8326
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3666,16 +2663,11 @@
       "label": "s2048_h32kv4",
       "status": "ok",
       "impls": {
-        "tir": 0.0550236
+        "tir": 55.1594
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3684,16 +2676,11 @@
       "label": "s2048_h32kv4_causal",
       "status": "ok",
       "impls": {
-        "tir": 0.0351648
+        "tir": 34.5892
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3702,16 +2689,11 @@
       "label": "s2048_h32kv8",
       "status": "ok",
       "impls": {
-        "tir": 0.0555066
+        "tir": 55.55879999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3720,16 +2702,11 @@
       "label": "s2048_h32kv8_causal",
       "status": "ok",
       "impls": {
-        "tir": 0.0354576
+        "tir": 54.1202
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3738,16 +2715,11 @@
       "label": "s4096_h32kv16",
       "status": "ok",
       "impls": {
-        "tir": 0.20641520000000002
+        "tir": 205.08459999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3756,16 +2728,11 @@
       "label": "s4096_h32kv16_causal",
       "status": "ok",
       "impls": {
-        "tir": 0.1121562
+        "tir": 111.1634
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3774,16 +2741,11 @@
       "label": "s4096_h32kv32",
       "status": "ok",
       "impls": {
-        "tir": 0.2093184
+        "tir": 210.19019999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3792,16 +2754,11 @@
       "label": "s4096_h32kv32_causal",
       "status": "ok",
       "impls": {
-        "tir": 0.1184694
+        "tir": 118.77239999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3810,16 +2767,11 @@
       "label": "s4096_h32kv4",
       "status": "ok",
       "impls": {
-        "tir": 0.20202520000000002
+        "tir": 204.18699999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3828,16 +2780,11 @@
       "label": "s4096_h32kv4_causal",
       "status": "ok",
       "impls": {
-        "tir": 0.10945540000000001
+        "tir": 109.83779999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3846,16 +2793,11 @@
       "label": "s4096_h32kv8",
       "status": "ok",
       "impls": {
-        "tir": 0.2033402
+        "tir": 202.36939999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3864,16 +2806,11 @@
       "label": "s4096_h32kv8_causal",
       "status": "ok",
       "impls": {
-        "tir": 0.1099714
+        "tir": 111.2032
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3882,16 +2819,11 @@
       "label": "s8192_h32kv16",
       "status": "ok",
       "impls": {
-        "tir": 0.8434172
+        "tir": 827.8186000000001
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3900,16 +2832,11 @@
       "label": "s8192_h32kv16_causal",
       "status": "ok",
       "impls": {
-        "tir": 0.4319208
+        "tir": 414.5392
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3918,16 +2845,11 @@
       "label": "s8192_h32kv32",
       "status": "ok",
       "impls": {
-        "tir": 0.851066
+        "tir": 833.5169999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3936,16 +2858,11 @@
       "label": "s8192_h32kv32_causal",
       "status": "ok",
       "impls": {
-        "tir": 0.43692600000000004
+        "tir": 442.4606
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3954,16 +2871,11 @@
       "label": "s8192_h32kv4",
       "status": "ok",
       "impls": {
-        "tir": 0.8329991999999999
+        "tir": 816.9906
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3972,16 +2884,11 @@
       "label": "s8192_h32kv4_causal",
       "status": "ok",
       "impls": {
-        "tir": 0.414565
+        "tir": 417.61299999999994
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3990,16 +2897,11 @@
       "label": "s8192_h32kv8",
       "status": "ok",
       "impls": {
-        "tir": 0.8352344
+        "tir": 835.4284
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4008,16 +2910,11 @@
       "label": "s8192_h32kv8_causal",
       "status": "ok",
       "impls": {
-        "tir": 0.4097156
+        "tir": 416.92179999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4026,16 +2923,11 @@
       "label": "bf16_1024x1024x1024",
       "status": "ok",
       "impls": {
-        "tir": 0.006290400000000001
+        "tir": 6.315199999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4044,16 +2936,11 @@
       "label": "bf16_16384x16384x16384",
       "status": "ok",
       "impls": {
-        "tir": 6.3988758
+        "tir": 6249.7348
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4062,16 +2949,11 @@
       "label": "bf16_2048x2048x2048",
       "status": "ok",
       "impls": {
-        "tir": 0.015922
+        "tir": 15.786999999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4080,16 +2962,11 @@
       "label": "bf16_4096x4096x4096",
       "status": "ok",
       "impls": {
-        "tir": 0.0915546
+        "tir": 137.8338
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4098,16 +2975,11 @@
       "label": "bf16_8192x8192x8192",
       "status": "ok",
       "impls": {
-        "tir": 0.7775636
+        "tir": 724.7116
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4116,16 +2988,11 @@
       "label": "fp16_1024x1024x1024",
       "status": "ok",
       "impls": {
-        "tir": 0.0063282
+        "tir": 6.3238
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4134,16 +3001,11 @@
       "label": "fp16_16384x16384x16384",
       "status": "ok",
       "impls": {
-        "tir": 6.5620852
+        "tir": 6371.721399999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4152,16 +3014,11 @@
       "label": "fp16_2048x2048x2048",
       "status": "ok",
       "impls": {
-        "tir": 0.0161478
+        "tir": 16.297
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4170,16 +3027,11 @@
       "label": "fp16_4096x4096x4096",
       "status": "ok",
       "impls": {
-        "tir": 0.0948814
+        "tir": 96.1704
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4188,16 +3040,11 @@
       "label": "fp16_8192x8192x8192",
       "status": "ok",
       "impls": {
-        "tir": 0.6919136666666666
+        "tir": 783.3475999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4206,16 +3053,11 @@
       "label": "deepgemm_m4096_n2112_k7168",
       "status": "ok",
       "impls": {
-        "tir": 0.0481344
+        "tir": 49.141
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4224,16 +3066,11 @@
       "label": "deepgemm_m4096_n24576_k1536",
       "status": "ok",
       "impls": {
-        "tir": 0.1160074
+        "tir": 116.55839999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4242,16 +3079,11 @@
       "label": "deepgemm_m4096_n32768_k512",
       "status": "ok",
       "impls": {
-        "tir": 0.0717814
+        "tir": 73.08279999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4260,16 +3092,11 @@
       "label": "deepgemm_m4096_n4096_k7168",
       "status": "ok",
       "impls": {
-        "tir": 0.08281480000000001
+        "tir": 83.0924
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4278,16 +3105,11 @@
       "label": "deepgemm_m4096_n576_k7168",
       "status": "ok",
       "impls": {
-        "tir": 0.0181592
+        "tir": 27.492
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4296,16 +3118,11 @@
       "label": "deepgemm_m4096_n7168_k16384",
       "status": "ok",
       "impls": {
-        "tir": 0.323926
+        "tir": 370.1945999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4314,52 +3131,11 @@
       "label": "deepgemm_m4096_n7168_k2048",
       "status": "ok",
       "impls": {
-        "tir": 0.0437326
+        "tir": 44.46
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
-      }
-    },
-    {
-      "kernel": "fp8_blockwise_gemm",
-      "config": "smoke_1024x1024x1024",
-      "label": "smoke_1024x1024x1024",
-      "status": "ok",
-      "impls": {
-        "tir": 0.0057416
-      },
-      "aggregated": {
-        "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
-      }
-    },
-    {
-      "kernel": "fp8_blockwise_gemm",
-      "config": "stress_m8192_n7168_k4096",
-      "label": "stress_m8192_n7168_k4096",
-      "status": "ok",
-      "impls": {
-        "tir": 0.1604906
-      },
-      "aggregated": {
-        "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4368,16 +3144,11 @@
       "label": "1024x1024x1024",
       "status": "ok",
       "impls": {
-        "tir": 0.0051206
+        "tir": 5.0716
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4386,16 +3157,11 @@
       "label": "16384x16384x16384",
       "status": "ok",
       "impls": {
-        "tir": 1.4668672
+        "tir": 1631.8342
       },
       "aggregated": {
-        "rounds": 7,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 1,
-        "ok_rounds": {
-          "tir": 7
-        }
+        "rounds": 5,
+        "method": "mean"
       }
     },
     {
@@ -4404,16 +3170,11 @@
       "label": "2048x2048x2048",
       "status": "ok",
       "impls": {
-        "tir": 0.0082876
+        "tir": 13.624199999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4422,16 +3183,11 @@
       "label": "4096x4096x4096",
       "status": "ok",
       "impls": {
-        "tir": 0.029007
+        "tir": 29.3036
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4440,16 +3196,11 @@
       "label": "8192x8192x8192",
       "status": "ok",
       "impls": {
-        "tir": 0.1826498
+        "tir": 185.4254
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tir": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4458,16 +3209,11 @@
       "label": "bench_regular_dqk512_hq128_s4096_kv32768_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 1.8180703999999999
+        "tirx": 1811.759
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4476,16 +3222,11 @@
       "label": "bench_regular_dqk512_hq128_s4096_kv65536_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 1.9846934
+        "tirx": 2468.3493999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4494,16 +3235,11 @@
       "label": "bench_regular_dqk512_hq128_s4096_kv8192_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 1.8107686
+        "tirx": 1784.0872
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4512,16 +3248,11 @@
       "label": "bench_regular_dqk576_hq128_s4096_kv32768_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 1.9082858
+        "tirx": 1871.3944
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4530,16 +3261,11 @@
       "label": "bench_regular_dqk576_hq128_s4096_kv65536_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 2.1153912
+        "tirx": 2106.4025999999994
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4548,16 +3274,11 @@
       "label": "bench_regular_dqk576_hq128_s4096_kv8192_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 1.8951882
+        "tirx": 1902.6127999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4566,16 +3287,11 @@
       "label": "bench_dqk512_hq64_s4096_kv32768_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 0.3701304
+        "tirx": 369.1212
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4584,16 +3300,11 @@
       "label": "bench_dqk512_hq64_s4096_kv49152_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 0.371797
+        "tirx": 584.1139999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4602,16 +3313,11 @@
       "label": "bench_dqk512_hq64_s4096_kv65536_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 0.3801064
+        "tirx": 378.8154
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4620,16 +3326,11 @@
       "label": "bench_dqk512_hq64_s4096_kv8192_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 0.3650352
+        "tirx": 366.15319999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4638,16 +3339,11 @@
       "label": "bench_dqk576_hq64_s4096_kv32768_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 0.385994
+        "tirx": 384.80039999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4656,16 +3352,11 @@
       "label": "bench_dqk576_hq64_s4096_kv49152_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 0.387539
+        "tirx": 599.9964
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4674,16 +3365,11 @@
       "label": "bench_dqk576_hq64_s4096_kv65536_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 0.40498619999999996
+        "tirx": 398.4434
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4692,16 +3378,11 @@
       "label": "bench_dqk576_hq64_s4096_kv8192_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 0.37322320000000003
+        "tirx": 373.05679999999995
       },
       "aggregated": {
         "rounds": 5,
-        "method": "mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "tirx": 5
-        }
+        "method": "mean"
       }
     }
   ]

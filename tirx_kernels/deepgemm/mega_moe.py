@@ -4932,6 +4932,8 @@ def _run_worker(local_rank: int, cfg_dict: dict[str, Any], mode: str) -> dict[st
     warmup = int(worker_kwargs.pop("warmup", 10))
     repeat = int(worker_kwargs.pop("repeat", 30))
     timer = str(worker_kwargs.pop("timer", "proton"))
+    rounds = int(worker_kwargs.pop("rounds", 1))
+    round_cooldown_s = float(worker_kwargs.pop("round_cooldown_s", 1.0))
     config = MegaMoeConfig(**worker_kwargs)
     config.validate()
 
@@ -5093,6 +5095,8 @@ def _run_worker(local_rank: int, cfg_dict: dict[str, Any], mode: str) -> dict[st
                 timer=timer,
                 proton_name=session_name,
                 references={"deepgemm": _deepgemm},
+                rounds=rounds,
+                round_cooldown_s=round_cooldown_s,
             )
             if torch.distributed.is_initialized():
                 torch.distributed.barrier()
@@ -5560,6 +5564,7 @@ def run_bench(
     warmup=10,
     repeat=30,
     timer="proton",
+    **kwargs,
 ):
     config = _make_config(
         num_processes=num_processes,
@@ -5572,4 +5577,4 @@ def run_bench(
         activation_clamp=activation_clamp,
         fast_math=fast_math,
     )
-    return _run_distributed(config, "bench", warmup=warmup, repeat=repeat, timer=timer)
+    return _run_distributed(config, "bench", warmup=warmup, repeat=repeat, timer=timer, **kwargs)

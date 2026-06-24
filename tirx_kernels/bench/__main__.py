@@ -17,35 +17,14 @@
 """CLI entry point: python -m tirx_kernels.bench [--kernel <name>] [--config <label>]"""
 
 import argparse
-import contextlib
 import json
 import os
 import sys
-import tempfile
 import traceback
 from unittest import SkipTest
 
 from tirx_kernels.registry import discover_kernels, load_kernel
 from tirx_kernels.runner import run_kernel_bench
-
-
-def _gpu_lock():
-    """Per-physical-GPU advisory lock around the GPU-measurement phase.
-
-    Enabled by TIR_BENCH_GPU_LOCK=1 (set by tir-bench run.py when it overcommits
-    CPU workers): many bench subprocesses import + compile in parallel, but only
-    one measures per physical GPU at a time. Keyed by CUDA_VISIBLE_DEVICES; a
-    no-op for standalone runs or a multi-GPU mask.
-    """
-    if os.environ.get("TIR_BENCH_GPU_LOCK") != "1":
-        return contextlib.nullcontext()
-    gpu = os.environ.get("CUDA_VISIBLE_DEVICES", "")
-    if not gpu or "," in gpu:
-        return contextlib.nullcontext()
-    from tvm_ffi.utils import FileLock
-
-    lock_dir = os.environ.get("TIR_BENCH_LOCK_DIR") or tempfile.gettempdir()
-    return FileLock(os.path.join(lock_dir, f"tir-bench-gpu-{gpu}.lock"))
 
 
 def main():
@@ -80,6 +59,18 @@ def main():
         help="Override the kernel module's benchmark timer",
     )
     parser.add_argument(
+        "--rounds",
+        type=int,
+        default=1,
+        help="Independent benchmark rounds inside one process (default 1)",
+    )
+    parser.add_argument(
+        "--round-cooldown",
+        type=float,
+        default=1.0,
+        help="Seconds to sleep between in-bench rounds (default 1.0)",
+    )
+    parser.add_argument(
         "--impls",
         type=str,
         choices=("all", "ours", "baseline"),
@@ -89,6 +80,13 @@ def main():
         "baseline), or 'baseline' (only reference impls). Sets TIRX_BENCH_IMPLS.",
     )
     args = parser.parse_args()
+
+    if args.rounds < 1:
+        print("ERROR: --rounds must be >= 1", file=sys.stderr)
+        sys.exit(2)
+    if args.round_cooldown < 0:
+        print("ERROR: --round-cooldown must be >= 0", file=sys.stderr)
+        sys.exit(2)
 
     if args.impls is not None:
         os.environ["TIRX_BENCH_IMPLS"] = args.impls
@@ -124,15 +122,17 @@ def main():
             if args.config and label != args.config:
                 continue
             try:
-                with _gpu_lock():
-                    result = run_kernel_bench(
-                        name,
-                        cfg,
-                        registry=all_kernels,
-                        warmup=args.warmup,
-                        repeat=args.repeat,
-                        timer=args.timer,
-                    )
+                # GPU flock is inside tvm.tirx.bench (prepare + rounds).
+                result = run_kernel_bench(
+                    name,
+                    cfg,
+                    registry=all_kernels,
+                    warmup=args.warmup,
+                    repeat=args.repeat,
+                    timer=args.timer,
+                    rounds=args.rounds,
+                    round_cooldown=args.round_cooldown,
+                )
                 results.append(result)
             except SkipTest as exc:
                 results.append(
@@ -163,7 +163,7 @@ def main():
                 print(f"SKIP  {kernel} [{label}]: {r.get('reason', '?')}")
             else:
                 impls = r.get("impls", {})
-                impl_str = ", ".join(f"{k}={v:.3f}ms" for k, v in impls.items())
+                impl_str = ", ".join(f"{k}={v:.3f}µs" for k, v in impls.items())
                 print(f"OK    {kernel} [{label}]: {impl_str}")
 
 

@@ -1340,4 +1340,5 @@ def run_bench(
         timer=timer,
         proton_name="flash_attention4",
         references={"flashinfer": _flashinfer, "flashattn_sm100": _flashattn_sm100},
+        **kwargs,
     )

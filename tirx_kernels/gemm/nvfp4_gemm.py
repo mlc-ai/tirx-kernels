@@ -685,7 +685,7 @@ def run_test(M=1024, N=1024, K=1024):
     assert cosine_sim > 0.97, f"nvfp4_gemm cosine_sim {cosine_sim:.6f} <= 0.97"
 
 
-def run_bench(M=1024, N=1024, K=1024, *, warmup=10, repeat=30, timer="proton"):
+def run_bench(M=1024, N=1024, K=1024, *, warmup=10, repeat=30, timer="proton", **kwargs):
     """Benchmark."""
     import torch
 
@@ -766,6 +766,7 @@ def run_bench(M=1024, N=1024, K=1024, *, warmup=10, repeat=30, timer="proton"):
         timer=timer,
         proton_name="nvfp4_gemm",
         references={"flashinfer": _flashinfer, "cublaslt_nvfp4": _cublaslt},
+        **kwargs,
     )
     result["metadata"] = {**result.get("metadata", {}), **metadata}
     return result

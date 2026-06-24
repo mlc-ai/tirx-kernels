@@ -1,14 +1,14 @@
 {
-  "timestamp": "16",
-  "label": "ref-full-x5-test",
+  "timestamp": "1",
+  "label": "10d2b82a-dirty",
   "git": {
-    "tir": "ca00cdc7-dirty",
-    "tirx-kernels": "a6c9c52e",
+    "tir": "4657e44b-dirty",
+    "tirx-kernels": "df166c15-dirty",
     "tirx-bench-ci": null
   },
   "kernel_tree": {
-    "tir:python/tvm/tirx": "a40833ee28bdea9f6c0adacda4be0d75e85fe0f2",
-    "tirx-kernels:tirx_kernels": "0426270065b97a9e78012abeb0e898bf6d1c1a28"
+    "tir:python/tvm/tirx": "b9ad64064a4412a85da39956664f376edf0f9a94",
+    "tirx-kernels:tirx_kernels": "959baad116cc23d6611ae0efd7822e422ab519d5"
   },
   "baselines": {
     "torch": {
@@ -49,15 +49,12 @@
   "probe": {
     "enabled": true,
     "usable": [
+      "0",
       "1",
       "2",
-      "3",
-      "4",
-      "5"
+      "3"
     ],
-    "failed": {
-      "0": "Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions."
-    }
+    "failed": {}
   },
   "results": [
     {
@@ -66,16 +63,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.04142166666666667
+        "deepgemm": 41.8448
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -84,16 +76,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.05356933333333333
+        "deepgemm": 85.7922
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -102,16 +89,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.040585333333333334
+        "deepgemm": 40.800399999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -120,16 +102,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.05247633333333333
+        "deepgemm": 52.0008
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -138,16 +115,11 @@
       "label": "s2048_skv4096_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.042564
+        "deepgemm": 42.209199999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -156,16 +128,11 @@
       "label": "s2048_skv4096_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.05557466666666667
+        "deepgemm": 89.17679999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -174,16 +141,11 @@
       "label": "s2048_skv4096_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.038441666666666666
+        "deepgemm": 38.5782
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -192,16 +154,11 @@
       "label": "s2048_skv4096_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.049520666666666664
+        "deepgemm": 49.163399999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -210,16 +167,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.07159933333333333
+        "deepgemm": 71.49459999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -228,16 +180,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.10971466666666665
+        "deepgemm": 109.89139999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -246,16 +193,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.06971433333333332
+        "deepgemm": 112.3394
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -264,16 +206,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.10651033333333333
+        "deepgemm": 106.4432
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -282,16 +219,11 @@
       "label": "s2048_skv8192_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.07454133333333333
+        "deepgemm": 74.6672
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -300,16 +232,11 @@
       "label": "s2048_skv8192_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.116043
+        "deepgemm": 115.762
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -318,16 +245,11 @@
       "label": "s2048_skv8192_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.06593866666666666
+        "deepgemm": 106.8992
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -336,16 +258,11 @@
       "label": "s2048_skv8192_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.10187266666666668
+        "deepgemm": 102.0052
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -354,16 +271,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.073351
+        "deepgemm": 118.1826
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -372,16 +284,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.07341233333333333
+        "deepgemm": 73.83599999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -390,16 +297,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.071911
+        "deepgemm": 71.86099999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -408,16 +310,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.07196233333333334
+        "deepgemm": 115.4018
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -426,16 +323,11 @@
       "label": "s4096_skv4096_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.075418
+        "deepgemm": 121.49699999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -444,16 +336,11 @@
       "label": "s4096_skv4096_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.07560266666666667
+        "deepgemm": 75.7784
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -462,16 +349,11 @@
       "label": "s4096_skv4096_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.06745633333333333
+        "deepgemm": 67.344
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -480,16 +362,11 @@
       "label": "s4096_skv4096_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.06759766666666667
+        "deepgemm": 108.83079999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -498,16 +375,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.129721
+        "deepgemm": 129.9796
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -516,16 +388,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.18593766666666667
+        "deepgemm": 186.94060000000002
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -534,16 +401,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.12625033333333333
+        "deepgemm": 126.1732
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -552,16 +414,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.18092266666666665
+        "deepgemm": 180.8738
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -570,16 +427,11 @@
       "label": "s4096_skv8192_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.1362203333333333
+        "deepgemm": 136.08659999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -588,16 +440,11 @@
       "label": "s4096_skv8192_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.19652233333333333
+        "deepgemm": 196.3066
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -606,16 +453,11 @@
       "label": "s4096_skv8192_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.12026866666666666
+        "deepgemm": 120.6848
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -624,16 +466,11 @@
       "label": "s4096_skv8192_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.17254033333333332
+        "deepgemm": 172.5008
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -642,16 +479,11 @@
       "label": "b16_n1_mp128_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003942333333333333
+        "deepgemm": 3.9634
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -660,16 +492,11 @@
       "label": "b16_n1_mp128_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0042699999999999995
+        "deepgemm": 4.248
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -678,16 +505,11 @@
       "label": "b16_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0044329999999999994
+        "deepgemm": 4.430599999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -696,16 +518,11 @@
       "label": "b16_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.004433333333333333
+        "deepgemm": 4.4648
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -714,16 +531,11 @@
       "label": "b16_n1_mp1_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003901333333333333
+        "deepgemm": 3.8684000000000003
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -732,16 +544,11 @@
       "label": "b16_n1_mp1_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003927333333333333
+        "deepgemm": 3.8549999999999995
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -750,16 +557,11 @@
       "label": "b16_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036746666666666664
+        "deepgemm": 3.6447999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -768,16 +570,11 @@
       "label": "b16_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037326666666666667
+        "deepgemm": 3.6368
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -786,16 +583,11 @@
       "label": "b16_n1_mp32_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0038093333333333334
+        "deepgemm": 3.7110000000000003
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -804,16 +596,11 @@
       "label": "b16_n1_mp32_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036866666666666667
+        "deepgemm": 3.6684
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -822,16 +609,11 @@
       "label": "b16_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0038726666666666666
+        "deepgemm": 3.8391999999999995
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -840,16 +622,11 @@
       "label": "b16_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003822
+        "deepgemm": 3.779
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -858,16 +635,11 @@
       "label": "b16_n1_mp8_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003769
+        "deepgemm": 6.3224
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -876,16 +648,11 @@
       "label": "b16_n1_mp8_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037586666666666667
+        "deepgemm": 6.342999999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -894,16 +661,11 @@
       "label": "b16_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036999999999999997
+        "deepgemm": 6.2303999999999995
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -912,16 +674,11 @@
       "label": "b16_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003707
+        "deepgemm": 6.2536
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -930,16 +687,11 @@
       "label": "b1_n1_mp128_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037170000000000003
+        "deepgemm": 3.7171999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -948,16 +700,11 @@
       "label": "b1_n1_mp128_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036146666666666666
+        "deepgemm": 3.6698
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -966,16 +713,11 @@
       "label": "b1_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003618333333333333
+        "deepgemm": 3.6957999999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -984,16 +726,11 @@
       "label": "b1_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003751333333333333
+        "deepgemm": 3.718
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1002,16 +739,11 @@
       "label": "b1_n1_mp1_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003608
+        "deepgemm": 3.597
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1020,16 +752,11 @@
       "label": "b1_n1_mp1_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037573333333333334
+        "deepgemm": 6.2748
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1038,16 +765,11 @@
       "label": "b1_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003695333333333333
+        "deepgemm": 3.5947999999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1056,16 +778,11 @@
       "label": "b1_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036413333333333332
+        "deepgemm": 3.6351999999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1074,16 +791,11 @@
       "label": "b1_n1_mp32_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003637
+        "deepgemm": 3.5878
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1092,16 +804,11 @@
       "label": "b1_n1_mp32_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003731
+        "deepgemm": 3.5995999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1110,16 +817,11 @@
       "label": "b1_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003630333333333333
+        "deepgemm": 3.6174
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1128,16 +830,11 @@
       "label": "b1_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036696666666666666
+        "deepgemm": 3.5534
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1146,16 +843,11 @@
       "label": "b1_n1_mp8_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037453333333333336
+        "deepgemm": 6.2942
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1164,16 +856,11 @@
       "label": "b1_n1_mp8_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0038493333333333335
+        "deepgemm": 6.3149999999999995
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1182,16 +869,11 @@
       "label": "b1_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036123333333333333
+        "deepgemm": 6.229
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1200,16 +882,11 @@
       "label": "b1_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037156666666666666
+        "deepgemm": 6.2574
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1218,16 +895,11 @@
       "label": "b2_n1_mp128_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037376666666666665
+        "deepgemm": 3.7256
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1236,16 +908,11 @@
       "label": "b2_n1_mp128_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036646666666666668
+        "deepgemm": 3.6504
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1254,16 +921,11 @@
       "label": "b2_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037393333333333332
+        "deepgemm": 3.7086
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1272,16 +934,11 @@
       "label": "b2_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003820333333333333
+        "deepgemm": 3.8206
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1290,16 +947,11 @@
       "label": "b2_n1_mp1_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003654
+        "deepgemm": 3.6367999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1308,16 +960,11 @@
       "label": "b2_n1_mp1_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.00373
+        "deepgemm": 3.6069999999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1326,16 +973,11 @@
       "label": "b2_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003805666666666667
+        "deepgemm": 3.589
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1344,16 +986,11 @@
       "label": "b2_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037213333333333334
+        "deepgemm": 3.59
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1362,16 +999,11 @@
       "label": "b2_n1_mp32_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037296666666666667
+        "deepgemm": 3.6084
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1380,16 +1012,11 @@
       "label": "b2_n1_mp32_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037773333333333335
+        "deepgemm": 3.5997999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1398,16 +1025,11 @@
       "label": "b2_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037280000000000004
+        "deepgemm": 3.5804
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1416,16 +1038,11 @@
       "label": "b2_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036093333333333333
+        "deepgemm": 3.572
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1434,16 +1051,11 @@
       "label": "b2_n1_mp8_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037306666666666664
+        "deepgemm": 6.3122
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1452,16 +1064,11 @@
       "label": "b2_n1_mp8_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036453333333333333
+        "deepgemm": 3.714
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1470,16 +1077,11 @@
       "label": "b2_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0035956666666666667
+        "deepgemm": 6.249
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1488,16 +1090,11 @@
       "label": "b2_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0035796666666666668
+        "deepgemm": 6.2576
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1506,16 +1103,11 @@
       "label": "b4_n1_mp128_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003643
+        "deepgemm": 3.7074
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1524,16 +1116,11 @@
       "label": "b4_n1_mp128_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036390000000000003
+        "deepgemm": 3.5925999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1542,16 +1129,11 @@
       "label": "b4_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0038410000000000002
+        "deepgemm": 3.8752
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1560,16 +1142,11 @@
       "label": "b4_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0038640000000000002
+        "deepgemm": 3.8677999999999995
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1578,16 +1155,11 @@
       "label": "b4_n1_mp1_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.00373
+        "deepgemm": 3.5921999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1596,16 +1168,11 @@
       "label": "b4_n1_mp1_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037376666666666665
+        "deepgemm": 3.7173999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1614,16 +1181,11 @@
       "label": "b4_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036226666666666664
+        "deepgemm": 3.5925999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1632,16 +1194,11 @@
       "label": "b4_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003706333333333333
+        "deepgemm": 3.5944
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1650,16 +1207,11 @@
       "label": "b4_n1_mp32_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037099999999999998
+        "deepgemm": 3.561
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1668,16 +1220,11 @@
       "label": "b4_n1_mp32_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003630333333333333
+        "deepgemm": 3.624
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1686,16 +1233,11 @@
       "label": "b4_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003832666666666667
+        "deepgemm": 3.5698
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1704,16 +1246,11 @@
       "label": "b4_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036153333333333337
+        "deepgemm": 3.5145999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1722,16 +1259,11 @@
       "label": "b4_n1_mp8_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036406666666666666
+        "deepgemm": 6.3152
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1740,16 +1272,11 @@
       "label": "b4_n1_mp8_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037393333333333332
+        "deepgemm": 3.5734
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1758,16 +1285,11 @@
       "label": "b4_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003551333333333333
+        "deepgemm": 6.2182
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1776,16 +1298,11 @@
       "label": "b4_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003687666666666667
+        "deepgemm": 6.2278
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1794,16 +1311,11 @@
       "label": "b8_n1_mp128_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003870666666666667
+        "deepgemm": 3.8577999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1812,16 +1324,11 @@
       "label": "b8_n1_mp128_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0038873333333333334
+        "deepgemm": 3.8087999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1830,16 +1337,11 @@
       "label": "b8_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003892333333333333
+        "deepgemm": 3.9306
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1848,16 +1350,11 @@
       "label": "b8_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0038983333333333335
+        "deepgemm": 3.9221999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1866,16 +1363,11 @@
       "label": "b8_n1_mp1_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003768333333333333
+        "deepgemm": 3.6528
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1884,16 +1376,11 @@
       "label": "b8_n1_mp1_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003854666666666667
+        "deepgemm": 3.7318
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1902,16 +1389,11 @@
       "label": "b8_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037486666666666666
+        "deepgemm": 3.663
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1920,16 +1402,11 @@
       "label": "b8_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003649
+        "deepgemm": 3.655
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1938,16 +1415,11 @@
       "label": "b8_n1_mp32_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003731666666666667
+        "deepgemm": 3.61
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1956,16 +1428,11 @@
       "label": "b8_n1_mp32_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003645
+        "deepgemm": 3.6203999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1974,16 +1441,11 @@
       "label": "b8_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003845333333333333
+        "deepgemm": 3.5993999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -1992,16 +1454,11 @@
       "label": "b8_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003832666666666667
+        "deepgemm": 3.5782
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2010,16 +1467,11 @@
       "label": "b8_n1_mp8_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003650333333333333
+        "deepgemm": 6.2932
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2028,16 +1480,11 @@
       "label": "b8_n1_mp8_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037463333333333333
+        "deepgemm": 3.7134
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2046,16 +1493,11 @@
       "label": "b8_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036286666666666668
+        "deepgemm": 6.292
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2064,16 +1506,11 @@
       "label": "b8_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037126666666666666
+        "deepgemm": 6.305599999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2082,16 +1519,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.044013333333333335
+        "deepgemm": 43.2588
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2100,16 +1532,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.057043666666666666
+        "deepgemm": 91.2508
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2118,16 +1545,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.04086566666666667
+        "deepgemm": 40.8442
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2136,16 +1558,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.054352666666666674
+        "deepgemm": 84.28479999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2154,16 +1571,11 @@
       "label": "s2048_skv4096_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.044032
+        "deepgemm": 43.3464
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2172,16 +1584,11 @@
       "label": "s2048_skv4096_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.056615
+        "deepgemm": 91.01279999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2190,16 +1597,11 @@
       "label": "s2048_skv4096_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.04107366666666667
+        "deepgemm": 40.09179999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2208,16 +1610,11 @@
       "label": "s2048_skv4096_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.05311766666666667
+        "deepgemm": 82.019
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2226,16 +1623,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.076227
+        "deepgemm": 76.4284
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2244,16 +1636,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.11659866666666667
+        "deepgemm": 116.04359999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2262,16 +1649,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.07219
+        "deepgemm": 72.1952
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2280,16 +1662,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.110046
+        "deepgemm": 108.1528
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2298,16 +1675,11 @@
       "label": "s2048_skv8192_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.07606233333333333
+        "deepgemm": 76.15379999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2316,16 +1688,11 @@
       "label": "s2048_skv8192_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.11635033333333333
+        "deepgemm": 115.76159999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2334,16 +1701,11 @@
       "label": "s2048_skv8192_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.06972400000000001
+        "deepgemm": 70.2992
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2352,16 +1714,11 @@
       "label": "s2048_skv8192_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.10733866666666667
+        "deepgemm": 106.2802
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2370,16 +1727,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.07751566666666666
+        "deepgemm": 77.31859999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2388,16 +1740,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.07760033333333334
+        "deepgemm": 124.27820000000001
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2406,16 +1753,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.071658
+        "deepgemm": 70.866
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2424,16 +1766,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.07178533333333334
+        "deepgemm": 113.7106
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2442,16 +1779,11 @@
       "label": "s4096_skv4096_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.07725966666666666
+        "deepgemm": 76.94500000000001
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2460,16 +1792,11 @@
       "label": "s4096_skv4096_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.07692366666666667
+        "deepgemm": 123.44919999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2478,16 +1805,11 @@
       "label": "s4096_skv4096_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.07057066666666667
+        "deepgemm": 69.74159999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2496,16 +1818,11 @@
       "label": "s4096_skv4096_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.070313
+        "deepgemm": 110.535
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2514,16 +1831,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.13769499999999998
+        "deepgemm": 137.3462
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2532,16 +1844,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.198434
+        "deepgemm": 198.18439999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2550,16 +1857,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.12791066666666667
+        "deepgemm": 127.03859999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2568,16 +1870,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.185339
+        "deepgemm": 185.5646
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2586,16 +1883,11 @@
       "label": "s4096_skv8192_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.13799833333333333
+        "deepgemm": 137.72320000000002
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2604,16 +1896,11 @@
       "label": "s4096_skv8192_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.19788399999999998
+        "deepgemm": 198.9796
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2622,16 +1909,11 @@
       "label": "s4096_skv8192_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.12830766666666668
+        "deepgemm": 127.1878
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2640,16 +1922,11 @@
       "label": "s4096_skv8192_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.183695
+        "deepgemm": 185.66819999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2658,16 +1935,11 @@
       "label": "b16_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.004423666666666667
+        "deepgemm": 4.4196
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2676,16 +1948,11 @@
       "label": "b16_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.004470666666666666
+        "deepgemm": 7.2905999999999995
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2694,16 +1961,11 @@
       "label": "b16_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003637333333333333
+        "deepgemm": 3.6572
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2712,16 +1974,11 @@
       "label": "b16_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036766666666666666
+        "deepgemm": 6.356
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2730,16 +1987,11 @@
       "label": "b16_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0038866666666666667
+        "deepgemm": 3.9414000000000002
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2748,16 +2000,11 @@
       "label": "b16_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003909666666666666
+        "deepgemm": 3.9412
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2766,16 +2013,11 @@
       "label": "b16_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037496666666666668
+        "deepgemm": 6.3552
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2784,16 +2026,11 @@
       "label": "b16_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0038506666666666667
+        "deepgemm": 3.669
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2802,16 +2039,11 @@
       "label": "b1_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037203333333333333
+        "deepgemm": 3.6701999999999995
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2820,16 +2052,11 @@
       "label": "b1_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037533333333333333
+        "deepgemm": 3.723
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2838,16 +2065,11 @@
       "label": "b1_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037693333333333333
+        "deepgemm": 3.5534000000000003
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2856,16 +2078,11 @@
       "label": "b1_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037573333333333334
+        "deepgemm": 3.7074
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2874,16 +2091,11 @@
       "label": "b1_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003747
+        "deepgemm": 6.2722
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2892,16 +2104,11 @@
       "label": "b1_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037183333333333335
+        "deepgemm": 3.6253999999999995
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2910,16 +2117,11 @@
       "label": "b1_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003661
+        "deepgemm": 3.7399999999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2928,16 +2130,11 @@
       "label": "b1_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003651
+        "deepgemm": 6.2912
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2946,16 +2143,11 @@
       "label": "b2_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003865
+        "deepgemm": 3.5629999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2964,16 +2156,11 @@
       "label": "b2_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037730000000000003
+        "deepgemm": 3.7157999999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -2982,16 +2169,11 @@
       "label": "b2_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036893333333333335
+        "deepgemm": 3.596
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3000,16 +2182,11 @@
       "label": "b2_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003671666666666667
+        "deepgemm": 3.6319999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3018,16 +2195,11 @@
       "label": "b2_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003641
+        "deepgemm": 3.65
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3036,16 +2208,11 @@
       "label": "b2_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036566666666666666
+        "deepgemm": 3.5258
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3054,16 +2221,11 @@
       "label": "b2_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037386666666666666
+        "deepgemm": 6.2954
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3072,16 +2234,11 @@
       "label": "b2_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003751333333333333
+        "deepgemm": 6.3328
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3090,16 +2247,11 @@
       "label": "b4_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003933666666666666
+        "deepgemm": 6.3187999999999995
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3108,16 +2260,11 @@
       "label": "b4_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003935
+        "deepgemm": 3.8997999999999995
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3126,16 +2273,11 @@
       "label": "b4_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003744
+        "deepgemm": 6.3134
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3144,16 +2286,11 @@
       "label": "b4_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003733
+        "deepgemm": 3.5799999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3162,16 +2299,11 @@
       "label": "b4_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0037343333333333334
+        "deepgemm": 3.6327999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3180,16 +2312,11 @@
       "label": "b4_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036073333333333335
+        "deepgemm": 3.6529999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3198,16 +2325,11 @@
       "label": "b4_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003712
+        "deepgemm": 3.652
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3216,16 +2338,11 @@
       "label": "b4_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036456666666666664
+        "deepgemm": 6.3074
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3234,16 +2351,11 @@
       "label": "b8_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003998
+        "deepgemm": 4.0
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3252,16 +2364,11 @@
       "label": "b8_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.004203666666666667
+        "deepgemm": 4.2558
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3270,16 +2377,11 @@
       "label": "b8_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003658
+        "deepgemm": 3.7571999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3288,16 +2390,11 @@
       "label": "b8_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003751333333333333
+        "deepgemm": 3.6742
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3306,16 +2403,11 @@
       "label": "b8_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0038206666666666662
+        "deepgemm": 6.3431999999999995
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3324,16 +2416,11 @@
       "label": "b8_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003843333333333333
+        "deepgemm": 3.6359999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3342,16 +2429,11 @@
       "label": "b8_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.0036713333333333333
+        "deepgemm": 3.6854
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3360,16 +2442,11 @@
       "label": "b8_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.003661
+        "deepgemm": 6.3804
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3378,16 +2455,11 @@
       "label": "m137_n24_k7680_s16",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.005036666666666667
+        "deepgemm": 5.0443999999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3396,16 +2468,11 @@
       "label": "m13_n24_k7168_s1",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.020678333333333333
+        "deepgemm": 20.6846
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3414,16 +2481,11 @@
       "label": "m4096_n24_k28672_s16",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.056836333333333336
+        "deepgemm": 56.7726
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3432,16 +2494,11 @@
       "label": "m4096_n24_k7168_s1",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.022081666666666666
+        "deepgemm": 21.9544
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3450,18 +2507,11 @@
       "label": "s1024_h32kv16",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.020031666666666666,
-        "flashinfer": 0.025183
+        "flashattn_sm100": 19.790399999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3470,18 +2520,11 @@
       "label": "s1024_h32kv16_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.019477666666666664,
-        "flashinfer": 0.025128666666666667
+        "flashattn_sm100": 19.4234
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3490,18 +2533,11 @@
       "label": "s1024_h32kv32",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.02023233333333333,
-        "flashinfer": 0.02547766666666667
+        "flashattn_sm100": 20.0716
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3510,18 +2546,11 @@
       "label": "s1024_h32kv32_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.019952333333333332,
-        "flashinfer": 0.025406333333333333
+        "flashattn_sm100": 31.2618
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3530,18 +2559,11 @@
       "label": "s1024_h32kv4",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.019778333333333332,
-        "flashinfer": 0.025039000000000002
+        "flashattn_sm100": 19.570999999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3550,18 +2572,11 @@
       "label": "s1024_h32kv4_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.019122333333333335,
-        "flashinfer": 0.024991666666666666
+        "flashattn_sm100": 18.929199999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3570,18 +2585,11 @@
       "label": "s1024_h32kv8",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.019967666666666665,
-        "flashinfer": 0.025183666666666667
+        "flashattn_sm100": 30.806199999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3590,18 +2598,11 @@
       "label": "s1024_h32kv8_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.019184666666666666,
-        "flashinfer": 0.02526266666666667
+        "flashattn_sm100": 30.523999999999994
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3610,18 +2611,11 @@
       "label": "s2048_h32kv16",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.056913,
-        "flashinfer": 0.073109
+        "flashattn_sm100": 86.2344
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3630,18 +2624,11 @@
       "label": "s2048_h32kv16_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.03775733333333334,
-        "flashinfer": 0.07308366666666667
+        "flashattn_sm100": 37.40319999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3650,18 +2637,11 @@
       "label": "s2048_h32kv32",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.05852566666666666,
-        "flashinfer": 0.07331766666666667
+        "flashattn_sm100": 58.466
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3670,18 +2650,11 @@
       "label": "s2048_h32kv32_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.038458,
-        "flashinfer": 0.07341500000000001
+        "flashattn_sm100": 38.9972
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3690,18 +2663,11 @@
       "label": "s2048_h32kv4",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.055134666666666665,
-        "flashinfer": 0.07298
+        "flashattn_sm100": 55.549
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3710,18 +2676,11 @@
       "label": "s2048_h32kv4_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.03686233333333333,
-        "flashinfer": 0.07285766666666665
+        "flashattn_sm100": 36.612
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3730,18 +2689,11 @@
       "label": "s2048_h32kv8",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.05577766666666667,
-        "flashinfer": 0.07303
+        "flashattn_sm100": 55.919399999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3750,18 +2702,11 @@
       "label": "s2048_h32kv8_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.037227,
-        "flashinfer": 0.07308766666666666
+        "flashattn_sm100": 57.176399999999994
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3770,18 +2715,11 @@
       "label": "s4096_h32kv16",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.20842766666666668,
-        "flashinfer": 0.26205466666666666
+        "flashattn_sm100": 206.66979999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3790,18 +2728,11 @@
       "label": "s4096_h32kv16_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.114708,
-        "flashinfer": 0.2618826666666667
+        "flashattn_sm100": 114.3864
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3810,18 +2741,11 @@
       "label": "s4096_h32kv32",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.21055233333333334,
-        "flashinfer": 0.26364499999999996
+        "flashattn_sm100": 211.3646
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3830,18 +2754,11 @@
       "label": "s4096_h32kv32_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.11779933333333334,
-        "flashinfer": 0.26350233333333334
+        "flashattn_sm100": 118.26499999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3850,18 +2767,11 @@
       "label": "s4096_h32kv4",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.20029566666666668,
-        "flashinfer": 0.2603223333333333
+        "flashattn_sm100": 203.4194
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3870,18 +2780,11 @@
       "label": "s4096_h32kv4_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.11171166666666667,
-        "flashinfer": 0.2599223333333333
+        "flashattn_sm100": 112.8038
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3890,18 +2793,11 @@
       "label": "s4096_h32kv8",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.20276366666666668,
-        "flashinfer": 0.261947
+        "flashattn_sm100": 201.08259999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3910,18 +2806,11 @@
       "label": "s4096_h32kv8_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.11398366666666666,
-        "flashinfer": 0.26179433333333335
+        "flashattn_sm100": 114.4892
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3930,18 +2819,11 @@
       "label": "s8192_h32kv16",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.8278053333333334,
-        "flashinfer": 1.0265253333333333
+        "flashattn_sm100": 828.524
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3950,18 +2832,11 @@
       "label": "s8192_h32kv16_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.4218536666666667,
-        "flashinfer": 1.0207266666666668
+        "flashattn_sm100": 434.23959999999994
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3970,18 +2845,11 @@
       "label": "s8192_h32kv32",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.8527720000000001,
-        "flashinfer": 1.0373616666666667
+        "flashattn_sm100": 841.3241999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -3990,18 +2858,11 @@
       "label": "s8192_h32kv32_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.44145966666666664,
-        "flashinfer": 1.0215873333333332
+        "flashattn_sm100": 431.8986
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4010,18 +2871,11 @@
       "label": "s8192_h32kv4",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.8190683333333333,
-        "flashinfer": 1.014755
+        "flashattn_sm100": 814.6275999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4030,18 +2884,11 @@
       "label": "s8192_h32kv4_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.43739933333333336,
-        "flashinfer": 1.018918
+        "flashattn_sm100": 418.931
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4050,18 +2897,11 @@
       "label": "s8192_h32kv8",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.8298103333333333,
-        "flashinfer": 1.0174376666666667
+        "flashattn_sm100": 808.2411999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4070,18 +2910,11 @@
       "label": "s8192_h32kv8_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 0.4240063333333333,
-        "flashinfer": 1.0159496666666668
+        "flashattn_sm100": 407.224
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashattn_sm100": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4090,20 +2923,13 @@
       "label": "bf16_1024x1024x1024",
       "status": "ok",
       "impls": {
-        "deepgemm-bf16": 0.007363666666666667,
-        "deepgemm-cublaslt": 0.005379666666666666,
-        "torch-cublas": 0.005329666666666667
+        "deepgemm-bf16": 7.34,
+        "deepgemm-cublaslt": 5.3696,
+        "torch-cublas": 5.3254
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm-bf16": 5,
-          "deepgemm-cublaslt": 5,
-          "torch-cublas": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4112,20 +2938,13 @@
       "label": "bf16_16384x16384x16384",
       "status": "ok",
       "impls": {
-        "deepgemm-bf16": 6.823302,
-        "deepgemm-cublaslt": 6.193222333333333,
-        "torch-cublas": 6.191668
+        "deepgemm-bf16": 7410.2663999999995,
+        "deepgemm-cublaslt": 6168.339399999999,
+        "torch-cublas": 6163.9238
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm-bf16": 5,
-          "deepgemm-cublaslt": 5,
-          "torch-cublas": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4134,20 +2953,13 @@
       "label": "bf16_2048x2048x2048",
       "status": "ok",
       "impls": {
-        "deepgemm-bf16": 0.018217333333333332,
-        "deepgemm-cublaslt": 0.017665,
-        "torch-cublas": 0.017518333333333334
+        "deepgemm-bf16": 17.8878,
+        "deepgemm-cublaslt": 17.028200000000002,
+        "torch-cublas": 17.4236
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm-bf16": 5,
-          "deepgemm-cublaslt": 5,
-          "torch-cublas": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4156,20 +2968,13 @@
       "label": "bf16_4096x4096x4096",
       "status": "ok",
       "impls": {
-        "deepgemm-bf16": 0.09098266666666667,
-        "deepgemm-cublaslt": 0.09251233333333334,
-        "torch-cublas": 0.092484
+        "deepgemm-bf16": 126.449,
+        "deepgemm-cublaslt": 135.4836,
+        "torch-cublas": 135.5056
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm-bf16": 5,
-          "deepgemm-cublaslt": 5,
-          "torch-cublas": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4178,20 +2983,13 @@
       "label": "bf16_8192x8192x8192",
       "status": "ok",
       "impls": {
-        "deepgemm-bf16": 0.7920363333333333,
-        "deepgemm-cublaslt": 0.7822403333333333,
-        "torch-cublas": 0.7949623333333334
+        "deepgemm-bf16": 758.197,
+        "deepgemm-cublaslt": 769.4888,
+        "torch-cublas": 777.4344
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm-bf16": 5,
-          "deepgemm-cublaslt": 5,
-          "torch-cublas": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4200,18 +2998,12 @@
       "label": "fp16_1024x1024x1024",
       "status": "ok",
       "impls": {
-        "deepgemm-cublaslt": 0.005415,
-        "torch-cublas": 0.005369666666666667
+        "deepgemm-cublaslt": 5.422199999999999,
+        "torch-cublas": 5.366599999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm-cublaslt": 5,
-          "torch-cublas": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4220,18 +3012,12 @@
       "label": "fp16_16384x16384x16384",
       "status": "ok",
       "impls": {
-        "deepgemm-cublaslt": 6.509624333333333,
-        "torch-cublas": 6.4813513333333335
+        "deepgemm-cublaslt": 6310.833,
+        "torch-cublas": 6292.6094
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm-cublaslt": 5,
-          "torch-cublas": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4240,18 +3026,12 @@
       "label": "fp16_2048x2048x2048",
       "status": "ok",
       "impls": {
-        "deepgemm-cublaslt": 0.017856666666666667,
-        "torch-cublas": 0.017685666666666666
+        "deepgemm-cublaslt": 17.6354,
+        "torch-cublas": 17.986399999999996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm-cublaslt": 5,
-          "torch-cublas": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4260,18 +3040,12 @@
       "label": "fp16_4096x4096x4096",
       "status": "ok",
       "impls": {
-        "deepgemm-cublaslt": 0.09682866666666666,
-        "torch-cublas": 0.096883
+        "deepgemm-cublaslt": 97.9766,
+        "torch-cublas": 97.926
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm-cublaslt": 5,
-          "torch-cublas": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4280,18 +3054,12 @@
       "label": "fp16_8192x8192x8192",
       "status": "ok",
       "impls": {
-        "deepgemm-cublaslt": 0.8291376666666668,
-        "torch-cublas": 0.8216553333333334
+        "deepgemm-cublaslt": 827.5840000000001,
+        "torch-cublas": 834.248
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm-cublaslt": 5,
-          "torch-cublas": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4300,16 +3068,11 @@
       "label": "deepgemm_m4096_n2112_k7168",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.049328333333333335
+        "deepgemm": 49.872
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4318,16 +3081,11 @@
       "label": "deepgemm_m4096_n24576_k1536",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.11748733333333333
+        "deepgemm": 117.17139999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4336,16 +3094,11 @@
       "label": "deepgemm_m4096_n32768_k512",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.075845
+        "deepgemm": 76.8444
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4354,16 +3107,11 @@
       "label": "deepgemm_m4096_n4096_k7168",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.08398433333333333
+        "deepgemm": 83.52019999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4372,16 +3120,11 @@
       "label": "deepgemm_m4096_n576_k7168",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.018694666666666665
+        "deepgemm": 29.846599999999995
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4390,16 +3133,11 @@
       "label": "deepgemm_m4096_n7168_k16384",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.31431333333333333
+        "deepgemm": 372.368
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4408,52 +3146,11 @@
       "label": "deepgemm_m4096_n7168_k2048",
       "status": "ok",
       "impls": {
-        "deepgemm": 0.04453833333333333
+        "deepgemm": 44.8032
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
-      }
-    },
-    {
-      "kernel": "fp8_blockwise_gemm",
-      "config": "smoke_1024x1024x1024",
-      "label": "smoke_1024x1024x1024",
-      "status": "ok",
-      "impls": {
-        "deepgemm": 0.006170333333333334
-      },
-      "aggregated": {
-        "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
-      }
-    },
-    {
-      "kernel": "fp8_blockwise_gemm",
-      "config": "stress_m8192_n7168_k4096",
-      "label": "stress_m8192_n7168_k4096",
-      "status": "ok",
-      "impls": {
-        "deepgemm": 0.16165666666666667
-      },
-      "aggregated": {
-        "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "deepgemm": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4462,18 +3159,12 @@
       "label": "1024x1024x1024",
       "status": "ok",
       "impls": {
-        "cublaslt_nvfp4": 0.0041459999999999995,
-        "flashinfer": 0.004277333333333333
+        "cublaslt_nvfp4": 4.2223999999999995,
+        "flashinfer": 4.3438
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "cublaslt_nvfp4": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4482,18 +3173,12 @@
       "label": "16384x16384x16384",
       "status": "ok",
       "impls": {
-        "cublaslt_nvfp4": 1.3994718,
-        "flashinfer": 1.3865678
+        "cublaslt_nvfp4": 1577.0185999999999,
+        "flashinfer": 1566.6044
       },
       "aggregated": {
-        "rounds": 7,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 1,
-        "ok_rounds": {
-          "cublaslt_nvfp4": 7,
-          "flashinfer": 7
-        }
+        "rounds": 5,
+        "method": "mean"
       }
     },
     {
@@ -4502,18 +3187,12 @@
       "label": "2048x2048x2048",
       "status": "ok",
       "impls": {
-        "cublaslt_nvfp4": 0.007619333333333334,
-        "flashinfer": 0.007683666666666667
+        "cublaslt_nvfp4": 15.300600000000001,
+        "flashinfer": 12.3292
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "cublaslt_nvfp4": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4522,17 +3201,12 @@
       "label": "4096x4096x4096",
       "status": "ok",
       "impls": {
-        "cublaslt_nvfp4": 0.030046
+        "cublaslt_nvfp4": 30.0556,
+        "flashinfer": 28.5838
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "cublaslt_nvfp4": 5,
-          "flashinfer": 4
-        }
+        "method": "mean"
       }
     },
     {
@@ -4541,18 +3215,12 @@
       "label": "8192x8192x8192",
       "status": "ok",
       "impls": {
-        "cublaslt_nvfp4": 0.18193433333333334,
-        "flashinfer": 0.18131999999999998
+        "cublaslt_nvfp4": 182.7252,
+        "flashinfer": 182.154
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "cublaslt_nvfp4": 5,
-          "flashinfer": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4561,16 +3229,11 @@
       "label": "bench_regular_dqk512_hq128_s4096_kv32768_topk2048",
       "status": "ok",
       "impls": {
-        "flashmla": 1.851175
+        "flashmla": 1854.7740000000001
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashmla": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4579,16 +3242,11 @@
       "label": "bench_regular_dqk512_hq128_s4096_kv65536_topk2048",
       "status": "ok",
       "impls": {
-        "flashmla": 1.9998336666666667
+        "flashmla": 2506.9339999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashmla": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4597,16 +3255,11 @@
       "label": "bench_regular_dqk512_hq128_s4096_kv8192_topk2048",
       "status": "ok",
       "impls": {
-        "flashmla": 1.8381243333333335
+        "flashmla": 1817.6071999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashmla": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4615,16 +3268,11 @@
       "label": "bench_regular_dqk576_hq128_s4096_kv32768_topk2048",
       "status": "ok",
       "impls": {
-        "flashmla": 1.953824
+        "flashmla": 1918.5914
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashmla": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4633,16 +3281,11 @@
       "label": "bench_regular_dqk576_hq128_s4096_kv65536_topk2048",
       "status": "ok",
       "impls": {
-        "flashmla": 2.114608333333333
+        "flashmla": 2115.0278
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashmla": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4651,16 +3294,11 @@
       "label": "bench_regular_dqk576_hq128_s4096_kv8192_topk2048",
       "status": "ok",
       "impls": {
-        "flashmla": 1.9244713333333334
+        "flashmla": 1947.9199999999998
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashmla": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4669,16 +3307,11 @@
       "label": "bench_dqk512_hq64_s4096_kv32768_topk512",
       "status": "ok",
       "impls": {
-        "flashmla": 0.37632733333333335
+        "flashmla": 374.2908
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashmla": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4687,16 +3320,11 @@
       "label": "bench_dqk512_hq64_s4096_kv49152_topk512",
       "status": "ok",
       "impls": {
-        "flashmla": 0.3757763333333333
+        "flashmla": 593.905
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashmla": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4705,16 +3333,11 @@
       "label": "bench_dqk512_hq64_s4096_kv65536_topk512",
       "status": "ok",
       "impls": {
-        "flashmla": 0.3831833333333333
+        "flashmla": 383.079
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashmla": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4723,16 +3346,11 @@
       "label": "bench_dqk512_hq64_s4096_kv8192_topk512",
       "status": "ok",
       "impls": {
-        "flashmla": 0.3706936666666667
+        "flashmla": 370.2996
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashmla": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4741,16 +3359,11 @@
       "label": "bench_dqk576_hq64_s4096_kv32768_topk512",
       "status": "ok",
       "impls": {
-        "flashmla": 0.3884493333333333
+        "flashmla": 396.4802
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashmla": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4759,16 +3372,11 @@
       "label": "bench_dqk576_hq64_s4096_kv49152_topk512",
       "status": "ok",
       "impls": {
-        "flashmla": 0.4047053333333333
+        "flashmla": 612.9573999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashmla": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4777,16 +3385,11 @@
       "label": "bench_dqk576_hq64_s4096_kv65536_topk512",
       "status": "ok",
       "impls": {
-        "flashmla": 0.41812033333333337
+        "flashmla": 412.8487999999999
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashmla": 5
-        }
+        "method": "mean"
       }
     },
     {
@@ -4795,16 +3398,11 @@
       "label": "bench_dqk576_hq64_s4096_kv8192_topk512",
       "status": "ok",
       "impls": {
-        "flashmla": 0.3809886666666667
+        "flashmla": 378.84999999999997
       },
       "aggregated": {
         "rounds": 5,
-        "method": "trimmed_mean",
-        "max_retry": 5,
-        "min_ok_rounds": 5,
-        "ok_rounds": {
-          "flashmla": 5
-        }
+        "method": "mean"
       }
     }
   ]

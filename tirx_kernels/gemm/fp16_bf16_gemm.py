@@ -513,4 +513,5 @@ def run_bench(dtype, M, N, K, warmup=10, repeat=30, timer="proton", **kwargs):
         timer=timer,
         proton_name="gemm",
         references=references,
+        **kwargs,
     )

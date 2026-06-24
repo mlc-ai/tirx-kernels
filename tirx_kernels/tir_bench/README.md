@@ -34,17 +34,20 @@ Run artifacts (logs, `runs/*.json`, `reports/*`) live under `.tir-bench/` and ar
 
 ## Strategy (TL;DR)
 
-1. **Pinned baseline lives in git** under this directory (`tir.json`, `ref.json`,
-   `baseline.md`, `ratio.json`) — not in `.tir-bench/reports/`.
-2. **Split jobs**: `run.py` benches ours and refs in **separate subprocesses**
-   (not paired like `tirx_kernels.bench --impls all`). Daily work uses
-   `--impls ours`; ref refresh uses `--impls baseline`.
-3. **×5 rounds** before promote; refs are usually reaggregated from logs with
-   **trimmed_mean** (drop fastest + slowest ok round).
-4. **One report per run**: `reports/<id>/bench.md` — ours ms, ref ms, ratio,
-   ratio Δ vs saved `ratio.json`. Human baseline view: `baseline.md`.
-5. **Trust ratio Δ** only when spread is low; spot-check suspicious rows with
-   paired `python -m tirx_kernels.bench --impls all`.
+1. **Pinned baseline lives in git** (`tir.json`, `ref.json`, `baseline.md`, `ratio.json`).
+2. **One job = one workload** (kernel + config). A worker acquires a GPU, runs **one**
+   bench subprocess: compile/prepare once, then **`--rounds N` in-bench** (each round:
+   warmup + repeat, paired ours + ref when `--impls all`). Optional `--round-cooldown`
+   between rounds.
+3. **Retry until ok**: INTERFERED / subprocess failure → job goes back on the
+   worker queue (another worker may pick it up later). `SKIP` workloads are not
+   retried.
+4. **Dynamic free GPU queue** (`--cpu-workers 0` = one worker per probe-OK GPU):
+   workers pull jobs from a shared queue; each job `acquire()`s any free card,
+   runs one subprocess, then `release()`s. Whoever finishes first grabs the next
+   job and the next free GPU — no static workload→GPU binding, no overcommit.
+5. **`--impls ours` / `baseline` / `all`** unchanged. Ratio Δ needs `--impls all`
+   (paired in one subprocess). Daily iteration uses `--impls ours` vs pinned `tir.json`.
 
 ## Baseline files (git-tracked)
 
@@ -55,24 +58,15 @@ Run artifacts (logs, `runs/*.json`, `reports/*`) live under `.tir-bench/` and ar
 | `ratio.json` | Saved ref/ours ratio per workload | Auto on promote / reaggregate |
 | `baseline.md` | Human view: ours + ref + ratio | Auto on promote / reaggregate |
 
-`tir.json` and `ref.json` have **independent update cadences**; they are joined
-at diff time. Always promote through `promote_baseline.py` (never bare `cp`).
-
-`sparse_flashmla_*` uses upstream [FlashMLA](https://github.com/deepseek-ai/FlashMLA)
-(`flashmla` impl). Set `FLASH_MLA_PATH` to a built tree (default `~/FlashMLA`).
+Promote through `promote_baseline.py` only (never bare `cp`).
 
 ## `--impls` modes
 
 | Mode | When | Report | Promote |
 |------|------|--------|---------|
-| `ours` (**default**) | Daily kernel work | `bench.md` (ours abs ms vs pin) | `--tir` |
-| `baseline` | Refresh references | `bench.md` (ref abs ms vs pin) | `--ref` or `reaggregate_from_logs.py --ref` |
-| `all` | Full ratio check (optional) | `bench.md` (ours + ref + ratio Δ) | split promote preferred |
-
-Ratio columns in `bench.md` need **both** ours and ref in the **current** run,
-so full ratio Δ normally requires `--impls all`. Day-to-day iteration compares
-ours abs ms against pinned `tir.json`; saved ratios live in `ratio.json` /
-`baseline.md`.
+| `ours` (**default**) | Daily kernel work | abs µs vs pin | `--tir` |
+| `baseline` | Refresh references | ref abs µs vs pin | `--ref` |
+| `all` | Full ratio check | ours + ref + ratio Δ | `--both` |
 
 ## Workflows
 
@@ -80,111 +74,63 @@ ours abs ms against pinned `tir.json`; saved ratios live in `ratio.json` /
 
 ```bash
 python -m tirx_kernels.tir_bench --impls ours
-# before merge: add --rounds 5
 python tirx_kernels/tir_bench/promote_baseline.py \
   .tir-bench/runs/<id>.json --tir
-git add tirx_kernels/tir_bench/tir.json tirx_kernels/tir_bench/baseline.md tirx_kernels/tir_bench/ratio.json && git commit
 ```
+
+Before merge, add `--rounds 5` and promote.
 
 ### Refresh references (rare)
 
 ```bash
-python -m tirx_kernels.tir_bench \
-  --impls baseline \
-  --rounds 5 \
-  --bench-aggregate mean \
-  --restable-reps 0
-
-# Prefer trim×5 from logs (keeps flashinfer etc. merged cleanly):
+python -m tirx_kernels.tir_bench --impls baseline --rounds 5
 python tirx_kernels/tir_bench/reaggregate_from_logs.py --ref
-
-git add tirx_kernels/tir_bench/ref.json tirx_kernels/tir_bench/baseline.md tirx_kernels/tir_bench/ratio.json && git commit
 ```
 
-After a split sweep (ours job + baseline job in one `run.py` invocation with
-separate roles), promote ours and reaggregate refs:
+Or separate ours + baseline runs, then:
 
 ```bash
 python -m tirx_kernels.tir_bench --impls ours --rounds 5
-python -m tirx_kernels.tir_bench --impls baseline --rounds 5 --restable-reps 0
+python -m tirx_kernels.tir_bench --impls baseline --rounds 5
 python tirx_kernels/tir_bench/promote_baseline.py .tir-bench/runs/<ours-id>.json --tir
 python tirx_kernels/tir_bench/reaggregate_from_logs.py --ref
 ```
 
-### Optional: full ratio report
+### Full ratio sweep
 
 ```bash
-python -m tirx_kernels.tir_bench --impls all --rounds 5 --restable-reps 0
+python -m tirx_kernels.tir_bench --impls all --rounds 5
 less .tir-bench/reports/latest/bench.md
+python tirx_kernels/tir_bench/promote_baseline.py .tir-bench/runs/<id>.json --both
 ```
 
-Do **not** use full `--impls all` ×5 as the default daily driver (cost vs benefit).
-For suspicious ratio Δ, confirm with paired bench:
+Spot-check one workload: `python -m tirx_kernels.bench --kernel ... --config ... --impls all --rounds 5`
 
-```bash
-python -m tirx_kernels.bench --kernel ... --config ... --impls all --warmup 100 --repeat 30
-```
-
-## Multi-round aggregation
-
-Each job is one `(workload, role, round)` subprocess. INTERFERED jobs retry up
-to `--max-retry` before the round is discarded.
+## Flags
 
 | Flag | Default | Meaning |
 |------|---------|---------|
-| `--rounds N` | `1` | Rounds per (workload, role) |
-| `--bench-aggregate` | `mean` | `mean`, `median`, or `trimmed_mean` over ok rounds |
-| `--max-retry N` | `5` | Max attempts per job on INTERFERED |
-| `--min-ok-rounds N` | `1` | Min ok rounds per impl to aggregate |
+| `--rounds N` | `1` | In-bench rounds (warmup+repeat each) per subprocess |
+| `--round-cooldown` | `1.0` | Seconds between in-bench rounds |
+| `--bench-aggregate` | `mean` | `mean`, `median`, or `trimmed_mean` over round samples |
+| `--cpu-workers` | `0` (= GPU count) | Concurrent workload workers (capped at GPU count) |
+| `--impls` | `ours` | `ours`, `baseline`, or `all` |
 
-Promoted baselines typically use **trimmed_mean ×5** (`reaggregate_from_logs.py`).
-Run JSON aggregation uses `--bench-aggregate` (default `mean`).
+Promoted baselines often use **trimmed_mean ×5** via `reaggregate_from_logs.py`.
 
 ## Ratio rules
 
-- **ref impl** = fastest non-ours impl in baseline, **fixed** across runs.
+- **ref impl** = fastest non-ours impl in baseline, fixed across runs.
 - **ratio** = ref/ours (>1 means ours is faster).
 - **ratio Δ** in `bench.md` = current ratio vs saved `ratio.json`.
-- **ours Δ / ref Δ** = abs ms vs pinned `tir.json` / `ref.json`.
-- |ratio Δ| > 5% with high spread → treat as inconclusive.
-- ⚠ in `bench.md` when ref abs ms drifted >20% vs pin (unstable env).
-
-## Restable phase (`--impls all` only)
-
-After `--impls all`, workloads with |ratio Δ| > `--restable-threshold` (3%) are
-re-benched `--restable-reps` rounds (median) and `bench.md` is rewritten.
-Skip with `--restable-reps 0` (recommended for baseline refresh).
 
 ## Outputs
 
 | Path | Description |
 |------|-------------|
-| `.tir-bench/runs/<id>.json` | Raw run results |
-| `.tir-bench/reports/<id>/summary.md` | Raw per-kernel table |
-| `.tir-bench/reports/<id>/bench.md` | **Main diff report** |
-| `.tir-bench/reports/latest/` | Symlink → latest run id |
-| `baseline.md` | **Pinned baseline (git)** |
-
-Ignore ad-hoc `rebaseline-*.md` under `.tir-bench/reports/` — one-off analysis.
-
-## Helpers
-
-```bash
-# Promote
-python tirx_kernels/tir_bench/promote_baseline.py .tir-bench/runs/<id>.json --tir
-python tirx_kernels/tir_bench/promote_baseline.py .tir-bench/runs/<id>.json --ref
-python tirx_kernels/tir_bench/promote_baseline.py .tir-bench/runs/<id>.json --tir --merge
-
-# Re-trim from logs (after ×5 sweep)
-python tirx_kernels/tir_bench/reaggregate_from_logs.py --tir --ref
-
-# Render baseline.md / ratio.json from pins
-python tirx_kernels/tir_bench/baseline_view.py
-python tirx_kernels/tir_bench/ratio_diff.py --refresh-ratio-json
-
-# Regenerate bench.md for an existing run
-python tirx_kernels/tir_bench/ratio_diff.py .tir-bench/runs/<id>.json
-```
+| `.tir-bench/runs/<id>.json` | Aggregated run results (times in microseconds) |
+| `.tir-bench/reports/<id>/bench.md` | Main diff report |
+| `.tir-bench/logs/*__<role>_a<N>.log` | Subprocess stdout (N proton trees when `--rounds N`) |
 
 ## Exit codes
 

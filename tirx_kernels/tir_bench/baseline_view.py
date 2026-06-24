@@ -56,8 +56,8 @@ def main() -> None:
             {
                 **r,
                 "impls": {
-                    **(r.get("impls") or {}),
                     **ref_idx.get((r["kernel"], r.get("label") or r.get("config")), {}),
+                    **(r.get("impls") or {}),
                 },
             }
             for r in tir.get("results", [])
@@ -72,7 +72,7 @@ def main() -> None:
             continue
         impls = r.get("impls") or {}
         ours = next((i for i in OUR_IMPLS if i in impls), None)
-        refs = {i: ms for i, ms in impls.items() if i not in OUR_IMPLS and ms > 0}
+        refs = {i: us for i, us in impls.items() if i not in OUR_IMPLS and us > 0}
         ref = min(refs, key=lambda k: refs[k]) if refs else None
         ratio = refs[ref] / impls[ours] if (ours and ref and impls[ours] > 0) else None
         rows.append(
@@ -112,19 +112,19 @@ def main() -> None:
             lines.append(f"## {cur_kernel}")
             lines.append("")
             lines.append(
-                "| config | ours impl | ours (ms) | ref impl | ref (ms) | ref/ours | other impls |"
+                "| config | ours impl | ours (µs) | ref impl | ref (µs) | ref/ours | other impls |"
             )
             lines.append("|---|---|---:|---|---:|---:|---|")
-        ours_ms = r["impls"].get(r["ours"], 0.0) if r["ours"] else float("nan")
-        ref_ms = r["impls"].get(r["ref"], 0.0) if r["ref"] else float("nan")
+        ours_us = r["impls"].get(r["ours"], float("nan")) if r["ours"] else float("nan")
+        ref_us = r["impls"].get(r["ref"], float("nan")) if r["ref"] else float("nan")
         ratio_s = f"{r['ratio']:.3f}" if r["ratio"] is not None else "—"
         others = sorted(
-            (i, ms) for i, ms in r["impls"].items() if i not in OUR_IMPLS and i != r["ref"]
+            (i, us) for i, us in r["impls"].items() if i not in OUR_IMPLS and i != r["ref"]
         )
-        others_s = ", ".join(f"{i}={ms:.4f}" for i, ms in others) or "—"
+        others_s = ", ".join(f"{i}={us:.4f}" for i, us in others) or "—"
         lines.append(
             f"| `{r['config']}` | {r['ours'] or '—'} | "
-            f"{ours_ms:.4f} | {r['ref'] or '—'} | {ref_ms:.4f} | "
+            f"{ours_us:.4f} | {r['ref'] or '—'} | {ref_us:.4f} | "
             f"{ratio_s} | {others_s} |"
         )
         # final newline added once per kernel group below

@@ -256,7 +256,6 @@ workloads:
   - {kernel: fp16_bf16_gemm, config: bf16_8192x8192x8192}
   - {kernel: fp16_bf16_gemm, config: bf16_16384x16384x16384}
   # ── fp8_blockwise_gemm
-  - {kernel: fp8_blockwise_gemm, config: smoke_1024x1024x1024}
   - {kernel: fp8_blockwise_gemm, config: deepgemm_m4096_n2112_k7168}
   - {kernel: fp8_blockwise_gemm, config: deepgemm_m4096_n576_k7168}
   - {kernel: fp8_blockwise_gemm, config: deepgemm_m4096_n24576_k1536}
@@ -264,7 +263,6 @@ workloads:
   - {kernel: fp8_blockwise_gemm, config: deepgemm_m4096_n7168_k16384}
   - {kernel: fp8_blockwise_gemm, config: deepgemm_m4096_n4096_k7168}
   - {kernel: fp8_blockwise_gemm, config: deepgemm_m4096_n7168_k2048}
-  - {kernel: fp8_blockwise_gemm, config: stress_m8192_n7168_k4096}
   # ── nvfp4_gemm
   - {kernel: nvfp4_gemm, config: 1024x1024x1024}
   - {kernel: nvfp4_gemm, config: 2048x2048x2048}

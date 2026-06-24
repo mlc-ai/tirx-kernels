@@ -2210,6 +2210,8 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
     repeat = kwargs.pop("repeat", 30)
     timer = kwargs.pop("timer", "proton")
     benchmark_order_mode = kwargs.pop("benchmark_order_mode", "bidirectional")
+    _rounds = kwargs.pop("rounds", 1)
+    _round_cooldown_s = kwargs.pop("round_cooldown_s", 1.0)
     config_kwargs = dict(kwargs)
 
     data = prepare_data(**config_kwargs)
@@ -2245,6 +2247,8 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
             warmup=warmup,
             repeat=repeat,
             timer=timer,
+        rounds=_rounds,
+        round_cooldown_s=_round_cooldown_s,
             proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
             references={"deepgemm": _deepgemm},
         )
@@ -2255,6 +2259,8 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
             warmup=warmup,
             repeat=repeat,
             timer=timer,
+        rounds=_rounds,
+        round_cooldown_s=_round_cooldown_s,
             proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
         )
     elif benchmark_order_mode == "tirx_first":
@@ -2264,6 +2270,8 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
             warmup=warmup,
             repeat=repeat,
             timer=timer,
+        rounds=_rounds,
+        round_cooldown_s=_round_cooldown_s,
             proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
             references={"deepgemm": _deepgemm},
         )
@@ -2274,6 +2282,8 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
             warmup=warmup,
             repeat=repeat,
             timer=timer,
+        rounds=_rounds,
+        round_cooldown_s=_round_cooldown_s,
             proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
             references={"deepgemm": _deepgemm},
         )
@@ -2284,6 +2294,8 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
             warmup=warmup,
             repeat=repeat,
             timer=timer,
+        rounds=_rounds,
+        round_cooldown_s=_round_cooldown_s,
             proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
             references={"deepgemm": _deepgemm},
         )
@@ -2293,6 +2305,8 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
             warmup=warmup,
             repeat=repeat,
             timer=timer,
+        rounds=_rounds,
+        round_cooldown_s=_round_cooldown_s,
             proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
             references={"deepgemm": _deepgemm},
         )

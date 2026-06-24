@@ -1989,6 +1989,8 @@ def run_bench(
         warmup=warmup,
         repeat=repeat,
         timer=timer,
+        rounds=_rounds,
+        round_cooldown_s=_round_cooldown_s,
         proton_name=KERNEL_META["name"],
         references={"flashmla": flashmla_reference_builder},
     )

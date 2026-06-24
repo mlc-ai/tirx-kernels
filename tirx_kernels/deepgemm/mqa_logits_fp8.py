@@ -1252,6 +1252,8 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
     warmup = kwargs.pop("warmup", 10)
     repeat = kwargs.pop("repeat", 30)
     timer = kwargs.pop("timer", "proton")
+    _rounds = kwargs.pop("rounds", 1)
+    _round_cooldown_s = kwargs.pop("round_cooldown_s", 1.0)
     config_kwargs = dict(kwargs)
     errors: dict[str, str] = {}
 
@@ -1283,6 +1285,8 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
         warmup=warmup,
         repeat=repeat,
         timer=timer,
+        rounds=_rounds,
+        round_cooldown_s=_round_cooldown_s,
         proton_name="deepgemm_sm100_fp8_mqa_logits",
         references={"deepgemm": _deepgemm},
     )

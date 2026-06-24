@@ -9,7 +9,7 @@ means we got faster vs ref (improvement), negative means slower
 (regression).
 
 Rationale: under GPU contention every impl slows by a similar factor,
-so absolute-ms diffs are dominated by that noise. The ratio between
+so absolute-µs diffs are dominated by that noise. The ratio between
 ours and a same-run reference is unchanged by uniform slowdown, so a
 moving ratio is a real perf signal. Rows where the reference impl
 itself drifted > 20% are flagged ⚠ — workload's environment was
@@ -79,7 +79,7 @@ def join_default_baseline() -> dict:
 
 
 def index(payload: dict) -> dict[tuple[str, str], dict[str, float]]:
-    """{(kernel, config) -> {impl -> ms}} for ok results."""
+    """{(kernel, config) -> {impl -> us}} for ok results."""
     out: dict[tuple[str, str], dict[str, float]] = {}
     for r in payload.get("results") or []:
         if r.get("status") != "ok":
@@ -126,9 +126,9 @@ def build_ratio_payload(tir_payload: dict, ref_payload: dict) -> dict:
         ours = pick_ours(impls)
         if ref is None or ours is None:
             continue
-        ours_ms = impls[ours]
-        ref_ms = impls[ref]
-        if ours_ms <= 0 or ref_ms <= 0:
+        ours_us = impls[ours]
+        ref_us = impls[ref]
+        if ours_us <= 0 or ref_us <= 0:
             continue
         out["results"].append(
             {
@@ -138,9 +138,9 @@ def build_ratio_payload(tir_payload: dict, ref_payload: dict) -> dict:
                 "status": "ok",
                 "ref_impl": ref,
                 "ours_impl": ours,
-                "ours_ms": ours_ms,
-                "ref_ms": ref_ms,
-                "ratio": ref_ms / ours_ms,
+                "ours_us": ours_us,
+                "ref_us": ref_us,
+                "ratio": ref_us / ours_us,
             }
         )
     out["results"].sort(key=_result_key)
@@ -253,27 +253,27 @@ def build_report(
             missing = ", ".join(i for i in (ours_b, ref) if i not in cur_impls)
             not_comparable.append((key[0], key[1], f"ok but missing impl(s): {missing}"))
             continue
-        our_b_ms, ref_b_ms = base_impls[ours_b], base_impls[ref]
-        our_c_ms, ref_c_ms = cur_impls[ours_b], cur_impls[ref]
-        if min(our_b_ms, ref_b_ms, our_c_ms, ref_c_ms) <= 0:
+        our_b_us, ref_b_us = base_impls[ours_b], base_impls[ref]
+        our_c_us, ref_c_us = cur_impls[ours_b], cur_impls[ref]
+        if min(our_b_us, ref_b_us, our_c_us, ref_c_us) <= 0:
             continue
         # ref/ours: higher = ours is faster than ref = better.
-        base_ratio = ref_b_ms / our_b_ms
-        cur_ratio = ref_c_ms / our_c_ms
+        base_ratio = ref_b_us / our_b_us
+        cur_ratio = ref_c_us / our_c_us
         saved_row = saved.get(key)
         saved_ratio = saved_row.get("ratio") if saved_row else base_ratio
         if saved_ratio <= 0:
             saved_ratio = base_ratio
         delta_pct = (cur_ratio - saved_ratio) / saved_ratio * 100.0
-        ref_drift_pct = (ref_c_ms - ref_b_ms) / ref_b_ms * 100.0
-        our_drift_pct = (our_c_ms - our_b_ms) / our_b_ms * 100.0
+        ref_drift_pct = (ref_c_us - ref_b_us) / ref_b_us * 100.0
+        our_drift_pct = (our_c_us - our_b_us) / our_b_us * 100.0
         rows.append(
             (
                 key[0],
                 key[1],
                 ref,
-                our_c_ms * 1000.0,
-                ref_c_ms * 1000.0,
+                our_c_us,
+                ref_c_us,
                 cur_ratio,
                 saved_ratio,
                 delta_pct,
@@ -301,12 +301,12 @@ def build_report(
 
     w("# tir-bench bench report")
     w()
-    w(f"- Baseline (abs ms): `{baseline_label}`")
+    w(f"- Baseline (abs µs): `{baseline_label}`")
     w(f"- Saved ratios: `{ratio_label}` from ratio.json")
     w(f"- Current run: `{current_label}`")
     w(
         "- Columns: ref/ours ratio (higher = ours faster), ratio Δ vs saved ratio.json, "
-        "ours/ref Δ vs pinned tir.json + ref.json abs ms. Sorted by ratio Δ."
+        "ours/ref Δ vs pinned tir.json + ref.json abs µs. Sorted by ratio Δ."
     )
     w(
         f"- Summary: {len(rows)} comparable workloads; "
@@ -316,20 +316,20 @@ def build_report(
             if not_comparable
             else ""
         )
-        + ". ⚠ = reference abs ms drifted >20% vs pinned ref (less trustworthy)."
+        + ". ⚠ = reference abs µs drifted >20% vs pinned ref (less trustworthy)."
     )
     w()
 
     if rows:
         w(
-            "| kernel | config | ref | ours (ms) | ref (ms) | ratio | saved | "
+            "| kernel | config | ref | ours (µs) | ref (µs) | ratio | saved | "
             "ratio Δ | ours Δ | ref Δ |"
         )
         w("|---|---|---|---:|---:|---:|---:|---:|---:|---:|")
-        for k, c, ref, our_ms, ref_ms, cr, sr, d, our_d, ref_d in rows:
+        for k, c, ref, our_us, ref_us, cr, sr, d, our_d, ref_d in rows:
             flag = " ⚠" if abs(ref_d) > 20 else ""
             w(
-                f"| {k} | {c} | {ref} | {our_ms:.2f} | {ref_ms:.2f} | {cr:.3f} | "
+                f"| {k} | {c} | {ref} | {our_us:.2f} | {ref_us:.2f} | {cr:.3f} | "
                 f"{sr:.3f} | {d:+.1f}% | {our_d:+.1f}% | {ref_d:+.1f}%{flag} |"
             )
         w()
