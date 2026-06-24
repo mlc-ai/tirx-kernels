@@ -1710,7 +1710,7 @@ def get_kernel(
         return T.ptx.prefetch_tensormap(T.address_of(tensor_map))
 
     def lds128(src_ptr, dst_ptr):
-        return T.cuda.copy_128b(dst_ptr, src_ptr)
+        return T.ptx.ld(src_ptr, "uint32", "u32", dst=dst_ptr, space="shared", vec="v4")
 
     def sts128(dst_ptr, r0, r1, r2, r3):
         return T.ptx.st(dst_ptr, r0, r1, r2, r3, space="shared", vec="v4", ptx_type="b32")
