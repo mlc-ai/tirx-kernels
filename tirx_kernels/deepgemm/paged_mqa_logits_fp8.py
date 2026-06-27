@@ -1680,13 +1680,15 @@ def _prepare_global_barrier(executable: Any) -> None:
 
 
 def _prepare_tirx_invocation(
-    data: dict[str, Any], logits: torch.Tensor | None = None
+    data: dict[str, Any], logits: torch.Tensor | None = None, *, executable: Any | None = None
 ) -> dict[str, Any]:
     config: PagedMQALogitsFP8Config = data["config"]
     if logits is None:
         logits = _allocate_logits(config)
+    if executable is None:
+        executable = _compile_tirx_paged_mqa(config)
     return {
-        "executable": _compile_tirx_paged_mqa(config),
+        "executable": executable,
         "logits": logits,
         "tensor_maps": _build_tirx_tensor_maps(data),
     }
@@ -1767,17 +1769,12 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
     _rounds = kwargs.pop("rounds", 1)
     _round_cooldown_s = kwargs.pop("round_cooldown_s", 1.0)
     config_kwargs = dict(kwargs)
-
-    data = prepare_data(**config_kwargs)
-    invocation = _prepare_tirx_invocation(data)
-    tirx_logits = _run_tirx_invocation(data, invocation)
-    torch.cuda.synchronize()
-    tirx_diff = _assert_correct(data, tirx_logits, name="TIRx")
-    torch.cuda.empty_cache()
+    max_diff: float | None = None
+    tirx_executable = _compile_tirx_paged_mqa(_make_config(**config_kwargs))
 
     def make_input() -> tuple[tuple[dict[str, Any], dict[str, Any]], int]:
         data = prepare_data(**config_kwargs)
-        invocation = _prepare_tirx_invocation(data)
+        invocation = _prepare_tirx_invocation(data, executable=tirx_executable)
         return (data, invocation), tensor_bytes(
             data["q"],
             data["fused_kv_cache"],
@@ -1787,6 +1784,14 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
             data["schedule_meta"],
             invocation["logits"],
         )
+
+    def validate_case(case: tuple[dict[str, Any], dict[str, Any]]) -> None:
+        nonlocal max_diff
+        data, invocation = case
+        tirx_logits = _run_tirx_invocation(data, invocation)
+        torch.cuda.synchronize()
+        max_diff = _assert_correct(data, tirx_logits, name="TIRx")
+        torch.cuda.empty_cache()
 
     def _deepgemm():
         return lambda case: _run_deepgemm_paged_mqa(case[0], clean_logits=False)
@@ -1801,8 +1806,10 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
         round_cooldown_s=_round_cooldown_s,
         proton_name="deepgemm_sm100_fp8_paged_mqa_logits",
         references={"deepgemm": _deepgemm},
+        validate_case=validate_case,
     )
-    result["max_diff"] = tirx_diff
+    if max_diff is not None:
+        result["max_diff"] = max_diff
     return result
 
 

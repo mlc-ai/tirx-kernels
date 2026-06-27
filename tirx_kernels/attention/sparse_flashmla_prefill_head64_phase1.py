@@ -7,8 +7,8 @@ from unittest import SkipTest
 
 import torch
 
-from tvm.script import tirx as T
 from tvm.backend.cuda.operator.tile_primitive.tma_utils import SwizzleMode
+from tvm.script import tirx as T
 from tvm.tirx.lang.pipeline import MBarrier, TCGen05Bar, TMABar
 
 B_H = 64
@@ -1995,6 +1995,8 @@ def run_test(**kwargs: Any) -> None:
 def run_bench(
     *, warmup: int = 10, repeat: int = 30, timer: str = "proton", **kwargs: Any
 ) -> dict[str, Any]:
+    _rounds = kwargs.pop("rounds", 1)
+    _round_cooldown_s = kwargs.pop("round_cooldown_s", 1.0)
     if not torch.cuda.is_available():
         raise SkipTest("CUDA is required for sparse FlashMLA phase1 benchmark")
 

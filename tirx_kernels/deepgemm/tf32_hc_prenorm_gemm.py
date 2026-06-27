@@ -17,7 +17,6 @@
 
 from __future__ import annotations
 
-import ctypes
 import os
 import re
 from dataclasses import asdict, dataclass
@@ -28,12 +27,8 @@ from unittest import SkipTest
 
 import torch
 
-from tvm.ir.type import PointerType, PrimType
-
 _DEEP_GEMM_MODULE_NAME = "deep_gemm"
 _SM100_SMEM_CAPACITY = 232448
-_CUDA_TENSOR_MAP_DATA_TYPE_FLOAT32 = 7
-_CUDA_TENSOR_MAP_DATA_TYPE_TFLOAT32 = 11
 _TEST_DIFF_THRESHOLD = 1e-8
 
 
@@ -314,9 +309,11 @@ class TF32HCBenchCase:
 
 
 def get_kernel(**kwargs: Any):
+    from tvm.backend.cuda.operator.tile_primitive.tma_utils import SwizzleMode, mma_shared_layout
     from tvm.script import tirx as T
-    from tvm.tirx.lang.smem_desc import SmemDescriptor
-    from tvm.tirx.layout import S, TCol, TileLayout, TLane
+    from tvm.script.tirx import tile as Tx
+    from tvm.tirx.lang.pipeline import Pipeline, TCGen05Bar
+    from tvm.tirx.layout import S, TCol, TileLayout, TLane, laneid, tcgen05_atom_layout
 
     config = _make_config(**kwargs)
     block_m = config.block_m
@@ -330,33 +327,26 @@ def get_kernel(**kwargs: Any):
     num_mma_warps = num_mma_threads // 32
     num_stages = config.num_stages
     num_cast_stages = 2
-    swizzle_a_mode = min(block_k * 2, 128)
     swizzle_b_mode = min(block_k * 4, 128)
     swizzle_cd_mode = config.swizzle_cd_mode
     smem_cd_size = config.smem_cd_size
     smem_a_size_per_stage = config.smem_a_size_per_stage
     smem_b_size_per_stage = config.smem_b_size_per_stage
-    smem_a_offset = smem_cd_size
-    smem_b_offset = smem_a_offset + num_stages * smem_a_size_per_stage
-    smem_barrier_offset = smem_b_offset + num_stages * smem_b_size_per_stage
-    num_total_barriers = num_stages * 4 + 1
-    full_barrier_base = 0
-    full_cast_barrier_base = num_stages
-    empty_barrier_base = num_stages * 2
-    empty_cast_barrier_base = num_stages * 3
-    tmem_full_barrier_idx = num_stages * 4
-    smem_tmem_ptr_offset = smem_barrier_offset + num_total_barriers * 8
-    smem_total_bytes = smem_tmem_ptr_offset + 4
-    if smem_total_bytes != config.smem_size:
-        raise ValueError("shared-memory layout size mismatch")
+    # SMEMPool bump-allocates cd | a | b | pipe barriers | tmem_ptr; all data
+    # sizes are 1024-multiples so the pooled offsets reproduce the hand layout.
     num_tmem_cols = 256
     block_swizzled_bk = swizzle_b_mode // 4
     num_b_tma_atoms = block_k // block_swizzled_bk
     umma_k = 32 // 4
     d_tmem_start_col = block_k * num_cast_stages
+    # Cast-warp per-thread register counts (compile-time Python ints): each of
+    # the 128 cast/reduce threads owns ``cast_per_thread`` fp32 A registers in
+    # the .16x256b atom; they span 2 Layout-F rows (top/bottom half), cast_pairs
+    # packed (row, lane) pairs each.
+    cast_per_thread = block_m * block_k // num_cast_and_reduce_threads
+    cast_row_w = cast_per_thread // 2  # per-thread elems per Layout-F row
+    cast_pairs = cast_row_w // 2  # packed (f32x2) pairs per row
     tmem_layout = TileLayout(S[(128, num_tmem_cols) : (1 @ TLane, 1 @ TCol)])
-    b_sdo = 8 * block_swizzled_bk * 4 // 16
-    b_swizzle = 3
     num_k_blocks = config.num_k_blocks
     num_k_blocks_per_split = num_k_blocks // num_splits
     remain_k_blocks = num_k_blocks % num_splits
@@ -364,200 +354,133 @@ def get_kernel(**kwargs: Any):
     def cuda_grid_dependency_synchronize():
         T.evaluate(T.ptx.griddepcontrol.wait())
 
-    def tma_load_2d_cluster(dst, bar, tensormap, coord0, coord1):
-        T.evaluate(
-            T.ptx.cp_async.bulk.tensor.g2c(
-                2, dst, bar, T.address_of(tensormap), 0, 1, "evict_normal", coord0, coord1
-            )
-        )
-
-    def tma_store_2d(src, tensormap, coord0, coord1):
-        T.evaluate(
-            T.ptx.cp_async.bulk.tensor.s2g(2, src, T.address_of(tensormap), "", coord0, coord1)
-        )
-
-    def tma_store_3d(src, tensormap, coord0, coord1, coord2):
-        T.evaluate(
-            T.ptx.cp_async.bulk.tensor.s2g(
-                3, src, T.address_of(tensormap), "", coord0, coord1, coord2
-            )
-        )
-
-    def mbarrier_init_cta(barrier, arrive_count):
-        T.evaluate(T.ptx.mbarrier.init(barrier, arrive_count))
-
-    def mbarrier_arrive_cta(barrier):
-        T.evaluate(T.ptx.mbarrier.arrive(barrier))
-
-    def mbarrier_arrive_expect_tx_cta(barrier, transaction_bytes):
-        T.evaluate(T.ptx.mbarrier.arrive.expect_tx(barrier, transaction_bytes))
-
-    def get_swizzled_smem_offset(offset, lane_idx, swizzle_mode):
-        swizzle_base = T.uint32(16)
-        groups_in_swizzle = T.uint32(swizzle_mode // 16)
-        bank_group_idx = offset + lane_idx * groups_in_swizzle
-        num_bank_groups = T.uint32(8)
-        if swizzle_mode == 128:
-            row = offset // num_bank_groups + lane_idx
-            col = offset
-        else:
-            row = bank_group_idx // num_bank_groups
-            col = bank_group_idx % num_bank_groups
-        col = T.bitwise_xor(col, row % groups_in_swizzle)
-        return row * T.uint32(128) + col * swizzle_base
-
-    def ldmatrix_x4_b16(d0, d1, d2, d3, smem_src):
-        T.evaluate(T.ptx.ldmatrix(False, 4, ".b16", smem_src, d0, d1, d2, d3))
-
-    def st_shared_v4_u32(smem_dst, v0, v1, v2, v3):
-        T.evaluate(T.ptx.st(smem_dst, v0, v1, v2, v3, space="shared", ptx_type="u32", vec="v4"))
-
-    def ffma2_rn(a, b, c):
-        # ``__ffma2_rn`` emits ``fma.rn.f32x2`` (non-ftz, IEEE-754); verified
-        # via nvcc PTX dump on sm_100a.
-        out = T.alloc_local((1,), "uint64")
-        T.evaluate(T.ptx.fma_f32x2(out.ptr_to([0]), a, b, c, rounding="rn", ftz=False))
-        return out[0]
-
-    def elect_one_sync_value():
-        return T.ptx.elect_sync()
-
-    def tcgen05_predicated_mma(d_tmem_addr, a_operand, b_desc, i_desc, scale_c, issue):
-        T.evaluate(
-            T.ptx.tcgen05.mma(
-                d_tmem_addr,
-                a_operand,
-                b_desc,
-                i_desc,
-                d_dtype="float32",
-                a_dtype="tf32",
-                b_dtype="tf32",
-                use_a_tmem=True,
-                cta_group=1,
-                enable_input_d=T.cast(scale_c, "uint32"),
-                scale_input_d=0,
-                pred=issue,
-            )
-        )
-
-    def tcgen05_predicated_commit(barrier, issue):
-        T.evaluate(T.ptx.tcgen05.commit(barrier, cta_group=1, pred=issue))
-
-    def smem_desc_replace_lo(desc_base, lo):
-        # Equivalent to `desc.lo = lo` on a 64-bit SmemDescriptor (low 32 bits).
-        return T.bitwise_or(
-            T.bitwise_and(desc_base, T.bitwise_not(T.uint64(0xFFFFFFFF))), T.cast(lo, "uint64")
-        )
-
-    def advance_umma_desc_lo(base, offset, k_idx):
-        return base + ((offset + k_idx) * T.uint32(4) >> T.uint32(4))
-
-    def warp_reduce_sum4(value):
-        value = value + T.tvm_warp_shuffle_xor(T.uint32(0xFFFFFFFF), value, 2, 32, 32)
-        value = value + T.tvm_warp_shuffle_xor(T.uint32(0xFFFFFFFF), value, 1, 32, 32)
-        return value
+    def fma_sum_of_squares(acc0, acc1, a_flat, row_w, npairs, sc):
+        # Plain (non-@T.inline) Python helper: the parser executes this call's
+        # Python ``for`` at parse time, unrolling it so each 2-wide pair slice
+        # stays a compile-time-static rank-1 region (a TIR loop var or a
+        # middle-dim scalar index would make the fma reg path reject the op —
+        # non-static extent / "op rank 3 > anchor rank 2"). Fused packed
+        # fma.f32x2 accumulate (acc += pair*pair) into the two per-row dual
+        # accumulators, structurally mirroring the hand ffma2 sum0/sum1 float2
+        # pair (the T.fma f32x2 path emits fma.rz.ftz vs the hand's rn/non-ftz
+        # — a sub-ULP sqr difference, well within the kernel's 1e-8 gate). The
+        # flat A view is [0:row_w]=row0, [row_w:2*row_w]=row1.
+        for p in range(npairs):
+            lo0, lo1 = 2 * p, row_w + 2 * p
+            sc.fma(acc0, a_flat[lo0 : lo0 + 2], a_flat[lo0 : lo0 + 2], acc0)
+            sc.fma(acc1, a_flat[lo1 : lo1 + 2], a_flat[lo1 : lo1 + 2], acc1)
 
     @T.prim_func
     def sm100_tf32_hc_prenorm_gemm(
         shape_m: T.uint32,
-        tensor_map_a: T.TensorMap(),
-        tensor_map_b: T.TensorMap(),
-        tensor_map_d: T.TensorMap(),
+        a: T.Buffer((config.m, config.k), "bfloat16"),
+        b: T.Buffer((config.n, config.k), "float32"),
+        d: T.Buffer(config.d_shape, "float32"),
         sqr_sum: T.Buffer((config.num_splits * config.m,), "float32"),
     ):
         T.device_entry()
-        # TIRX_TRANSCRIBE_START sm100_tf32_hc_prenorm_gemm_impl
         T.attr({"tirx.launch_bounds_min_blocks_per_sm": 1})
+        # TIRX_TRANSCRIBE_START sm100_tf32_hc_prenorm_gemm_impl
         warp_idx = T.warp_id([num_warps])
+        T.warpgroup_id([num_warps // 4])
         lane_idx = T.lane_id([32])
         lane_u32: T.uint32 = T.cast(lane_idx, "uint32")
 
-        if warp_idx == 0:
-            if T.ptx.elect_sync():
-                T.evaluate(T.ptx.prefetch_tensormap(T.address_of(tensor_map_a)))
-                T.evaluate(T.ptx.prefetch_tensormap(T.address_of(tensor_map_b)))
-                T.evaluate(T.ptx.prefetch_tensormap(T.address_of(tensor_map_d)))
-
-        smem = T.alloc_buffer([smem_total_bytes], "uint8", scope="shared.dyn", align=1024)
-        smem_cd_data: T.let[T.Var(name="smem_cd_data", dtype=PointerType(PrimType("float32")))] = (
-            T.reinterpret("handle", smem.ptr_to([0]))
+        # SMEMPool bump-allocates over a 1024-aligned uint8 arena (matches the
+        # hand's __align__(1024) so the 128B-swizzle TMA boxes stay aligned). All
+        # data sizes are 1024-multiples so the pooled offsets reproduce the hand
+        # layout (cd@0 | a | b | barriers | tmem_ptr) filling config.smem_size.
+        smem = T.alloc_buffer([config.smem_size], "uint8", scope="shared.dyn", align=1024)
+        pool = T.SMEMPool(ptr=smem.data)
+        # Swizzled (block_m, block_n) float32 view of the D-epilogue SMEM staging
+        # buffer. The D epilogue stages the register tile into it with a single
+        # Tx.copy(smem_cd_mma, d_reg) (swizzle handled by the reg->smem dispatch),
+        # then the copy_async(tma) D store reads it back as this 128B-swizzled
+        # mma_shared_layout atom.
+        smem_cd_mma = pool.alloc(
+            (block_m, block_n),
+            "float32",
+            align=1024,
+            layout=mma_shared_layout("float32", SwizzleMode.SWIZZLE_128B_ATOM, (block_m, block_n)),
         )
-        smem_a_data: T.let[T.Var(name="smem_a_data", dtype=PointerType(PrimType("bfloat16")))] = (
-            T.reinterpret("handle", smem.ptr_to([smem_a_offset]))
-        )
-        smem_b_data: T.let[T.Var(name="smem_b_data", dtype=PointerType(PrimType("float32")))] = (
-            T.reinterpret("handle", smem.ptr_to([smem_b_offset]))
-        )
-        smem_barrier_data: T.let[
-            T.Var(name="smem_barrier_data", dtype=PointerType(PrimType("uint64")))
-        ] = T.reinterpret("handle", smem.ptr_to([smem_barrier_offset]))
-        smem_tmem_ptr_data: T.let[
-            T.Var(name="smem_tmem_ptr_data", dtype=PointerType(PrimType("uint32")))
-        ] = T.reinterpret("handle", smem.ptr_to([smem_tmem_ptr_offset]))
-        smem_cd = T.decl_buffer(
-            (smem_cd_size,), "uint8", data=smem.data, scope="shared.dyn", elem_offset=0
-        )
-        smem_a = T.decl_buffer(
+        # Swizzled (stage, block_m, block_k) view: copy_async(tma) writes it and
+        # the cast warp reads it via T.copy -> ldmatrix.x4 into the warpgroup
+        # .16x256b register atom (block_k * 2B = 128 B/row = 1 mma_shared_layout
+        # 128B atom).
+        smem_a_mma = pool.alloc(
             (num_stages, block_m, block_k),
             "bfloat16",
-            data=smem_a_data,
-            scope="shared.dyn",
-            elem_offset=0,
             align=1024,
+            layout=mma_shared_layout(
+                "bfloat16", SwizzleMode.SWIZZLE_128B_ATOM, (num_stages, block_m, block_k)
+            ),
         )
-        smem_b = T.decl_buffer(
-            (num_stages, num_b_tma_atoms, block_n, block_swizzled_bk),
+        # (stage, block_n, block_k) 128B-swizzled view: copy_async(tma) writes it
+        # and T.gemm_async reads it as a [block_n, block_k] tf32 operand. block_k *
+        # 4B = 256 B/row = 2 x 128B atoms (one TMA copy spans both).
+        smem_b_mma = pool.alloc(
+            (num_stages, block_n, block_k),
             "float32",
-            data=smem_b_data,
-            scope="shared.dyn",
-            elem_offset=0,
             align=1024,
+            layout=mma_shared_layout(
+                "float32", SwizzleMode.SWIZZLE_128B_ATOM, (num_stages, block_n, block_k)
+            ),
         )
-        smem_barriers = T.decl_buffer(
-            (num_total_barriers,),
-            "uint64",
-            data=smem_barrier_data,
-            scope="shared.dyn",
-            elem_offset=0,
-            align=8,
+        # Three Pipes carve their full/empty mbarriers from the pool (replacing
+        # the hand 5-class barrier array + manual init loop); each ctor inits its
+        # barriers under a single-leader (thread-0) guard.
+        #   smem_pipe : TMA full (expect_tx; cast warps wait) + tcgen05-commit
+        #               empty (MMA frees the A/B stage; TMA warp waits).
+        #   cast_pipe : 128-thread mbarrier full (cast warps deposit A->TMEM; MMA
+        #               waits) + tcgen05-commit empty (MMA frees the TMEM A; cast
+        #               warps wait). num_cast_stages deep (was over-allocated to
+        #               num_stages by the hand).
+        #   tmem_pipe : tcgen05-commit full only (MMA signals D ready; epilogue
+        #               waits).
+        smem_pipe = Pipeline(
+            pool, num_stages, full="tma", empty="tcgen05", init_full=1, init_empty=1
         )
-        tmem_ptr_in_smem = T.decl_buffer(
-            (1,), "uint32", data=smem_tmem_ptr_data, scope="shared.dyn", elem_offset=0, align=4
+        cast_pipe = Pipeline(
+            pool,
+            num_cast_stages,
+            full="mbar",
+            empty="tcgen05",
+            init_full=num_cast_and_reduce_threads,
+            init_empty=1,
         )
-        _tmem = T.decl_buffer(
-            (128, num_tmem_cols),
-            "float32",
-            scope="tmem",
-            allocated_addr=tmem_ptr_in_smem[0],
-            layout=tmem_layout,
+        # One-way "tmem freed" signal (no slot to recycle), so a bare TCGen05Bar
+        # rather than a full/empty Pipeline.
+        tmem_pipe = TCGen05Bar(pool, 1)
+        tmem_pipe.init(1)
+        tmem_ptr_in_smem = pool.alloc((1,), "uint32", align=4)
+        # TMEMPool owns the single full-256-col tcgen05.alloc (emitted by
+        # ``commit()`` in a warp-2 guard) and the matching relinquish+dealloc
+        # (``dealloc()`` in a warp-1 guard). ``alloc`` hands back a buffer whose
+        # ``allocated_addr`` is the pool's compile-time ``col_start`` (0 for the
+        # first/only region), so the TMEM base stays the constant 0 the hand
+        # MMA/epilogue used — gemm_async never reloads the base from SMEM (a
+        # per-MMA LDS, ~+16% on the latency-bound configs). ``tmem_ptr_in_smem``
+        # is the runtime alloc-result slot (written by tcgen05.alloc, otherwise
+        # unread since the base is the const 0). sync_after_alloc=False matches
+        # the hand kernel, which relies on the cta_sync below.
+        tmem_pool = T.TMEMPool(
+            None,
+            total_cols=num_tmem_cols,
+            cta_group=1,
+            alloc_warp=2,
+            dealloc_warp=1,
+            tmem_addr=tmem_ptr_in_smem,
+            sync_after_alloc=False,
         )
+        _tmem = tmem_pool.alloc((128, num_tmem_cols), "float32", layout=tmem_layout)
 
-        if warp_idx == 1:
-            if T.ptx.elect_sync():
-                for init_i in T.unroll(0, num_stages):
-                    mbarrier_init_cta(
-                        smem_barriers.ptr_to([full_barrier_base + init_i]), T.uint32(1)
-                    )
-                    mbarrier_init_cta(
-                        smem_barriers.ptr_to([full_cast_barrier_base + init_i]),
-                        T.uint32(num_cast_and_reduce_threads),
-                    )
-                    mbarrier_init_cta(
-                        smem_barriers.ptr_to([empty_barrier_base + init_i]), T.uint32(1)
-                    )
-                    mbarrier_init_cta(
-                        smem_barriers.ptr_to([empty_cast_barrier_base + init_i]), T.uint32(1)
-                    )
-                mbarrier_init_cta(smem_barriers.ptr_to([tmem_full_barrier_idx]), T.uint32(1))
-                T.ptx.fence.mbarrier_init()
-        elif warp_idx == 2:
-            T.ptx.tcgen05.alloc(
-                T.address_of(tmem_ptr_in_smem[0]), n_cols=num_tmem_cols, cta_group=1
-            )
+        # Pipeline ctors already inited every barrier (thread-0 leader); the fence
+        # makes those inits visible before the cta_sync releases the consumers.
+        T.ptx.fence.mbarrier_init()
+        tmem_pool.commit()  # warp-2-guarded tcgen05.alloc (self-guards via thread_rank)
         T.cuda.cta_sync()
 
-        block_idx_raw = T.cast(T.cta_id([config.grid_blocks]), "uint32")
-        block_idx = T.tvm_warp_shuffle(T.uint32(0xFFFFFFFF), block_idx_raw, 0, 32, 32)
+        block_idx: T.uint32 = T.cast(T.cta_id([config.grid_blocks]), "uint32")
         m_block_idx: T.uint32 = block_idx // T.uint32(num_splits)
         k_split_idx: T.uint32 = block_idx % T.uint32(num_splits)
         k_offset: T.uint32 = (
@@ -576,205 +499,215 @@ def get_kernel(**kwargs: Any):
                 if T.ptx.elect_sync():
                     for s in T.serial(T.uint32(0), num_total_stages):
                         stage_idx: T.uint32 = s % T.uint32(num_stages)
-                        T.ptx.mbarrier.try_wait(
-                            smem_barriers.ptr_to([empty_barrier_base + stage_idx]),
-                            ((s // T.uint32(num_stages)) & T.uint32(1)) ^ T.uint32(1),
+                        smem_pipe.empty.wait(
+                            stage_idx, ((s // T.uint32(num_stages)) & T.uint32(1)) ^ T.uint32(1)
                         )
-                        m_idx: T.uint32 = m_block_idx * T.uint32(block_m)
-                        k_idx: T.uint32 = k_offset + s * T.uint32(block_k)
-                        tma_load_2d_cluster(
-                            smem_a.ptr_to([stage_idx, 0, 0]),
-                            smem_barriers.ptr_to([full_barrier_base + stage_idx]),
-                            tensor_map_a,
-                            k_idx,
-                            m_idx,
+                        # u32 row/col bases — the copy_async(tma) gmem-layout grouping
+                        # now handles unsigned shape extents (no int32 cast needed).
+                        m_idx0: T.uint32 = m_block_idx * T.uint32(block_m)
+                        k_idx0: T.uint32 = k_offset + s * T.uint32(block_k)
+                        # the outer elect_sync narrows to one lane; the copy_async(tma)
+                        # runs at the default thread scope the dispatch requires (a
+                        # bare op under a manual `if warp==0` emits no lane guard ->
+                        # all 32 lanes over-issue the bulk copy). A is loaded
+                        # as bf16 (exact in tf32); B as TFLOAT32 so the TMA RN-truncates
+                        # fp32->tf32 ON LOAD, matching the tf32 MMA + DeepGEMM (else the
+                        # MMA's RZ truncation diverges ~1 tf32 ULP, D off ~5e-4).
+                        # block_n=32 > n -> B rows n..block_n are TMA OOB-filled.
+                        Tx.copy_async(
+                            smem_a_mma[stage_idx],
+                            a[m_idx0 : m_idx0 + block_m, k_idx0 : k_idx0 + block_k],
+                            dispatch="tma",
+                            mbar=smem_pipe.full.ptr_to([stage_idx]),
+                            cta_group=1,
+                            cache_hint="evict_normal",
                         )
-                        for b_atom in T.unroll(0, num_b_tma_atoms):
-                            tma_load_2d_cluster(
-                                smem_b.ptr_to([stage_idx, b_atom, 0, 0]),
-                                smem_barriers.ptr_to([full_barrier_base + stage_idx]),
-                                tensor_map_b,
-                                k_idx + T.uint32(b_atom * block_swizzled_bk),
-                                T.uint32(0),
-                            )
-                        mbarrier_arrive_expect_tx_cta(
-                            smem_barriers.ptr_to([full_barrier_base + stage_idx]),
-                            T.uint32(smem_a_size_per_stage + smem_b_size_per_stage),
+                        Tx.copy_async(
+                            smem_b_mma[stage_idx],
+                            b[0:block_n, k_idx0 : k_idx0 + block_k],
+                            dispatch="tma",
+                            mbar=smem_pipe.full.ptr_to([stage_idx]),
+                            cta_group=1,
+                            cache_hint="evict_normal",
+                            tma_dtype="tf32",
+                        )
+                        smem_pipe.full.arrive(
+                            stage_idx,
+                            tx_count=T.uint32(smem_a_size_per_stage + smem_b_size_per_stage),
                         )
 
             if warp_idx == 1:
-                desc_i: T.uint32
-                T.ptx.tcgen05.encode_instr_descriptor(
-                    T.address_of(desc_i),
-                    d_dtype="float32",
-                    a_dtype="tf32",
-                    b_dtype="tf32",
-                    M=block_m,
-                    N=block_n,
-                    K=umma_k,
-                    trans_a=False,
-                    trans_b=False,
-                    n_cta_groups=1,
-                )
-                desc_b = SmemDescriptor()
-                desc_b.init(smem_b.ptr_to([0, 0, 0, 0]), ldo=0, sdo=b_sdo, swizzle=b_swizzle)
-                b_desc_base_lo: T.uint32 = T.cast(desc_b.desc, "uint32")
-                b_desc_lo: T.uint32 = T.if_then_else(
-                    lane_u32 < T.uint32(num_stages),
-                    b_desc_base_lo + lane_u32 * T.uint32(smem_b_size_per_stage // 16),
-                    T.uint32(0),
-                )
-                mma_elect_once: T.uint32 = elect_one_sync_value()
                 for s in T.serial(T.uint32(0), num_total_stages):
                     stage_idx: T.uint32 = s % T.uint32(num_stages)
                     cast_stage_idx: T.uint32 = s % T.uint32(num_cast_stages)
-                    T.ptx.mbarrier.try_wait(
-                        smem_barriers.ptr_to([full_cast_barrier_base + cast_stage_idx]),
-                        (s // T.uint32(num_cast_stages)) & T.uint32(1),
+                    cast_pipe.full.wait(
+                        cast_stage_idx, (s // T.uint32(num_cast_stages)) & T.uint32(1)
                     )
-                    b_desc_shuffled_lo: T.uint32 = T.tvm_warp_shuffle(
-                        T.uint32(0xFFFFFFFF), b_desc_lo, stage_idx, 32, 32
+                    # int32 col base so the A tmem slice extent stays int (a uint32
+                    # base makes the extent uint32, which fails gemm_async's A-layout
+                    # structural-equality check against the int expected layout).
+                    a_col: T.int32 = T.cast(cast_stage_idx * T.uint32(block_k), "int32")
+                    # D[block_m, block_n] = (s==0 ? overwrite : +=) A @ B^T, A read from
+                    # TMEM (cast-deposited tf32), B from the 128B-swizzled SMEM view. The
+                    # tcgen05 dispatch unrolls the umma_k=8 K-tiling internally, so
+                    # accum=(s != 0) reproduces the hand scale_c = (s != 0)|(mma_k != 0).
+                    Tx.warp.gemm_async(
+                        _tmem[0:block_m, d_tmem_start_col : d_tmem_start_col + block_n],
+                        _tmem[0:block_m, a_col : a_col + block_k],
+                        smem_b_mma[stage_idx],
+                        accum=(s != T.uint32(0)),
+                        is_AB_tf32=True,
+                        dispatch="tcgen05",
+                        cta_group=1,
+                        # "recompute" encodes each MMA's B descriptor independently
+                        # via cvta on the uniform datapath (ULEA), avoiding the
+                        # "hoist" 3-op chain (stage_idx*stride -> shift -> add to a
+                        # shared descB) that sits on the per-stage critical path
+                        # before the first MMA issues. Matches the hand-rolled
+                        # shuffle-precompute latency on the latency-bound tail.
+                        smem_desc="recompute",
                     )
-                    for mma_k in T.serial(T.uint32(0), T.uint32(block_k // umma_k), unroll=True):
-                        mma_col: T.uint32 = mma_k * T.uint32(umma_k)
-                        atom_idx: T.uint32 = mma_col // T.uint32(block_swizzled_bk)
-                        in_atom_idx: T.uint32 = mma_col % T.uint32(block_swizzled_bk)
-                        b_offset: T.uint32 = atom_idx * T.uint32(block_n * block_swizzled_bk)
-                        b_desc_lo_i: T.uint32 = advance_umma_desc_lo(
-                            b_desc_shuffled_lo, b_offset, in_atom_idx
-                        )
-                        b_desc_i: T.uint64 = smem_desc_replace_lo(desc_b.desc, b_desc_lo_i)
-                        tcgen05_predicated_mma(
-                            T.cuda.get_tmem_addr(T.uint32(0), 0, d_tmem_start_col),
-                            T.cuda.get_tmem_addr(
-                                T.uint32(0), 0, cast_stage_idx * T.uint32(block_k) + mma_col
-                            ),
-                            b_desc_i,
-                            desc_i,
-                            (s != T.uint32(0)) | (mma_k != T.uint32(0)),
-                            mma_elect_once,
-                        )
-                    tcgen05_predicated_commit(
-                        smem_barriers.ptr_to([empty_cast_barrier_base + cast_stage_idx]),
-                        mma_elect_once,
-                    )
-                    tcgen05_predicated_commit(
-                        smem_barriers.ptr_to([empty_barrier_base + stage_idx]), mma_elect_once
-                    )
-                tcgen05_predicated_commit(
-                    smem_barriers.ptr_to([tmem_full_barrier_idx]), mma_elect_once
-                )
+                    if T.ptx.elect_sync():
+                        cast_pipe.empty.arrive(cast_stage_idx)
+                        smem_pipe.empty.arrive(stage_idx)
+                if T.ptx.elect_sync():
+                    tmem_pipe.arrive(0)
 
-            T.ptx.mbarrier.try_wait(smem_barriers.ptr_to([tmem_full_barrier_idx]), 0)
-            values = T.alloc_local((4,), "uint32")
-            for epi_i in T.unroll(0, block_n // 4):
-                T.ptx.tcgen05.ld(
-                    T.uint32(0),
-                    values[0],
-                    values[1],
-                    values[2],
-                    values[3],
-                    shape="32x32b",
-                    num=4,
-                    row=0,
-                    col=d_tmem_start_col + epi_i * 4,
-                )
-                T.ptx.tcgen05.wait.ld()
-                smem_offset: T.uint32 = T.cast(warp_idx, "uint32") * T.uint32(
-                    block_m // 4 * swizzle_cd_mode
-                ) + get_swizzled_smem_offset(T.uint32(epi_i), lane_u32, swizzle_cd_mode)
-                if lane_u32 < T.uint32(16):
-                    st_shared_v4_u32(
-                        smem_cd.ptr_to([smem_offset]), values[0], values[1], values[2], values[3]
-                    )
-                T.cuda.warp_sync()
+            tmem_pipe.wait(0, 0)
+            # D epilogue: read the M=64 (Layout-F scattered) tcgen05 accumulator
+            # out of TMEM into a warpgroup register tile via the ``.16x256b`` atom
+            # (``copy_async(reg, tmem)``), then stage it into the 128B-swizzled
+            # ``smem_cd_mma`` view with a single ``Tx.copy(smem, reg)``. The
+            # register tile's layout is ``tcgen05_atom_layout``, whose logical
+            # (row, col) ↔ (lane, reg) mapping matches the MMA's Layout-F write,
+            # so the reg→smem copy is a logical identity that reproduces the
+            # hand-rolled ``tcgen05.ld 32x32b`` + ``st.shared.v4`` store
+            # bit-exactly (rel D == 0).
+            d_reg = T.alloc_buffer(
+                (block_m, block_n),
+                "float32",
+                layout=tcgen05_atom_layout("16x256b", (block_m, block_n), "float32"),
+                scope="local",
+            )
+            Tx.warpgroup.copy_async(
+                d_reg, _tmem[0:block_m, d_tmem_start_col : d_tmem_start_col + block_n]
+            )
+            T.ptx.tcgen05.wait.ld()
+            Tx.warpgroup.copy(smem_cd_mma, d_reg)
 
             T.ptx.fence.proxy_async("shared::cta")
             T.ptx.bar.sync(0, num_mma_threads)
             if warp_idx == 0:
                 if T.ptx.elect_sync():
+                    # D store: smem_cd_mma (block_m, block_n swizzled) -> gmem D tile.
+                    # block_m/block_n may exceed m/n (boundary tile) -> the TMA store
+                    # writes only the valid region. elect (lane guard) + default
+                    # thread scope (copy_async scope), like the loads.
+                    m0: T.uint32 = m_block_idx * T.uint32(block_m)
                     if num_splits == 1:
-                        tma_store_2d(
-                            smem_cd.ptr_to([0]),
-                            tensor_map_d,
-                            T.uint32(0),
-                            m_block_idx * T.uint32(block_m),
-                        )
+                        Tx.copy_async(d[m0 : m0 + block_m, 0:block_n], smem_cd_mma, dispatch="tma")
                     else:
-                        tma_store_3d(
-                            smem_cd.ptr_to([0]),
-                            tensor_map_d,
-                            T.uint32(0),
-                            m_block_idx * T.uint32(block_m),
-                            k_split_idx,
+                        ks: T.uint32 = k_split_idx
+                        Tx.copy_async(
+                            d[ks, m0 : m0 + block_m, 0:block_n], smem_cd_mma, dispatch="tma"
                         )
                     T.ptx.cp_async.bulk.commit_group()
-            if warp_idx == 1:
-                T.ptx.tcgen05.dealloc(T.uint32(0), n_cols=num_tmem_cols, cta_group=1)
+            tmem_pool.dealloc()  # warp-1-guarded relinquish + tcgen05.dealloc
         else:
             sub_warp_idx: T.uint32 = T.cast(
                 T.cast(warp_idx, "int32") - T.int32(num_mma_warps), "uint32"
             )
-            uint32_values = T.alloc_local((2, block_k // 8), "uint32")
-            fp32x2_values = T.alloc_local((2, block_k // 8), "uint64")
-            store_values = T.alloc_local((4,), "uint32")
-            sum0: T.uint64 = T.cuda.make_float2(T.float32(0), T.float32(0))
-            sum1: T.uint64 = T.cuda.make_float2(T.float32(0), T.float32(0))
+            # A cast/deposit register tiles. The bf16 A tile is ldmatrix-loaded
+            # (below) into the per-warpgroup ``.16x256b`` tcgen05 register atom —
+            # the same Layout-F M=64 distribution the gemm_async A-in-TMEM operand
+            # reads — then cast to tf32 (T.cast) and DEPOSITED into TMEM cols
+            # [cast_stage*block_k, +block_k) via T.copy_async (reg->tmem
+            # tcgen05.st, the A operand gemm_async consumes). ``a_bf16`` is
+            # declared with the *fp32* atom layout (one element per 32-bit slot,
+            # NOT the dense 2-bf16-per-slot bf16 atom) so a_bf16 and a_fp32 share
+            # an identical per-(lane, register) (row, col) mapping — the cast is
+            # then a slot-for-slot widen and a_fp32's register order matches both
+            # the ldmatrix output AND what the tcgen05.st deposit consumes (rel
+            # D == 0). NB the LOAD stays hand ldmatrix: T.copy on this warpgroup
+            # atom can't emit ldmatrix (its m8n8 per-warp lane distribution is
+            # structurally incompatible with the wid_in_wg+split-laneid atom) and
+            # falls to a 16x-scalar-LDS reg path that costs +25% on the latency-
+            # bound tail. The square/accumulate runs on the flat ``.local()`` view
+            # (per-thread private regs via ``Tx.fill`` / ``Tx.fma``): per-thread
+            # fp32 reg index decomposes va = r // 16 (the Layout-F row selector),
+            # regs [0,16) feed row m_idx0, regs [16,32) feed row m_idx1 (+8).
+            a_bf16 = T.alloc_buffer(
+                (block_m, block_k),
+                "bfloat16",
+                layout=tcgen05_atom_layout("16x256b", (block_m, block_k), "float32"),
+                scope="local",
+            )
+            a_fp32 = T.alloc_buffer(
+                (block_m, block_k),
+                "float32",
+                layout=tcgen05_atom_layout("16x256b", (block_m, block_k), "float32"),
+                scope="local",
+            )
+            # Dual packed sum-of-squares accumulators, mirroring the hand's two
+            # float2 (sum0/sum1) accumulators: one 2-wide packed accumulator per
+            # Layout-F row this thread owns. ``T.fma`` (packed fma.f32x2)
+            # accumulates one packed pair at a time — the FUSED multiply-
+            # accumulate is the only no-regression reduce form (playbook: serial
+            # T.sum is -15%, un-fused tree -9%).
+            sqr0 = T.alloc_local((2,), "float32")
+            sqr1 = T.alloc_local((2,), "float32")
+            a_flat = a_fp32.local()  # 1D (cast_per_thread,): [0:16]=row0, [16:32]=row1
+            # Per-thread private regs: use thread-scope fill/fma (not Tx.warp — warp
+            # scope requires a laneid-distributed layout; see elementwise reg dispatch).
+            Tx.fill(sqr0, T.float32(0))
+            Tx.fill(sqr1, T.float32(0))
             for s in T.serial(T.uint32(0), num_total_stages, unroll=True):
                 stage_idx: T.uint32 = s % T.uint32(num_stages)
-                T.ptx.mbarrier.try_wait(
-                    smem_barriers.ptr_to([full_barrier_base + stage_idx]),
-                    (s // T.uint32(num_stages)) & T.uint32(1),
-                )
-                for load_i in T.unroll(0, block_k // 8 // 2):
-                    i = load_i * 2
-                    swizzled_offset: T.uint32 = get_swizzled_smem_offset(
-                        T.uint32(i) + lane_u32 // T.uint32(16),
-                        lane_u32 % T.uint32(16),
-                        swizzle_a_mode,
-                    )
-                    smem_linear_byte: T.uint32 = (
-                        T.cast(stage_idx, "uint32") * T.uint32(smem_a_size_per_stage)
-                        + sub_warp_idx * T.uint32(block_m // 4 * swizzle_a_mode)
-                        + swizzled_offset
-                    )
-                    ldmatrix_x4_b16(
-                        T.address_of(uint32_values[0, i]),
-                        T.address_of(uint32_values[1, i]),
-                        T.address_of(uint32_values[0, i + 1]),
-                        T.address_of(uint32_values[1, i + 1]),
-                        smem.ptr_to([T.uint32(smem_a_offset) + smem_linear_byte]),
-                    )
                 cast_stage_idx: T.uint32 = s % T.uint32(num_cast_stages)
-                T.ptx.mbarrier.try_wait(
-                    smem_barriers.ptr_to([empty_cast_barrier_base + cast_stage_idx]),
-                    ((s // T.uint32(num_cast_stages)) & T.uint32(1)) ^ T.uint32(1),
+                a_col: T.int32 = T.cast(cast_stage_idx * T.uint32(block_k), "int32")
+                smem_pipe.full.wait(stage_idx, (s // T.uint32(num_stages)) & T.uint32(1))
+                # SMEM->reg A load: T.copy dispatches to ldmatrix.x4 for the
+                # warpgroup .16x256b atom (enabled by the ld_stmatrix llvm-slice
+                # fix — without it the canon hits "conflicting scopes for thread"
+                # and falls to a +25% scalar-LDS path). a_bf16 carries the *fp32*
+                # atom layout so the T.cast to a_fp32 is a slot-for-slot widen
+                # and the tcgen05.st deposit reads the same (row, col).
+                Tx.warpgroup.copy(a_bf16, smem_a_mma[stage_idx])
+                cast_pipe.empty.wait(
+                    cast_stage_idx, ((s // T.uint32(num_cast_stages)) & T.uint32(1)) ^ T.uint32(1)
                 )
-                for i in T.unroll(0, block_k // 8):
-                    fp32x2_values[0, i] = T.cuda.bfloat1622float2(uint32_values[0, i])
-                    fp32x2_values[1, i] = T.cuda.bfloat1622float2(uint32_values[1, i])
-                    sum0 = ffma2_rn(fp32x2_values[0, i], fp32x2_values[0, i], sum0)
-                    sum1 = ffma2_rn(fp32x2_values[1, i], fp32x2_values[1, i], sum1)
-                    store_values[0] = T.cuda.float_as_uint(T.cuda.float2_x(fp32x2_values[0, i]))
-                    store_values[1] = T.cuda.float_as_uint(T.cuda.float2_y(fp32x2_values[0, i]))
-                    store_values[2] = T.cuda.float_as_uint(T.cuda.float2_x(fp32x2_values[1, i]))
-                    store_values[3] = T.cuda.float_as_uint(T.cuda.float2_y(fp32x2_values[1, i]))
-                    T.ptx.tcgen05.st(
-                        T.uint32(0),
-                        store_values[0],
-                        store_values[1],
-                        store_values[2],
-                        store_values[3],
-                        shape="16x256b",
-                        num=1,
-                        row=0,
-                        col=cast_stage_idx * block_k + i * 8,
-                    )
+                # bf16 -> tf32 with the atom layouts intact so the dest is
+                # written in the deposit's native PTX-register order.
+                Tx.warpgroup.cast(a_fp32, a_bf16)
+                # Fused multiply-accumulate sum-of-squares: sqr{0,1} += a*a
+                # per packed pair (8 fma.f32x2 per row/stage, structurally
+                # matching the hand ffma2 dual accumulator). Per-row, order-
+                # insensitive.
+                fma_sum_of_squares(sqr0, sqr1, a_flat, cast_row_w, cast_pairs, Tx)
+                Tx.warpgroup.copy_async(_tmem[0:block_m, a_col : a_col + block_k], a_fp32)
                 T.ptx.tcgen05.wait.st()
-                mbarrier_arrive_cta(smem_barriers.ptr_to([full_cast_barrier_base + cast_stage_idx]))
+                cast_pipe.full.arrive(cast_stage_idx)
 
-            reduced0: T.float32 = warp_reduce_sum4(T.cuda.float2_x(sum0) + T.cuda.float2_y(sum0))
-            reduced1: T.float32 = warp_reduce_sum4(T.cuda.float2_x(sum1) + T.cuda.float2_y(sum1))
+            # Cross-lane sum-of-squares reduce: each Layout-F row is split across
+            # the 4 K-lanes (laneid bits 0..1). Stage the per-thread col-reduced
+            # partials (sqr{0,1}[0]+[1]) into a 2-row tile whose warp view is
+            # (16, 4) = (8 lane//4 x 2 rows, 4 lane%4); Tx.sum(thread_reduce)
+            # reduces the lane%4 axis in place (the shfl_xor 2,1 the hand did).
+            sqr_part = T.alloc_buffer(
+                [2], "float32", scope="local", layout=TileLayout(S[(2,) : (1,)])
+            )
+            sqr_part[0] = sqr0[0] + sqr0[1]
+            sqr_part[1] = sqr1[0] + sqr1[1]
+            sqr_warp = sqr_part.view(
+                16,
+                4,
+                layout=TileLayout(S[(1, 1) : (1, 1)])
+                .tile(TileLayout(S[(8, 4) : (4 @ laneid, 1 @ laneid)]), (8, 4), (1, 1))
+                .tile(TileLayout(S[(2, 1) : (1, 1)]), (2, 1), (8, 4)),
+            )
+            Tx.warp.sum(sqr_warp, sqr_warp, thread_reduce=True)
+            reduced0: T.float32 = sqr_part[0]
+            reduced1: T.float32 = sqr_part[1]
             m_idx0: T.uint32 = (
                 m_block_idx * T.uint32(block_m)
                 + sub_warp_idx * T.uint32(block_m // 4)
@@ -835,170 +768,17 @@ def _compile_tirx_tf32_hc(config: TF32HCPrenormGemmConfig) -> Any:
     return _compile_tirx_tf32_hc_for_config(**asdict(config))
 
 
-def _encode_driver_tma_desc(
-    *,
-    desc: Any,
-    tensor: torch.Tensor,
-    data_type: int,
-    global_shape: tuple[int, ...],
-    global_strides_bytes: tuple[int, ...],
-    box_dim: tuple[int, ...],
-    swizzle: int,
-) -> None:
-    from tirx_kernels.deepgemm import mega_moe
-
-    rank = len(global_shape)
-    global_shape_arr = (ctypes.c_uint64 * rank)(*[int(v) for v in global_shape])
-    global_strides_arr = (ctypes.c_uint64 * (rank - 1))(*[int(v) for v in global_strides_bytes])
-    box_dim_arr = (ctypes.c_uint32 * rank)(*[int(v) for v in box_dim])
-    element_strides_arr = (ctypes.c_uint32 * rank)(*[1 for _ in range(rank)])
-    result = mega_moe._get_cuda_driver().cuTensorMapEncodeTiled(
-        desc.ptr,
-        int(data_type),
-        ctypes.c_uint32(rank),
-        ctypes.c_void_p(int(tensor.data_ptr())),
-        global_shape_arr,
-        global_strides_arr,
-        box_dim_arr,
-        element_strides_arr,
-        mega_moe._CUDA_TENSOR_MAP_INTERLEAVE_NONE,
-        int(swizzle),
-        mega_moe._CUDA_TENSOR_MAP_L2_PROMOTION_L2_256B,
-        mega_moe._CUDA_TENSOR_MAP_FLOAT_OOB_FILL_NONE,
-    )
-    if result != 0:
-        raise RuntimeError(f"cuTensorMapEncodeTiled failed with CUresult={result}")
-
-
-def _encode_tf32_tma_2d_desc(
-    *,
-    tensor: torch.Tensor,
-    gmem_inner_dim: int,
-    gmem_outer_dim: int,
-    smem_inner_dim: int,
-    smem_outer_dim: int,
-    gmem_outer_stride: int,
-    swizzle_mode: int,
-) -> Any:
-    from tirx_kernels.deepgemm import mega_moe
-
-    elem_size = int(tensor.element_size())
-    if swizzle_mode != 0:
-        smem_inner_dim = swizzle_mode // elem_size
-    desc = mega_moe._AlignedTensorMap()
-    _encode_driver_tma_desc(
-        desc=desc,
-        tensor=tensor,
-        data_type=_CUDA_TENSOR_MAP_DATA_TYPE_TFLOAT32,
-        global_shape=(gmem_inner_dim, gmem_outer_dim),
-        global_strides_bytes=(int(gmem_outer_stride * elem_size),),
-        box_dim=(smem_inner_dim, smem_outer_dim),
-        swizzle=mega_moe._tensor_map_swizzle_from_mode(swizzle_mode),
-    )
-    return desc
-
-
-def _encode_float32_tma_3d_desc(
-    *,
-    tensor: torch.Tensor,
-    gmem_dim_0: int,
-    gmem_dim_1: int,
-    gmem_dim_2: int,
-    smem_dim_0: int,
-    smem_dim_1: int,
-    smem_dim_2: int,
-    gmem_stride_0: int,
-    gmem_stride_1: int,
-    swizzle_mode: int,
-) -> Any:
-    from tirx_kernels.deepgemm import mega_moe
-
-    elem_size = int(tensor.element_size())
-    if swizzle_mode != 0:
-        smem_dim_0 = swizzle_mode // elem_size
-    desc = mega_moe._AlignedTensorMap()
-    _encode_driver_tma_desc(
-        desc=desc,
-        tensor=tensor,
-        data_type=_CUDA_TENSOR_MAP_DATA_TYPE_FLOAT32,
-        global_shape=(gmem_dim_0, gmem_dim_1, gmem_dim_2),
-        global_strides_bytes=(int(gmem_stride_0 * elem_size), int(gmem_stride_1 * elem_size)),
-        box_dim=(smem_dim_0, smem_dim_1, smem_dim_2),
-        swizzle=mega_moe._tensor_map_swizzle_from_mode(swizzle_mode),
-    )
-    return desc
-
-
 def _build_tirx_tensor_maps(data: dict[str, Any]) -> dict[str, Any]:
-    import tvm
-    from tirx_kernels.deepgemm.mega_moe import _encode_tma_2d_desc
-
-    config: TF32HCPrenormGemmConfig = data["config"]
-    encode_tensormap = tvm.get_global_func("runtime.cuTensorMapEncodeTiled")
-    a = data["a"]
-    b = data["b"]
-    d = data["d_tirx"]
-    swizzle_ab_mode = _get_swizzle_mode(config.block_k, int(a.element_size()))
-    swizzle_b_mode = _get_swizzle_mode(config.block_k, int(b.element_size()))
-    maps = {
-        "tensor_map_a": _encode_tma_2d_desc(
-            encode_tensormap=encode_tensormap,
-            tensor=a,
-            gmem_inner_dim=config.k,
-            gmem_outer_dim=config.m,
-            smem_inner_dim=config.block_k,
-            smem_outer_dim=config.block_m,
-            gmem_outer_stride=int(a.stride(0)),
-            swizzle_mode=swizzle_ab_mode,
-        ),
-        "tensor_map_b": _encode_tf32_tma_2d_desc(
-            tensor=b,
-            gmem_inner_dim=config.k,
-            gmem_outer_dim=config.n,
-            smem_inner_dim=config.block_k,
-            smem_outer_dim=config.block_n,
-            gmem_outer_stride=int(b.stride(0)),
-            swizzle_mode=swizzle_b_mode,
-        ),
-    }
-    if config.num_splits == 1:
-        maps["tensor_map_d"] = _encode_tma_2d_desc(
-            encode_tensormap=encode_tensormap,
-            tensor=d,
-            gmem_inner_dim=config.n,
-            gmem_outer_dim=config.m,
-            smem_inner_dim=config.block_n,
-            smem_outer_dim=config.block_m,
-            gmem_outer_stride=int(d.stride(-2)),
-            swizzle_mode=config.swizzle_cd_mode,
-        )
-    else:
-        maps["tensor_map_d"] = _encode_float32_tma_3d_desc(
-            tensor=d,
-            gmem_dim_0=config.n,
-            gmem_dim_1=config.m,
-            gmem_dim_2=config.num_splits,
-            smem_dim_0=config.block_n,
-            smem_dim_1=config.block_m,
-            smem_dim_2=1,
-            gmem_stride_0=int(d.stride(-2)),
-            gmem_stride_1=int(d.stride(-3)),
-            swizzle_mode=config.swizzle_cd_mode,
-        )
-    return maps
+    # A, B and D are all raw gmem buffer params now (copy_async(tma) host-builds
+    # every descriptor: A bf16, B TFLOAT32, D fp32 store). No hand tensor maps.
+    return {}
 
 
 def _run_tirx_with_tensor_maps(
     data: dict[str, Any], executable: Any, tensor_maps: dict[str, Any]
 ) -> tuple[torch.Tensor, torch.Tensor]:
     config: TF32HCPrenormGemmConfig = data["config"]
-    executable(
-        config.m,
-        tensor_maps["tensor_map_a"].ptr,
-        tensor_maps["tensor_map_b"].ptr,
-        tensor_maps["tensor_map_d"].ptr,
-        data["sqr_tirx"].reshape(-1),
-    )
+    executable(config.m, data["a"], data["b"], data["d_tirx"], data["sqr_tirx"].reshape(-1))
     return data["d_tirx"], data["sqr_tirx"]
 
 
@@ -1100,13 +880,7 @@ def _bench_case_input_bytes(case: TF32HCBenchCase) -> int:
 
 
 def _bench_tirx_case(case: TF32HCBenchCase, executable: Any) -> tuple[torch.Tensor, torch.Tensor]:
-    executable(
-        case.config.m,
-        case.tensor_maps["tensor_map_a"].ptr,
-        case.tensor_maps["tensor_map_b"].ptr,
-        case.tensor_maps["tensor_map_d"].ptr,
-        case.sqr_tirx.reshape(-1),
-    )
+    executable(case.config.m, case.a, case.b, case.d_tirx, case.sqr_tirx.reshape(-1))
     return case.d_tirx, case.sqr_tirx
 
 
@@ -1130,33 +904,38 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
     _rounds = kwargs.pop("rounds", 1)
     _round_cooldown_s = kwargs.pop("round_cooldown_s", 1.0)
     config_kwargs = dict(kwargs)
-    executable: Any | None = None
+    config = _make_config(**config_kwargs)
+    deep_gemm, _ = load_deep_gemm_hc()
+    runtime_config = TF32HCPrenormGemmConfig(
+        **{
+            **asdict(config),
+            "num_sms": int(
+                getattr(deep_gemm, "get_num_sms", lambda: _get_num_sms(config.num_sms))()
+            ),
+        }
+    )
+    executable = _compile_tirx_tf32_hc(runtime_config)
+    metrics: dict[str, float] = {}
 
     def make_input() -> tuple[TF32HCBenchCase, int]:
-        nonlocal executable
         case = _make_bench_case(config_kwargs)
-        if executable is None:
-            executable = _compile_tirx_tf32_hc(case.config)
         return case, _bench_case_input_bytes(case)
 
-    sample_case, _ = make_input()
-    tirx_d, tirx_sqr = _bench_tirx_case(sample_case, executable)
-    torch.cuda.synchronize()
-    tirx_diff = _assert_correct_case(sample_case, tirx_d, tirx_sqr, name="TIRx")
-    deepgemm_d, deepgemm_sqr = _bench_deepgemm_case(sample_case)
-    torch.cuda.synchronize()
-    deepgemm_diff = _assert_correct_case(sample_case, deepgemm_d, deepgemm_sqr, name="DeepGEMM")
+    def validate_case(case: TF32HCBenchCase) -> None:
+        tirx_d, tirx_sqr = _bench_tirx_case(case, executable)
+        torch.cuda.synchronize()
+        metrics["tirx_diff"] = _assert_correct_case(case, tirx_d, tirx_sqr, name="TIRx")
+        deepgemm_d, deepgemm_sqr = _bench_deepgemm_case(case)
+        torch.cuda.synchronize()
+        metrics["deepgemm_diff"] = _assert_correct_case(
+            case, deepgemm_d, deepgemm_sqr, name="DeepGEMM"
+        )
 
     def run_tirx(case: TF32HCBenchCase) -> tuple[torch.Tensor, torch.Tensor]:
-        if executable is None:
-            raise RuntimeError("TIRx executable was not compiled before benchmarking")
         return _bench_tirx_case(case, executable)
 
-    def _deepgemm():
-        return _bench_deepgemm_case
-
     result = bench(
-        {"tirx": run_tirx},
+        {"deepgemm": _bench_deepgemm_case, "tirx": run_tirx},
         make_input,
         warmup=warmup,
         repeat=repeat,
@@ -1164,12 +943,11 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
         rounds=_rounds,
         round_cooldown_s=_round_cooldown_s,
         proton_name="deepgemm_sm100_tf32_hc_prenorm_gemm",
-        references={"deepgemm": _deepgemm},
+        validate_case=validate_case,
     )
 
-    result["max_diff"] = max(tirx_diff, deepgemm_diff)
-    result["tirx_diff"] = tirx_diff
-    result["deepgemm_diff"] = deepgemm_diff
+    result["max_diff"] = max(metrics.get("tirx_diff", 0.0), metrics.get("deepgemm_diff", 0.0))
+    result.update(metrics)
     return result
 
 

@@ -1960,6 +1960,8 @@ def run_test(**kwargs: Any) -> None:
 def run_bench(
     *, warmup: int = 10, repeat: int = 30, timer: str = "proton", **kwargs: Any
 ) -> dict[str, Any]:
+    _rounds = kwargs.pop("rounds", 1)
+    _round_cooldown_s = kwargs.pop("round_cooldown_s", 1.0)
     if not _IMPLEMENTATION_COMPLETE:
         raise SkipTest("sparse FlashMLA head128 phase1 transcription is not complete")
     if not torch.cuda.is_available():

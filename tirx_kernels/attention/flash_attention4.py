@@ -1176,41 +1176,8 @@ def run_bench(
         profiler_buf = torch.zeros(PROFILER_BUFFER_SIZE, dtype=torch.uint64, device="cuda")
         case = {
             "tir": (Q_cuda, K_cuda, V_cuda, O_tir, profiler_buf),
-            # Cheap reshapes; only consumed when flashinfer is actually benched.
-            "flashinfer": (
-                Q_cuda.reshape(-1, num_qo_heads, head_dim),
-                K_cuda.reshape(-1, num_kv_heads, head_dim),
-                V_cuda.reshape(-1, num_kv_heads, head_dim),
-            ),
         }
         return case, tensor_bytes(Q_cuda, K_cuda, V_cuda, O_tir)
-
-    def _flashinfer():
-        import flashinfer
-
-        workspace_buffer = torch.empty(128 * 1024 * 1024, dtype=torch.uint8, device="cuda:0")
-        wrapper = flashinfer.BatchPrefillWithRaggedKVCacheWrapper(
-            workspace_buffer, "NHD", backend="cutlass"
-        )
-        qo_indptr = torch.tensor([0, seq_len], device="cuda:0", dtype=torch.int32)
-        kv_indptr = torch.tensor([0, seq_len], device="cuda:0", dtype=torch.int32)
-        wrapper.plan(
-            qo_indptr,
-            kv_indptr,
-            num_qo_heads=num_qo_heads,
-            num_kv_heads=num_kv_heads,
-            head_dim_qk=head_dim,
-        )
-        Q0, K0, V0, _ = prepare_data(
-            batch_size, seq_len, seq_len, num_qo_heads, num_kv_heads, head_dim
-        )
-        wrapper.run(
-            Q0.reshape(-1, num_qo_heads, head_dim).cuda(),
-            K0.reshape(-1, num_kv_heads, head_dim).cuda(),
-            V0.reshape(-1, num_kv_heads, head_dim).cuda(),
-        )
-        torch.cuda.synchronize()
-        return lambda case: wrapper.run(*case["flashinfer"])
 
     def _flashattn_sm100():
         # Flash-Attention SM100 (CuTeDSL FA4) baseline.
@@ -1339,6 +1306,6 @@ def run_bench(
         repeat=repeat,
         timer=timer,
         proton_name="flash_attention4",
-        references={"flashinfer": _flashinfer, "flashattn_sm100": _flashattn_sm100},
+        references={"flashattn_sm100": _flashattn_sm100},
         **kwargs,
     )

@@ -1530,9 +1530,9 @@ def get_kernel(
     fast_math: int = 1,
     emit_nvl_barrier_timeout_printf: bool = True,
 ):
-    from tvm.script import tirx as T
     from tvm.backend.cuda.operator.tile_primitive.gemm_async.tcgen05 import sf_tmem_layout
     from tvm.backend.cuda.operator.tile_primitive.tma_utils import SwizzleMode, mma_shared_layout
+    from tvm.script import tirx as T
     from tvm.tirx.layout import S, TCol, TileLayout, TLane
 
     runtime_config = MegaMoeConfig(
@@ -5109,6 +5109,7 @@ def _run_worker(local_rank: int, cfg_dict: dict[str, Any], mode: str) -> dict[st
                 "reference_source": source,
                 "deepgemm_max_abs_diff": deepgemm_max_abs_diff,
                 "impls": {"deepgemm": float(impls["deepgemm"]), "tirx": float(impls["tirx"])},
+                "round_samples": bench_result.get("round_samples", {}),
                 "errors": bench_result["errors"],
             }
 

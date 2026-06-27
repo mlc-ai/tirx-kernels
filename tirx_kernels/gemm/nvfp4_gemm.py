@@ -7,11 +7,11 @@ import torch
 from flashinfer import SfLayout, nvfp4_quantize
 
 import tvm
+from tvm.backend.cuda.operator.tile_primitive.gemm_async.tcgen05 import sf_smem_layout
+from tvm.backend.cuda.operator.tile_primitive.tma_utils import SwizzleMode
 from tvm.script import tirx as T
 from tvm.script.tirx import tile as Tx
 from tvm.tirx.bench import bench
-from tvm.backend.cuda.operator.tile_primitive.gemm_async.tcgen05 import sf_smem_layout
-from tvm.backend.cuda.operator.tile_primitive.tma_utils import SwizzleMode
 from tvm.tirx.lang.pipeline import MBarrier, Pipeline, PipelineState, TMABar
 from tvm.tirx.lang.tile_scheduler import ClusterPersistentScheduler2D
 

@@ -25,8 +25,8 @@ from unittest import SkipTest
 
 import torch
 
-from tvm.ir.type import PointerType, PrimType
 from tvm.backend.cuda.op import cuda_func_call
+from tvm.ir.type import PointerType, PrimType
 
 _DEEP_GEMM_MODULE_NAME = "deep_gemm"
 _SM100_SMEM_CAPACITY = 232448
@@ -488,8 +488,8 @@ def prepare_data(**kwargs: Any) -> dict[str, Any]:
 
 
 def get_kernel(**kwargs: Any):
-    from tvm.script import tirx as T
     from tvm.backend.cuda.operator.tile_primitive.gemm_async.tcgen05 import sf_tmem_layout
+    from tvm.script import tirx as T
     from tvm.tirx.layout import S, TCol, TileLayout, TLane
 
     config = _make_config(**kwargs)
@@ -2124,13 +2124,15 @@ def _prepare_global_barrier(executable: Any) -> None:
 
 
 def _prepare_tirx_invocation(
-    data: dict[str, Any], logits: torch.Tensor | None = None
+    data: dict[str, Any], logits: torch.Tensor | None = None, *, executable: Any | None = None
 ) -> dict[str, Any]:
     config: PagedMQALogitsFP4Config = data["config"]
     if logits is None:
         logits = _allocate_logits(config)
+    if executable is None:
+        executable = _compile_tirx_paged_mqa(config)
     return {
-        "executable": _compile_tirx_paged_mqa(config),
+        "executable": executable,
         "logits": logits,
         "tensor_maps": _build_tirx_tensor_maps(data),
     }
@@ -2209,7 +2211,6 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
     warmup = kwargs.pop("warmup", 10)
     repeat = kwargs.pop("repeat", 30)
     timer = kwargs.pop("timer", "proton")
-    benchmark_order_mode = kwargs.pop("benchmark_order_mode", "bidirectional")
     _rounds = kwargs.pop("rounds", 1)
     _round_cooldown_s = kwargs.pop("round_cooldown_s", 1.0)
     config_kwargs = dict(kwargs)
@@ -2238,7 +2239,6 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
         return lambda case: _run_deepgemm_paged_mqa(case[0], clean_logits=False)
 
     funcs_tirx_first = {"tirx": lambda case: _run_tirx_invocation(case[0], case[1])}
-    funcs_deepgemm_first = {"tirx": lambda case: _run_tirx_invocation(case[0], case[1])}
 
     if bench_impls_mode() == "baseline":
         result = bench(
@@ -2247,8 +2247,8 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
             warmup=warmup,
             repeat=repeat,
             timer=timer,
-        rounds=_rounds,
-        round_cooldown_s=_round_cooldown_s,
+            rounds=_rounds,
+            round_cooldown_s=_round_cooldown_s,
             proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
             references={"deepgemm": _deepgemm},
         )
@@ -2259,84 +2259,21 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
             warmup=warmup,
             repeat=repeat,
             timer=timer,
-        rounds=_rounds,
-        round_cooldown_s=_round_cooldown_s,
+            rounds=_rounds,
+            round_cooldown_s=_round_cooldown_s,
             proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
         )
-    elif benchmark_order_mode == "tirx_first":
-        result = bench(
-            funcs_tirx_first,
-            make_input,
-            warmup=warmup,
-            repeat=repeat,
-            timer=timer,
-        rounds=_rounds,
-        round_cooldown_s=_round_cooldown_s,
-            proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
-            references={"deepgemm": _deepgemm},
-        )
-    elif benchmark_order_mode == "deepgemm_first":
-        result = bench(
-            funcs_deepgemm_first,
-            make_input,
-            warmup=warmup,
-            repeat=repeat,
-            timer=timer,
-        rounds=_rounds,
-        round_cooldown_s=_round_cooldown_s,
-            proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
-            references={"deepgemm": _deepgemm},
-        )
-    elif benchmark_order_mode == "bidirectional":
-        tirx_first = bench(
-            funcs_tirx_first,
-            make_input,
-            warmup=warmup,
-            repeat=repeat,
-            timer=timer,
-        rounds=_rounds,
-        round_cooldown_s=_round_cooldown_s,
-            proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
-            references={"deepgemm": _deepgemm},
-        )
-        deepgemm_first = bench(
-            funcs_deepgemm_first,
-            make_input,
-            warmup=warmup,
-            repeat=repeat,
-            timer=timer,
-        rounds=_rounds,
-        round_cooldown_s=_round_cooldown_s,
-            proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
-            references={"deepgemm": _deepgemm},
-        )
-        result = {
-            "impls": {
-                "tirx": (tirx_first["impls"]["tirx"] + deepgemm_first["impls"]["tirx"]) / 2,
-                "deepgemm": (
-                    tirx_first["impls"]["deepgemm"] + deepgemm_first["impls"]["deepgemm"]
-                )
-                / 2,
-            },
-            "errors": {**tirx_first.get("errors", {}), **deepgemm_first.get("errors", {})},
-            "timer": timer,
-            "benchmark_protocol": {
-                **tirx_first["benchmark_protocol"],
-                "order": ["tirx", "deepgemm", "deepgemm", "tirx"],
-                "order_mode": "bidirectional_average",
-                "component_runs": [
-                    tirx_first["benchmark_protocol"],
-                    deepgemm_first["benchmark_protocol"],
-                ],
-            },
-            "component_impls": {
-                "tirx_first": tirx_first["impls"],
-                "deepgemm_first": deepgemm_first["impls"],
-            },
-        }
     else:
-        raise ValueError(
-            "benchmark_order_mode must be one of 'bidirectional', 'tirx_first', or 'deepgemm_first'"
+        result = bench(
+            funcs_tirx_first,
+            make_input,
+            warmup=warmup,
+            repeat=repeat,
+            timer=timer,
+            rounds=_rounds,
+            round_cooldown_s=_round_cooldown_s,
+            proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
+            references={"deepgemm": _deepgemm},
         )
     result["max_diff"] = tirx_diff
     return result

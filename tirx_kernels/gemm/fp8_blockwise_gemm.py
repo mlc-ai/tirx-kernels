@@ -6,10 +6,10 @@ import os
 import torch
 from deep_gemm.utils.math import per_block_cast_to_fp8, per_token_cast_to_fp8
 
+from tvm.backend.cuda.operator.tile_primitive.tma_utils import SwizzleMode
 from tvm.script import tirx as T
 from tvm.script.tirx import tile as Tx
 from tvm.tirx.bench import bench, tensor_bytes
-from tvm.backend.cuda.operator.tile_primitive.tma_utils import SwizzleMode
 from tvm.tirx.lang.pipeline import MBarrier, Pipeline, PipelineState
 from tvm.tirx.lang.tile_scheduler import ClusterPersistentScheduler2D
 
@@ -528,7 +528,6 @@ CONFIGS = [
     {"M": s, "N": s, "K": s, "label": f"{s}x{s}x{s}"} for s in [1024, 2048, 4096, 8192, 16384]
 ]
 BENCH_CONFIGS = [
-    {"M": 1024, "N": 1024, "K": 1024, "label": "smoke_1024x1024x1024"},
     {"M": 4096, "N": 2112, "K": 7168, "label": "deepgemm_m4096_n2112_k7168"},
     {"M": 4096, "N": 576, "K": 7168, "label": "deepgemm_m4096_n576_k7168"},
     {"M": 4096, "N": 24576, "K": 1536, "label": "deepgemm_m4096_n24576_k1536"},
@@ -536,7 +535,6 @@ BENCH_CONFIGS = [
     {"M": 4096, "N": 7168, "K": 16384, "label": "deepgemm_m4096_n7168_k16384"},
     {"M": 4096, "N": 4096, "K": 7168, "label": "deepgemm_m4096_n4096_k7168"},
     {"M": 4096, "N": 7168, "K": 2048, "label": "deepgemm_m4096_n7168_k2048"},
-    {"M": 8192, "N": 7168, "K": 4096, "label": "stress_m8192_n7168_k4096"},
 ]
 
 
@@ -572,8 +570,6 @@ def run_bench(
         kernel_fair = _env_flag("TIRX_FP8_BLOCKWISE_GEMM_KERNEL_FAIR", default=True)
 
     kernel = tir_kernel(M, N, K)
-    A_fp8, B_fp8, sfa, sfb, sfa_pack, sfb_pack, C_ref, A_origin, B_origin = prepare_data(M, N, K)
-    C_tvm = torch.zeros_like(C_ref).to(torch.bfloat16).to("cuda")
     ex = compile_kernel(kernel)
 
     def make_input():
