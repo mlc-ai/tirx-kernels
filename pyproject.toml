@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tirx-kernels"
 version = "0.1.1"
-description = "High-performance GPU kernels (GEMM + FlashAttention4) written in TIRx"
+description = "High-performance GPU kernels (GEMM, DeepGEMM, and FlashAttention4) written in TIRx"
 readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.10"
@@ -23,7 +23,7 @@ classifiers = [
 # Runtime deps are NOT on PyPI and must be installed separately:
 #   - tvm.tirx (the TIRx compiler)  — required by every kernel
 #   - torch                          — required by every kernel
-#   - deep_gemm                      — optional, fp8_blockwise_gemm reference/baseline
+#   - deep_gemm                      — optional, fp8_blockwise/deepgemm references
 #   - flashinfer                     — optional, nvfp4_gemm quantization/baseline
 # See README.md "External dependencies". They are imported lazily so
 # `import tirx_kernels` and registry discovery work without them.

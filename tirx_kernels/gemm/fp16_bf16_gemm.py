@@ -437,7 +437,7 @@ CONFIGS = [
     for s in [1024, 2048, 4096, 8192, 16384]
 ]
 # Benchmark on the square fp16/bf16 B200 shapes. Both dtypes must be here so the
-# tir-bench workloads for fp16_* and bf16_* resolve to a config (fp16 compares
+# bench_suite workloads for fp16_* and bf16_* resolve to a config (fp16 compares
 # against the cublasLt/torch baselines; the native deepgemm baseline is bf16-only).
 BENCH_CONFIGS = [
     {"dtype": d, "M": s, "N": s, "K": s, "label": f"{d}_{s}x{s}x{s}"}

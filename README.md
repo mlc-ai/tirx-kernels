@@ -10,6 +10,9 @@ High-performance GPU kernels written in [TIRx](https://github.com/apache/tvm).
 | `fp8_blockwise_gemm` | fp8 (blockwise)   | sm_100a |
 | `nvfp4_gemm`         | nvfp4             | sm_100a |
 | `flash_attention4`   | bf16              | sm_100a |
+| `deepgemm_sm100_fp4_mqa_logits` | fp4 / bf16 | sm_100a |
+| `deepgemm_sm100_fp8_mqa_logits` | fp8 / bf16 | sm_100a |
+| `deepgemm_sm100_tf32_hc_prenorm_gemm` | tf32 / bf16 | sm_100a |
 
 ## Installation
 
@@ -29,7 +32,7 @@ them — they are only needed to actually compile/run a kernel:
 | ---------------- | ---------------------------------- | ------------------------------------------------------ |
 | `tvm.tirx`       | all kernels (compile + run)        | The TIRx compiler. Put it on `PYTHONPATH`, e.g. `/path/to/tir/python`. |
 | `torch`          | all kernels                        | CUDA build matching your GPU.                          |
-| `deep_gemm`      | `fp8_blockwise_gemm` data/baseline | Used for fp8 quantization helpers and the reference.   |
+| `deep_gemm`      | `fp8_blockwise_gemm` and `deepgemm_*` data/baselines | Used for quantization helpers and references. |
 | `flashinfer`     | `nvfp4_gemm` data/baseline         | Used for nvfp4 quantization and the baseline.          |
 
 ## Usage
@@ -47,6 +50,9 @@ python -m tirx_kernels.test --kernel fp16_bf16_gemm --config bf16_1024x1024x1024
 
 # Benchmark
 python -m tirx_kernels.bench --kernel nvfp4_gemm
+
+# Pre-commit regression benchmark sweep
+python -m tirx_kernels.bench_suite --impls all
 ```
 
 ### Programmatic API
