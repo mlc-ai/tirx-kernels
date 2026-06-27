@@ -2,13 +2,13 @@
   "timestamp": "12",
   "label": "3a146e3c-dirty",
   "git": {
-    "tir": "c467b1b9",
-    "tirx-kernels": "3a146e3c-dirty",
+    "tir": "66ac7a57",
+    "tirx-kernels": "78d81763-dirty",
     "tirx-bench-ci": null
   },
   "kernel_tree": {
-    "tir:python/tvm/tirx": "f9614f05eec2dbe4d1b8d76b85a374e52f8059eb",
-    "tirx-kernels:tirx_kernels": "f2a93fd52e02824aca35bf3a9fe43da531ad8974"
+    "tir:python/tvm/tirx": "e35110c95092edafaa381877b62a4fd86bfd237c",
+    "tirx-kernels:tirx_kernels": "1eb348225cd4509323f34e48521550d2f0092042"
   },
   "baselines": {
     "torch": {
@@ -122,8 +122,8 @@
       "label": "s2048_skv4096_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 42.4088,
-        "tirx": 39.3552
+        "deepgemm": 42.266,
+        "tirx": 39.369
       },
       "aggregated": {
         "rounds": 5,
@@ -990,8 +990,8 @@
       "label": "b2_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 3.933,
-        "tirx": 3.9492
+        "deepgemm": 3.9376,
+        "tirx": 3.949
       },
       "aggregated": {
         "rounds": 5,
@@ -1494,8 +1494,8 @@
       "label": "b8_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 3.6302,
-        "tirx": 3.4246
+        "deepgemm": 3.6104000000000003,
+        "tirx": 3.4458
       },
       "aggregated": {
         "rounds": 5,
@@ -1508,8 +1508,8 @@
       "label": "b8_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 3.6294,
-        "tirx": 3.4142
+        "deepgemm": 4.0043999999999995,
+        "tirx": 3.8504
       },
       "aggregated": {
         "rounds": 5,
@@ -1760,8 +1760,8 @@
       "label": "s2048_skv8192_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "deepgemm": 116.6622,
-        "tirx": 108.4644
+        "deepgemm": 116.7262,
+        "tirx": 108.21000000000001
       },
       "aggregated": {
         "rounds": 5,
@@ -1858,8 +1858,8 @@
       "label": "s4096_skv4096_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 77.2318,
-        "tirx": 70.1938
+        "deepgemm": 76.8538,
+        "tirx": 70.6786
       },
       "aggregated": {
         "rounds": 5,
@@ -1914,8 +1914,8 @@
       "label": "s4096_skv4096_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "deepgemm": 76.7488,
-        "tirx": 69.752
+        "deepgemm": 76.9666,
+        "tirx": 70.302
       },
       "aggregated": {
         "rounds": 5,
@@ -2222,8 +2222,8 @@
       "label": "b1_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 3.5728,
-        "tirx": 3.5842
+        "deepgemm": 3.634,
+        "tirx": 3.6494
       },
       "aggregated": {
         "rounds": 5,
@@ -2488,8 +2488,8 @@
       "label": "b4_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 3.5496,
-        "tirx": 3.5522
+        "deepgemm": 3.6666,
+        "tirx": 3.6658
       },
       "aggregated": {
         "rounds": 5,
@@ -2614,8 +2614,8 @@
       "label": "b8_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "deepgemm": 3.9924,
-        "tirx": 3.9942
+        "deepgemm": 3.7612,
+        "tirx": 3.7894
       },
       "aggregated": {
         "rounds": 5,
@@ -2712,8 +2712,8 @@
       "label": "s1024_h32kv16_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 19.3654,
-        "tir": 19.2018
+        "flashattn_sm100": 19.38,
+        "tir": 19.2028
       },
       "aggregated": {
         "rounds": 5,
@@ -3104,8 +3104,8 @@
       "label": "s8192_h32kv4_causal",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 431.5668,
-        "tir": 408.7442
+        "flashattn_sm100": 428.298,
+        "tir": 424.2588
       },
       "aggregated": {
         "rounds": 5,
@@ -3118,8 +3118,8 @@
       "label": "s8192_h32kv8",
       "status": "ok",
       "impls": {
-        "flashattn_sm100": 832.8190000000001,
-        "tir": 841.1218
+        "flashattn_sm100": 813.0972,
+        "tir": 839.2554
       },
       "aggregated": {
         "rounds": 5,
@@ -3226,9 +3226,9 @@
       "label": "fp16_1024x1024x1024",
       "status": "ok",
       "impls": {
-        "deepgemm-cublaslt": 5.3838,
-        "tir": 6.3156,
-        "torch-cublas": 5.3472
+        "deepgemm-cublaslt": 5.436,
+        "tir": 6.4952,
+        "torch-cublas": 5.3986
       },
       "aggregated": {
         "rounds": 5,
@@ -3286,9 +3286,9 @@
       "label": "fp16_8192x8192x8192",
       "status": "ok",
       "impls": {
-        "deepgemm-cublaslt": 875.7346,
-        "tir": 782.9782,
-        "torch-cublas": 836.7684
+        "deepgemm-cublaslt": 865.7601999999999,
+        "tir": 793.7719999999999,
+        "torch-cublas": 863.3326
       },
       "aggregated": {
         "rounds": 5,
@@ -3488,8 +3488,8 @@
       "label": "bench_regular_dqk512_hq128_s4096_kv65536_topk2048",
       "status": "ok",
       "impls": {
-        "flashmla": 2003.421,
-        "tirx": 1974.974
+        "flashmla": 1994.7396,
+        "tirx": 1979.2134
       },
       "aggregated": {
         "rounds": 5,
@@ -3544,8 +3544,8 @@
       "label": "bench_regular_dqk576_hq128_s4096_kv8192_topk2048",
       "status": "ok",
       "impls": {
-        "flashmla": 1952.2334,
-        "tirx": 1897.3562
+        "flashmla": 1955.2818,
+        "tirx": 1908.6346
       },
       "aggregated": {
         "rounds": 5,
@@ -3572,8 +3572,8 @@
       "label": "bench_dqk512_hq64_s4096_kv49152_topk512",
       "status": "ok",
       "impls": {
-        "flashmla": 377.4166,
-        "tirx": 372.698
+        "flashmla": 374.3474,
+        "tirx": 370.39119999999997
       },
       "aggregated": {
         "rounds": 5,
@@ -3628,8 +3628,8 @@
       "label": "bench_dqk576_hq64_s4096_kv49152_topk512",
       "status": "ok",
       "impls": {
-        "flashmla": 399.2042,
-        "tirx": 388.5462
+        "flashmla": 394.7292,
+        "tirx": 387.44440000000003
       },
       "aggregated": {
         "rounds": 5,

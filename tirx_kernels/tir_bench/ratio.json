@@ -2,13 +2,13 @@
   "timestamp": "12",
   "label": "3a146e3c-dirty",
   "git": {
-    "tir": "c467b1b9",
-    "tirx-kernels": "3a146e3c-dirty",
+    "tir": "66ac7a57",
+    "tirx-kernels": "78d81763-dirty",
     "tirx-bench-ci": null
   },
   "kernel_tree": {
-    "tir:python/tvm/tirx": "f9614f05eec2dbe4d1b8d76b85a374e52f8059eb",
-    "tirx-kernels:tirx_kernels": "f2a93fd52e02824aca35bf3a9fe43da531ad8974"
+    "tir:python/tvm/tirx": "e35110c95092edafaa381877b62a4fd86bfd237c",
+    "tirx-kernels:tirx_kernels": "1eb348225cd4509323f34e48521550d2f0092042"
   },
   "results": [
     {
@@ -62,9 +62,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 39.3552,
-      "ref_us": 42.4088,
-      "ratio": 1.0775907631011912
+      "ours_us": 39.369,
+      "ref_us": 42.266,
+      "ratio": 1.0735858162513652
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -744,9 +744,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9492,
-      "ref_us": 3.933,
-      "ratio": 0.995897903372835
+      "ours_us": 3.949,
+      "ref_us": 3.9376,
+      "ratio": 0.9971131932134718
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1140,9 +1140,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.4246,
-      "ref_us": 3.6302,
-      "ratio": 1.0600362086083046
+      "ours_us": 3.4458,
+      "ref_us": 3.6104000000000003,
+      "ratio": 1.0477682976377038
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1151,9 +1151,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.4142,
-      "ref_us": 3.6294,
-      "ratio": 1.0630308710678928
+      "ours_us": 3.8504,
+      "ref_us": 4.0043999999999995,
+      "ratio": 1.0399958445875752
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1349,9 +1349,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 108.4644,
-      "ref_us": 116.6622,
-      "ratio": 1.0755805591512053
+      "ours_us": 108.21000000000001,
+      "ref_us": 116.7262,
+      "ratio": 1.078700674614176
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1426,9 +1426,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 70.1938,
-      "ref_us": 77.2318,
-      "ratio": 1.1002652655932577
+      "ours_us": 70.6786,
+      "ref_us": 76.8538,
+      "ratio": 1.0873701516442036
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1470,9 +1470,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 69.752,
-      "ref_us": 76.7488,
-      "ratio": 1.1003096685399703
+      "ours_us": 70.302,
+      "ref_us": 76.9666,
+      "ratio": 1.0947995789593468
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1712,9 +1712,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.5842,
-      "ref_us": 3.5728,
-      "ratio": 0.9968193739188661
+      "ours_us": 3.6494,
+      "ref_us": 3.634,
+      "ratio": 0.9957801282402586
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1921,9 +1921,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.5522,
-      "ref_us": 3.5496,
-      "ratio": 0.9992680592308991
+      "ours_us": 3.6658,
+      "ref_us": 3.6666,
+      "ratio": 1.000218233400622
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -2020,9 +2020,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9942,
-      "ref_us": 3.9924,
-      "ratio": 0.999549346552501
+      "ours_us": 3.7894,
+      "ref_us": 3.7612,
+      "ratio": 0.9925581886314456
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -2097,9 +2097,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 19.2018,
-      "ref_us": 19.3654,
-      "ratio": 1.0085200345800915
+      "ours_us": 19.2028,
+      "ref_us": 19.38,
+      "ratio": 1.0092278209427792
     },
     {
       "kernel": "flash_attention4",
@@ -2405,9 +2405,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 408.7442,
-      "ref_us": 431.5668,
-      "ratio": 1.055835899322853
+      "ours_us": 424.2588,
+      "ref_us": 428.298,
+      "ratio": 1.0095206039332596
     },
     {
       "kernel": "flash_attention4",
@@ -2416,9 +2416,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 841.1218,
-      "ref_us": 832.8190000000001,
-      "ratio": 0.9901288969088663
+      "ours_us": 839.2554,
+      "ref_us": 813.0972,
+      "ratio": 0.9688316572047079
     },
     {
       "kernel": "flash_attention4",
@@ -2493,9 +2493,9 @@
       "status": "ok",
       "ref_impl": "torch-cublas",
       "ours_impl": "tir",
-      "ours_us": 6.3156,
-      "ref_us": 5.3472,
-      "ratio": 0.8466653999619989
+      "ours_us": 6.4952,
+      "ref_us": 5.3986,
+      "ratio": 0.8311676314817096
     },
     {
       "kernel": "fp16_bf16_gemm",
@@ -2537,9 +2537,9 @@
       "status": "ok",
       "ref_impl": "torch-cublas",
       "ours_impl": "tir",
-      "ours_us": 782.9782,
-      "ref_us": 836.7684,
-      "ratio": 1.0686994861415045
+      "ours_us": 793.7719999999999,
+      "ref_us": 863.3326,
+      "ratio": 1.0876329726924105
     },
     {
       "kernel": "fp8_blockwise_gemm",
@@ -2691,9 +2691,9 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 1974.974,
-      "ref_us": 2003.421,
-      "ratio": 1.0144037339225733
+      "ours_us": 1979.2134,
+      "ref_us": 1994.7396,
+      "ratio": 1.0078446316097092
     },
     {
       "kernel": "sparse_flashmla_prefill_head128_phase1",
@@ -2735,9 +2735,9 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 1897.3562,
-      "ref_us": 1952.2334,
-      "ratio": 1.028922982410999
+      "ours_us": 1908.6346,
+      "ref_us": 1955.2818,
+      "ratio": 1.0244400892659076
     },
     {
       "kernel": "sparse_flashmla_prefill_head64_phase1",
@@ -2757,9 +2757,9 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 372.698,
-      "ref_us": 377.4166,
-      "ratio": 1.0126606528610296
+      "ours_us": 370.39119999999997,
+      "ref_us": 374.3474,
+      "ratio": 1.0106811392927262
     },
     {
       "kernel": "sparse_flashmla_prefill_head64_phase1",
@@ -2801,9 +2801,9 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 388.5462,
-      "ref_us": 399.2042,
-      "ratio": 1.0274304574333761
+      "ours_us": 387.44440000000003,
+      "ref_us": 394.7292,
+      "ratio": 1.0188021816807777
     },
     {
       "kernel": "sparse_flashmla_prefill_head64_phase1",

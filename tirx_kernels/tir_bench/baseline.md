@@ -2,7 +2,7 @@
 
 - Timestamp: `12`
 - Label:     `3a146e3c-dirty`
-- Git:       `{'tir': 'c467b1b9', 'tirx-kernels': '3a146e3c-dirty', 'tirx-bench-ci': None}`
+- Git:       `{'tir': '66ac7a57', 'tirx-kernels': '78d81763-dirty', 'tirx-bench-ci': None}`
 - Workloads: 256 ok, 0 failed
 
 Each row shows our impl's time (tir/tirx) and every reference impl, with ref/ours where ref = fastest non-ours impl. Higher ratio = ours is faster.
@@ -15,7 +15,7 @@ Each row shows our impl's time (tir/tirx) and every reference impl, with ref/our
 | `s2048_skv4096_h64_d128_bf16_compressed_nocp` | tirx | 50.4636 | deepgemm | 53.7064 | 1.064 | — |
 | `s2048_skv4096_h64_d128_bf16_dense_cp` | tirx | 39.1974 | deepgemm | 40.2046 | 1.026 | — |
 | `s2048_skv4096_h64_d128_bf16_dense_nocp` | tirx | 50.7348 | deepgemm | 51.9132 | 1.023 | — |
-| `s2048_skv4096_h64_d128_f32_compressed_cp` | tirx | 39.3552 | deepgemm | 42.4088 | 1.078 | — |
+| `s2048_skv4096_h64_d128_f32_compressed_cp` | tirx | 39.3690 | deepgemm | 42.2660 | 1.074 | — |
 | `s2048_skv4096_h64_d128_f32_compressed_nocp` | tirx | 51.3034 | deepgemm | 55.6612 | 1.085 | — |
 | `s2048_skv4096_h64_d128_f32_dense_cp` | tirx | 38.6596 | deepgemm | 38.2982 | 0.991 | — |
 | `s2048_skv4096_h64_d128_f32_dense_nocp` | tirx | 49.6118 | deepgemm | 49.2016 | 0.992 | — |
@@ -81,7 +81,7 @@ Each row shows our impl's time (tir/tirx) and every reference impl, with ref/our
 | `b1_n1_mp8_ps64_h64_d128_f32_fixed` | tirx | 3.6428 | deepgemm | 3.6260 | 0.995 | — |
 | `b2_n1_mp128_ps32_h64_d128_bf16_fixed` | tirx | 4.0356 | deepgemm | 4.0188 | 0.996 | — |
 | `b2_n1_mp128_ps32_h64_d128_f32_fixed` | tirx | 3.7344 | deepgemm | 3.7228 | 0.997 | — |
-| `b2_n1_mp128_ps64_h64_d128_bf16_fixed` | tirx | 3.9492 | deepgemm | 3.9330 | 0.996 | — |
+| `b2_n1_mp128_ps64_h64_d128_bf16_fixed` | tirx | 3.9490 | deepgemm | 3.9376 | 0.997 | — |
 | `b2_n1_mp128_ps64_h64_d128_f32_fixed` | tirx | 3.8358 | deepgemm | 3.8182 | 0.995 | — |
 | `b2_n1_mp1_ps32_h64_d128_bf16_fixed` | tirx | 3.5204 | deepgemm | 3.6884 | 1.048 | — |
 | `b2_n1_mp1_ps32_h64_d128_f32_fixed` | tirx | 3.4562 | deepgemm | 3.6316 | 1.051 | — |
@@ -117,8 +117,8 @@ Each row shows our impl's time (tir/tirx) and every reference impl, with ref/our
 | `b8_n1_mp128_ps64_h64_d128_f32_fixed` | tirx | 3.8858 | deepgemm | 3.8850 | 1.000 | — |
 | `b8_n1_mp1_ps32_h64_d128_bf16_fixed` | tirx | 3.8674 | deepgemm | 4.0218 | 1.040 | — |
 | `b8_n1_mp1_ps32_h64_d128_f32_fixed` | tirx | 3.5254 | deepgemm | 3.7258 | 1.057 | — |
-| `b8_n1_mp1_ps64_h64_d128_bf16_fixed` | tirx | 3.4246 | deepgemm | 3.6302 | 1.060 | — |
-| `b8_n1_mp1_ps64_h64_d128_f32_fixed` | tirx | 3.4142 | deepgemm | 3.6294 | 1.063 | — |
+| `b8_n1_mp1_ps64_h64_d128_bf16_fixed` | tirx | 3.4458 | deepgemm | 3.6104 | 1.048 | — |
+| `b8_n1_mp1_ps64_h64_d128_f32_fixed` | tirx | 3.8504 | deepgemm | 4.0044 | 1.040 | — |
 | `b8_n1_mp32_ps32_h64_d128_bf16_fixed` | tirx | 3.9808 | deepgemm | 3.9610 | 0.995 | — |
 | `b8_n1_mp32_ps32_h64_d128_f32_fixed` | tirx | 3.6626 | deepgemm | 3.6512 | 0.997 | — |
 | `b8_n1_mp32_ps64_h64_d128_bf16_fixed` | tirx | 3.5700 | deepgemm | 3.5460 | 0.993 | — |
@@ -140,18 +140,18 @@ Each row shows our impl's time (tir/tirx) and every reference impl, with ref/our
 | `s2048_skv4096_h64_d128_f32_dense_cp` | tirx | 41.0534 | deepgemm | 40.7790 | 0.993 | — |
 | `s2048_skv4096_h64_d128_f32_dense_nocp` | tirx | 52.5876 | deepgemm | 51.7582 | 0.984 | — |
 | `s2048_skv8192_h64_d128_bf16_compressed_cp` | tirx | 70.5332 | deepgemm | 75.7720 | 1.074 | — |
-| `s2048_skv8192_h64_d128_bf16_compressed_nocp` | tirx | 108.4644 | deepgemm | 116.6622 | 1.076 | — |
+| `s2048_skv8192_h64_d128_bf16_compressed_nocp` | tirx | 108.2100 | deepgemm | 116.7262 | 1.079 | — |
 | `s2048_skv8192_h64_d128_bf16_dense_cp` | tirx | 69.9804 | deepgemm | 70.0708 | 1.001 | — |
 | `s2048_skv8192_h64_d128_bf16_dense_nocp` | tirx | 109.8610 | deepgemm | 110.6138 | 1.007 | — |
 | `s2048_skv8192_h64_d128_f32_compressed_cp` | tirx | 69.0042 | deepgemm | 75.4814 | 1.094 | — |
 | `s2048_skv8192_h64_d128_f32_compressed_nocp` | tirx | 114.7394 | deepgemm | 116.2582 | 1.013 | — |
 | `s2048_skv8192_h64_d128_f32_dense_cp` | tirx | 69.5186 | deepgemm | 68.6358 | 0.987 | — |
 | `s2048_skv8192_h64_d128_f32_dense_nocp` | tirx | 116.6902 | deepgemm | 106.7686 | 0.915 | — |
-| `s4096_skv4096_h64_d128_bf16_compressed_cp` | tirx | 70.1938 | deepgemm | 77.2318 | 1.100 | — |
+| `s4096_skv4096_h64_d128_bf16_compressed_cp` | tirx | 70.6786 | deepgemm | 76.8538 | 1.087 | — |
 | `s4096_skv4096_h64_d128_bf16_compressed_nocp` | tirx | 70.0840 | deepgemm | 76.9674 | 1.098 | — |
 | `s4096_skv4096_h64_d128_bf16_dense_cp` | tirx | 70.2026 | deepgemm | 70.5664 | 1.005 | — |
 | `s4096_skv4096_h64_d128_bf16_dense_nocp` | tirx | 70.3950 | deepgemm | 70.8030 | 1.006 | — |
-| `s4096_skv4096_h64_d128_f32_compressed_cp` | tirx | 69.7520 | deepgemm | 76.7488 | 1.100 | — |
+| `s4096_skv4096_h64_d128_f32_compressed_cp` | tirx | 70.3020 | deepgemm | 76.9666 | 1.095 | — |
 | `s4096_skv4096_h64_d128_f32_compressed_nocp` | tirx | 71.1504 | deepgemm | 77.7792 | 1.093 | — |
 | `s4096_skv4096_h64_d128_f32_dense_cp` | tirx | 69.9604 | deepgemm | 69.9062 | 0.999 | — |
 | `s4096_skv4096_h64_d128_f32_dense_nocp` | tirx | 69.8496 | deepgemm | 69.3916 | 0.993 | — |
@@ -177,7 +177,7 @@ Each row shows our impl's time (tir/tirx) and every reference impl, with ref/our
 | `b16_n1_mp8_ps64_h64_d128_f32_fixed` | tirx | 3.6728 | deepgemm | 3.6428 | 0.992 | — |
 | `b1_n1_mp128_ps64_h64_d128_bf16_fixed` | tirx | 3.7164 | deepgemm | 3.6664 | 0.987 | — |
 | `b1_n1_mp128_ps64_h64_d128_f32_fixed` | tirx | 3.6442 | deepgemm | 3.6366 | 0.998 | — |
-| `b1_n1_mp1_ps64_h64_d128_bf16_fixed` | tirx | 3.5842 | deepgemm | 3.5728 | 0.997 | — |
+| `b1_n1_mp1_ps64_h64_d128_bf16_fixed` | tirx | 3.6494 | deepgemm | 3.6340 | 0.996 | — |
 | `b1_n1_mp1_ps64_h64_d128_f32_fixed` | tirx | 3.7246 | deepgemm | 3.7140 | 0.997 | — |
 | `b1_n1_mp32_ps64_h64_d128_bf16_fixed` | tirx | 3.6312 | deepgemm | 3.6206 | 0.997 | — |
 | `b1_n1_mp32_ps64_h64_d128_f32_fixed` | tirx | 3.6566 | deepgemm | 3.6460 | 0.997 | — |
@@ -196,7 +196,7 @@ Each row shows our impl's time (tir/tirx) and every reference impl, with ref/our
 | `b4_n1_mp1_ps64_h64_d128_bf16_fixed` | tirx | 3.6462 | deepgemm | 3.6290 | 0.995 | — |
 | `b4_n1_mp1_ps64_h64_d128_f32_fixed` | tirx | 3.6512 | deepgemm | 3.6446 | 0.998 | — |
 | `b4_n1_mp32_ps64_h64_d128_bf16_fixed` | tirx | 4.0678 | deepgemm | 4.0132 | 0.987 | — |
-| `b4_n1_mp32_ps64_h64_d128_f32_fixed` | tirx | 3.5522 | deepgemm | 3.5496 | 0.999 | — |
+| `b4_n1_mp32_ps64_h64_d128_f32_fixed` | tirx | 3.6658 | deepgemm | 3.6666 | 1.000 | — |
 | `b4_n1_mp8_ps64_h64_d128_bf16_fixed` | tirx | 3.6936 | deepgemm | 3.6478 | 0.988 | — |
 | `b4_n1_mp8_ps64_h64_d128_f32_fixed` | tirx | 3.9736 | deepgemm | 3.9584 | 0.996 | — |
 | `b8_n1_mp128_ps64_h64_d128_bf16_fixed` | tirx | 4.0128 | deepgemm | 3.9904 | 0.994 | — |
@@ -205,7 +205,7 @@ Each row shows our impl's time (tir/tirx) and every reference impl, with ref/our
 | `b8_n1_mp1_ps64_h64_d128_f32_fixed` | tirx | 4.0542 | deepgemm | 4.0408 | 0.997 | — |
 | `b8_n1_mp32_ps64_h64_d128_bf16_fixed` | tirx | 3.8628 | deepgemm | 3.8436 | 0.995 | — |
 | `b8_n1_mp32_ps64_h64_d128_f32_fixed` | tirx | 3.6420 | deepgemm | 3.6528 | 1.003 | — |
-| `b8_n1_mp8_ps64_h64_d128_bf16_fixed` | tirx | 3.9942 | deepgemm | 3.9924 | 1.000 | — |
+| `b8_n1_mp8_ps64_h64_d128_bf16_fixed` | tirx | 3.7894 | deepgemm | 3.7612 | 0.993 | — |
 | `b8_n1_mp8_ps64_h64_d128_f32_fixed` | tirx | 3.6678 | deepgemm | 3.6590 | 0.998 | — |
 ## deepgemm_sm100_tf32_hc_prenorm_gemm
 
@@ -220,7 +220,7 @@ Each row shows our impl's time (tir/tirx) and every reference impl, with ref/our
 | config | ours impl | ours (µs) | ref impl | ref (µs) | ref/ours | other impls |
 |---|---|---:|---|---:|---:|---|
 | `s1024_h32kv16` | tir | 19.6242 | flashattn_sm100 | 19.8208 | 1.010 | — |
-| `s1024_h32kv16_causal` | tir | 19.2018 | flashattn_sm100 | 19.3654 | 1.009 | — |
+| `s1024_h32kv16_causal` | tir | 19.2028 | flashattn_sm100 | 19.3800 | 1.009 | — |
 | `s1024_h32kv32` | tir | 20.1002 | flashattn_sm100 | 20.1028 | 1.000 | — |
 | `s1024_h32kv32_causal` | tir | 20.5508 | flashattn_sm100 | 20.0346 | 0.975 | — |
 | `s1024_h32kv4` | tir | 19.2656 | flashattn_sm100 | 19.5874 | 1.017 | — |
@@ -248,8 +248,8 @@ Each row shows our impl's time (tir/tirx) and every reference impl, with ref/our
 | `s8192_h32kv32` | tir | 841.2190 | flashattn_sm100 | 834.8080 | 0.992 | — |
 | `s8192_h32kv32_causal` | tir | 440.2474 | flashattn_sm100 | 438.5840 | 0.996 | — |
 | `s8192_h32kv4` | tir | 853.7838 | flashattn_sm100 | 837.4688 | 0.981 | — |
-| `s8192_h32kv4_causal` | tir | 408.7442 | flashattn_sm100 | 431.5668 | 1.056 | — |
-| `s8192_h32kv8` | tir | 841.1218 | flashattn_sm100 | 832.8190 | 0.990 | — |
+| `s8192_h32kv4_causal` | tir | 424.2588 | flashattn_sm100 | 428.2980 | 1.010 | — |
+| `s8192_h32kv8` | tir | 839.2554 | flashattn_sm100 | 813.0972 | 0.969 | — |
 | `s8192_h32kv8_causal` | tir | 425.0300 | flashattn_sm100 | 426.0576 | 1.002 | — |
 ## fp16_bf16_gemm
 
@@ -260,11 +260,11 @@ Each row shows our impl's time (tir/tirx) and every reference impl, with ref/our
 | `bf16_2048x2048x2048` | tir | 15.8594 | torch-cublas | 17.2414 | 1.087 | deepgemm-bf16=17.9342, deepgemm-cublaslt=17.5336 |
 | `bf16_4096x4096x4096` | tir | 92.2864 | deepgemm-bf16 | 91.9502 | 0.996 | deepgemm-cublaslt=93.8422, torch-cublas=93.9048 |
 | `bf16_8192x8192x8192` | tir | 770.5386 | deepgemm-cublaslt | 799.6210 | 1.038 | deepgemm-bf16=827.0226, torch-cublas=836.7196 |
-| `fp16_1024x1024x1024` | tir | 6.3156 | torch-cublas | 5.3472 | 0.847 | deepgemm-cublaslt=5.3838 |
+| `fp16_1024x1024x1024` | tir | 6.4952 | torch-cublas | 5.3986 | 0.831 | deepgemm-cublaslt=5.4360 |
 | `fp16_16384x16384x16384` | tir | 6523.3726 | deepgemm-cublaslt | 6440.7908 | 0.987 | torch-cublas=6444.0982 |
 | `fp16_2048x2048x2048` | tir | 16.0552 | torch-cublas | 17.5884 | 1.095 | deepgemm-cublaslt=17.7006 |
 | `fp16_4096x4096x4096` | tir | 96.6986 | deepgemm-cublaslt | 99.1310 | 1.025 | torch-cublas=99.2578 |
-| `fp16_8192x8192x8192` | tir | 782.9782 | torch-cublas | 836.7684 | 1.069 | deepgemm-cublaslt=875.7346 |
+| `fp16_8192x8192x8192` | tir | 793.7720 | torch-cublas | 863.3326 | 1.088 | deepgemm-cublaslt=865.7602 |
 ## fp8_blockwise_gemm
 
 | config | ours impl | ours (µs) | ref impl | ref (µs) | ref/ours | other impls |
@@ -290,20 +290,20 @@ Each row shows our impl's time (tir/tirx) and every reference impl, with ref/our
 | config | ours impl | ours (µs) | ref impl | ref (µs) | ref/ours | other impls |
 |---|---|---:|---|---:|---:|---|
 | `bench_regular_dqk512_hq128_s4096_kv32768_topk2048` | tirx | 1805.4558 | flashmla | 1848.2204 | 1.024 | — |
-| `bench_regular_dqk512_hq128_s4096_kv65536_topk2048` | tirx | 1974.9740 | flashmla | 2003.4210 | 1.014 | — |
+| `bench_regular_dqk512_hq128_s4096_kv65536_topk2048` | tirx | 1979.2134 | flashmla | 1994.7396 | 1.008 | — |
 | `bench_regular_dqk512_hq128_s4096_kv8192_topk2048` | tirx | 1826.5718 | flashmla | 1862.2020 | 1.020 | — |
 | `bench_regular_dqk576_hq128_s4096_kv32768_topk2048` | tirx | 1927.7038 | flashmla | 1955.0134 | 1.014 | — |
 | `bench_regular_dqk576_hq128_s4096_kv65536_topk2048` | tirx | 2134.2220 | flashmla | 2138.2772 | 1.002 | — |
-| `bench_regular_dqk576_hq128_s4096_kv8192_topk2048` | tirx | 1897.3562 | flashmla | 1952.2334 | 1.029 | — |
+| `bench_regular_dqk576_hq128_s4096_kv8192_topk2048` | tirx | 1908.6346 | flashmla | 1955.2818 | 1.024 | — |
 ## sparse_flashmla_prefill_head64_phase1
 
 | config | ours impl | ours (µs) | ref impl | ref (µs) | ref/ours | other impls |
 |---|---|---:|---|---:|---:|---|
 | `bench_dqk512_hq64_s4096_kv32768_topk512` | tirx | 369.4776 | flashmla | 373.0770 | 1.010 | — |
-| `bench_dqk512_hq64_s4096_kv49152_topk512` | tirx | 372.6980 | flashmla | 377.4166 | 1.013 | — |
+| `bench_dqk512_hq64_s4096_kv49152_topk512` | tirx | 370.3912 | flashmla | 374.3474 | 1.011 | — |
 | `bench_dqk512_hq64_s4096_kv65536_topk512` | tirx | 372.9602 | flashmla | 381.1098 | 1.022 | — |
 | `bench_dqk512_hq64_s4096_kv8192_topk512` | tirx | 365.7822 | flashmla | 369.0582 | 1.009 | — |
 | `bench_dqk576_hq64_s4096_kv32768_topk512` | tirx | 385.2106 | flashmla | 392.2244 | 1.018 | — |
-| `bench_dqk576_hq64_s4096_kv49152_topk512` | tirx | 388.5462 | flashmla | 399.2042 | 1.027 | — |
+| `bench_dqk576_hq64_s4096_kv49152_topk512` | tirx | 387.4444 | flashmla | 394.7292 | 1.019 | — |
 | `bench_dqk576_hq64_s4096_kv65536_topk512` | tirx | 398.8962 | flashmla | 404.7574 | 1.015 | — |
 | `bench_dqk576_hq64_s4096_kv8192_topk512` | tirx | 375.5956 | flashmla | 381.4672 | 1.016 | — |
