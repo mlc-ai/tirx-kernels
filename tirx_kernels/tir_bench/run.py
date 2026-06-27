@@ -59,13 +59,8 @@ MONITOR_INTERVAL = 0.5  # seconds between nvidia-smi polls during a workload
 # 0 means auto: one worker per probe-OK GPU (see main()).
 DEFAULT_CPU_WORKERS = 0
 DEFAULT_ROUND_COOLDOWN_S = 1.0
-DEFAULT_UTIL_THRESHOLD = 10.0  # % GPU util at/above which a card counts as "actively computing"
-# Why util, not PID-presence: on shared boxes other tenants routinely *park*
-# processes that hold tens-to-hundreds of GiB of VRAM at 0% utilization. They
-# aren't competing for SMs, so co-running our bench on such a card is fine.
-# Gating on "any compute-app PID present" would reject every such card and
-# starve the sweep; gating on utilization lets us share idle-but-resident cards
-# while still avoiding cards where a neighbor is actually burning the GPU.
+DEFAULT_UTIL_THRESHOLD = 0.0  # % GPU util above which a card counts as busy.
+DEFAULT_MEM_THRESHOLD = 0.0  # % compute-app memory above which a card counts as busy.
 
 # Tiny real workload used to decide whether a GPU is actually usable.
 # Catches: driver hangs, ECC errors when touching memory, cuBLAS init
@@ -116,18 +111,21 @@ class GpuPool:
     At most one orchestrator job per card at a time.
 
     acquire() also re-queries utilization each loop: a card counts as taken if
-    it is in `_owned` or its GPU util is at/above `util_threshold` (a foreign
-    tenant actively computing). A card merely holding resident VRAM at 0% util
-    is shareable. Startup probe filters broken cards into `allowed`.
+    it is in `_owned`, its GPU util is above `util_threshold`, or its memory
+    use is above `mem_threshold`. Startup probe filters broken cards into `allowed`.
     """
 
     def __init__(
-        self, allowed: set[str] | None = None, util_threshold: float = DEFAULT_UTIL_THRESHOLD
+        self,
+        allowed: set[str] | None = None,
+        util_threshold: float = DEFAULT_UTIL_THRESHOLD,
+        mem_threshold: float = DEFAULT_MEM_THRESHOLD,
     ):
         self._owned: set[str] = set()
         self._lock = threading.Lock()
         self._allowed = allowed
         self.util_threshold = util_threshold
+        self.mem_threshold = mem_threshold
 
     @staticmethod
     def _nvidia_smi(args: list[str]) -> list[str]:
@@ -176,11 +174,42 @@ class GpuPool:
                     pass
         return out
 
+    def _mem_used_pct(self) -> dict[str, float]:
+        """Map GPU index -> compute-app used_memory / memory.total (percent)."""
+        gpus = self._nvidia_smi(["--query-gpu=index,uuid,memory.total"])
+        uuid_to_idx: dict[str, str] = {}
+        total_by_idx: dict[str, float] = {}
+        for line in gpus:
+            parts = [p.strip() for p in line.split(",")]
+            if len(parts) >= 3:
+                try:
+                    uuid_to_idx[parts[1]] = parts[0]
+                    total_by_idx[parts[0]] = float(parts[2])
+                except ValueError:
+                    pass
+        used_by_idx: dict[str, float] = {idx: 0.0 for idx in total_by_idx}
+        rows = self._nvidia_smi(["--query-compute-apps=gpu_uuid,used_memory"])
+        for line in rows:
+            parts = [p.strip() for p in line.split(",")]
+            if len(parts) >= 2:
+                idx = uuid_to_idx.get(parts[0])
+                if idx is None:
+                    continue
+                try:
+                    used_by_idx[idx] += float(parts[1])
+                except ValueError:
+                    pass
+        out: dict[str, float] = {}
+        for idx, used in used_by_idx.items():
+            total = total_by_idx.get(idx, 0.0)
+            out[idx] = 100.0 * used / total if total > 0 else 0.0
+        return out
+
     def _occupied_indices(self) -> set[str]:
-        """GPU indices actively computing (util >= threshold) — i.e. a real
-        tenant is burning the GPU, so we should not co-run there. Idle cards
-        holding only resident VRAM read ~0% util and are NOT occupied."""
-        return {idx for idx, u in self._utils().items() if u >= self.util_threshold}
+        """GPU indices over the configured SM or memory threshold."""
+        util_busy = {idx for idx, u in self._utils().items() if u > self.util_threshold}
+        mem_busy = {idx for idx, m in self._mem_used_pct().items() if m > self.mem_threshold}
+        return util_busy | mem_busy
 
     def total_visible(self) -> int:
         gpus = self._all_gpus()
@@ -192,8 +221,8 @@ class GpuPool:
         """Block until a free GPU is found; return its index string.
 
         Picks uniformly at random among cards that are not in `_owned` and not
-        occupied by a foreign tenant (util >= threshold). Re-queries utilization
-        on every loop iteration so a card that was busy can become free.
+        over the configured SM/memory thresholds. Re-queries nvidia-smi on every
+        loop iteration so a card that was busy can become free.
         """
         while True:
             with self._lock:
@@ -389,7 +418,7 @@ def _pid_sm_on_gpu(gpu_index: str) -> dict[int, float]:
 
 
 def _active_strangers(gpu_index: str, our_pids: set[int], sm_threshold: float) -> dict[int, float]:
-    """PIDs on `gpu_index` that are NOT ours and whose sm-util >= threshold.
+    """PIDs on `gpu_index` that are NOT ours and whose sm-util exceeds threshold.
 
     Empty result == no neighbor is actively computing right now, so an
     idle-but-resident squatter (sm 0) does not count as interference and we
@@ -397,7 +426,7 @@ def _active_strangers(gpu_index: str, our_pids: set[int], sm_threshold: float) -
     return {
         pid: sm
         for pid, sm in _pid_sm_on_gpu(gpu_index).items()
-        if pid not in our_pids and sm >= sm_threshold
+        if pid not in our_pids and sm > sm_threshold
     }
 
 
@@ -500,9 +529,7 @@ def _run_subprocess_monitored(
     Returns (returncode, interfered, intruder_pids).
 
     Interference == another tenant is actually computing on our card, i.e. a
-    PID that is not registered as ours has sm-utilization >= `sm_threshold`.
-    A neighbor that only parks resident VRAM at 0% sm is NOT interference — we
-    deliberately co-run with those (that is the whole point of the util gate).
+    PID that is not registered as ours has sm-utilization above `sm_threshold`.
 
     Two-stage protection, both using per-PID sm-util (`nvidia-smi pmon`):
 
@@ -513,7 +540,7 @@ def _run_subprocess_monitored(
 
     2. **Per-poll check**: at every `monitor_interval`, take the per-PID sm
        map, drop registered bench PIDs (and their descendants, e.g. nvcc),
-       and if any remaining PID is at/above the sm threshold, SIGTERM the
+       and if any remaining PID is above the sm threshold, SIGTERM the
        subprocess. This catches a brand-new intruder *and* a resident neighbor
        that bursts its own sm mid-run — per-PID sm stays meaningful even while
        our own kernel pegs the device-level utilization.
@@ -1429,11 +1456,17 @@ def main() -> None:
         "--util-threshold",
         type=float,
         default=DEFAULT_UTIL_THRESHOLD,
-        help="%% GPU/sm utilization at/above which a card counts as "
+        help="%% GPU/sm utilization above which a card counts as "
         "actively in use: selection skips such cards and the "
-        "monitor requeues if a neighbor crosses it mid-run. "
-        "Cards merely holding resident VRAM at lower util are "
-        f"shared (default {DEFAULT_UTIL_THRESHOLD:g})",
+        "monitor requeues if a neighbor crosses it mid-run "
+        f"(default {DEFAULT_UTIL_THRESHOLD:g})",
+    )
+    ap.add_argument(
+        "--mem-threshold",
+        type=float,
+        default=DEFAULT_MEM_THRESHOLD,
+        help="%% GPU memory used by compute apps above which a card counts as occupied "
+        f"(default {DEFAULT_MEM_THRESHOLD:g})",
     )
     ap.add_argument(
         "--rounds",
@@ -1486,6 +1519,9 @@ def main() -> None:
     if args.round_cooldown < 0:
         print("[tir-bench] --round-cooldown must be >= 0", file=sys.stderr)
         sys.exit(2)
+    if args.util_threshold < 0 or args.mem_threshold < 0:
+        print("[tir-bench] --util-threshold/--mem-threshold must be >= 0", file=sys.stderr)
+        sys.exit(2)
 
     workloads = load_workloads(args.workloads)
     if args.filter:
@@ -1532,28 +1568,31 @@ def main() -> None:
     #    (including busy ones — the probe is light, finishes fine on a
     #    contended card; this catches broken drivers / ECC). Probe failures
     #    are banned for the rest of the run.
-    # 2. Per-workload acquire: re-scan utilization every time we need a card
-    #    and pick any probe-OK one whose util is below --util-threshold. A
-    #    card pegged at sweep start is reusable the moment its util drops; a
-    #    card merely holding resident VRAM at low util is shared right away.
-    listing_pool = GpuPool(util_threshold=args.util_threshold)
+    # 2. Per-workload acquire: re-scan utilization/memory every time we need a card.
+    listing_pool = GpuPool(
+        util_threshold=args.util_threshold,
+        mem_threshold=args.mem_threshold,
+    )
     in_filter = [idx for idx, _ in listing_pool._all_gpus()]
     if not in_filter:
         print("[tir-bench] no visible GPUs.", file=sys.stderr)
         sys.exit(1)
     utils_now = listing_pool._utils()
+    mem_now = listing_pool._mem_used_pct()
     occupied_now = sorted(listing_pool._occupied_indices() & set(in_filter), key=int)
     resident = sorted(listing_pool._busy_indices() & set(in_filter), key=int)
     util_str = " ".join(f"{i}:{utils_now.get(i, 0):.0f}%" for i in sorted(in_filter, key=int))
+    mem_str = " ".join(f"{i}:{mem_now.get(i, 0):.1f}%" for i in sorted(in_filter, key=int))
     print(
         f"[tir-bench] visible: {len(in_filter)} {sorted(in_filter, key=int)}; "
-        f"util now [{util_str}]",
+        f"util now [{util_str}]; mem now [{mem_str}]",
         flush=True,
     )
     print(
-        f"[tir-bench] gate: util-threshold={args.util_threshold:g}% — "
+        f"[tir-bench] gate: util-threshold={args.util_threshold:g}%, "
+        f"mem-threshold={args.mem_threshold:g}% — "
         f"occupied (skip): {occupied_now if occupied_now else 'none'}; "
-        f"shareable incl. idle-but-resident: "
+        f"shareable: "
         f"{sorted((set(in_filter) - set(occupied_now)), key=int)} "
         f"(resident-VRAM cards: {resident if resident else 'none'})",
         flush=True,
@@ -1574,7 +1613,11 @@ def main() -> None:
             print(f"[tir-bench]   gpu {idx}: {err}", file=sys.stderr)
         sys.exit(1)
 
-    pool = GpuPool(allowed=usable, util_threshold=args.util_threshold)
+    pool = GpuPool(
+        allowed=usable,
+        util_threshold=args.util_threshold,
+        mem_threshold=args.mem_threshold,
+    )
     n_gpus = len(usable)
     cpu_workers = args.cpu_workers if args.cpu_workers > 0 else n_gpus
     cpu_workers = min(cpu_workers, n_gpus)

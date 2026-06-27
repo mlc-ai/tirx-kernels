@@ -115,6 +115,8 @@ Spot-check one workload: `python -m tirx_kernels.bench --kernel ... --config ...
 | `--bench-aggregate` | `mean` | `mean`, `median`, or `trimmed_mean` over round samples |
 | `--cpu-workers` | `0` (= GPU count) | Concurrent workload workers (capped at GPU count) |
 | `--impls` | `ours` | `ours`, `baseline`, or `all` |
+| `--util-threshold` | `0` | Skip GPUs with SM utilization above this percent |
+| `--mem-threshold` | `0` | Skip GPUs with compute-app memory-used percent above this percent |
 
 Promoted baselines often use **trimmed_mean ×5** via `reaggregate_from_logs.py`.
 
