@@ -244,6 +244,10 @@ workloads:
   - {kernel: sparse_flashmla_prefill_head128_phase1, config: bench_regular_dqk576_hq128_s4096_kv8192_topk2048}
   - {kernel: sparse_flashmla_prefill_head128_phase1, config: bench_regular_dqk576_hq128_s4096_kv32768_topk2048}
   - {kernel: sparse_flashmla_prefill_head128_phase1, config: bench_regular_dqk576_hq128_s4096_kv65536_topk2048}
+  # -- sparse_flashmla_prefill_head128_small_topk_phase1
+  - {kernel: sparse_flashmla_prefill_head128_small_topk_phase1, config: bench_smalltopk_dqk512_hq128_s4096_kv8192_topk1280}
+  - {kernel: sparse_flashmla_prefill_head128_small_topk_phase1, config: bench_smalltopk_dqk512_hq128_s4096_kv32768_topk1280}
+  - {kernel: sparse_flashmla_prefill_head128_small_topk_phase1, config: bench_smalltopk_dqk512_hq128_s4096_kv65536_topk1280}
   # ── fp16_bf16_gemm
   - {kernel: fp16_bf16_gemm, config: fp16_1024x1024x1024}
   - {kernel: fp16_bf16_gemm, config: fp16_2048x2048x2048}
