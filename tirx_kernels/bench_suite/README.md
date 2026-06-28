@@ -1,11 +1,11 @@
-# bench_suite
+# bench-suite
 
 Pre-commit regression benchmark for TIRx kernels. Runs the curated workload
 sweep in `workloads.yaml` against the **working tree**, assigns GPUs
-automatically, and writes run JSON + reports under `.bench_suite/`.
+automatically, and writes run JSON + reports under `.bench-suite/`.
 
 ```bash
-cd /path/to/tirx-kernels
+cd /path/to/tirx-kernels-staging
 pip install -e .
 
 export TVM_PATH=/path/to/tvm
@@ -30,7 +30,7 @@ python -m tirx_kernels.bench_suite --check-imports
 | **Pinned baseline (git)** | `tir.json`, `ref.json`, `ratio.json`, `baseline.md` |
 | **Promote / report** | `promote_baseline.py`, `reaggregate_from_logs.py`, `ratio_diff.py`, `baseline_view.py` |
 
-Run artifacts (logs, `runs/*.json`, `reports/*`) live under `.bench_suite/` and are not committed.
+Run artifacts (logs, `runs/*.json`, `reports/*`) live under `.bench-suite/` and are not committed.
 
 ## Strategy (TL;DR)
 
@@ -75,7 +75,7 @@ Promote through `promote_baseline.py` only (never bare `cp`).
 ```bash
 python -m tirx_kernels.bench_suite --impls ours
 python tirx_kernels/bench_suite/promote_baseline.py \
-  .bench_suite/runs/<id>.json --tir
+  .bench-suite/runs/<id>.json --tir
 ```
 
 Before merge, add `--rounds 5` and promote.
@@ -92,7 +92,7 @@ Or separate ours + baseline runs, then:
 ```bash
 python -m tirx_kernels.bench_suite --impls ours --rounds 5
 python -m tirx_kernels.bench_suite --impls baseline --rounds 5
-python tirx_kernels/bench_suite/promote_baseline.py .bench_suite/runs/<ours-id>.json --tir
+python tirx_kernels/bench_suite/promote_baseline.py .bench-suite/runs/<ours-id>.json --tir
 python tirx_kernels/bench_suite/reaggregate_from_logs.py --ref
 ```
 
@@ -100,8 +100,8 @@ python tirx_kernels/bench_suite/reaggregate_from_logs.py --ref
 
 ```bash
 python -m tirx_kernels.bench_suite --impls all --rounds 5
-less .bench_suite/reports/latest/bench.md
-python tirx_kernels/bench_suite/promote_baseline.py .bench_suite/runs/<id>.json --both
+less .bench-suite/reports/latest/bench.md
+python tirx_kernels/bench_suite/promote_baseline.py .bench-suite/runs/<id>.json --both
 ```
 
 Spot-check one workload: `python -m tirx_kernels.bench --kernel ... --config ... --impls all --rounds 5`
@@ -130,9 +130,9 @@ Promoted baselines often use **trimmed_mean ×5** via `reaggregate_from_logs.py`
 
 | Path | Description |
 |------|-------------|
-| `.bench_suite/runs/<id>.json` | Aggregated run results (times in microseconds) |
-| `.bench_suite/reports/<id>/bench.md` | Main diff report |
-| `.bench_suite/logs/*__<role>_a<N>.log` | Subprocess stdout (N proton trees when `--rounds N`) |
+| `.bench-suite/runs/<id>.json` | Aggregated run results (times in microseconds) |
+| `.bench-suite/reports/<id>/bench.md` | Main diff report |
+| `.bench-suite/logs/*__<role>_a<N>.log` | Subprocess stdout (N proton trees when `--rounds N`) |
 
 ## Exit codes
 

@@ -149,7 +149,7 @@ BENCH_CONFIGS = [
 
 KERNEL_META = {
     "name": "sparse_flashmla_prefill_head128_phase1",
-    "category": "attention",
+    "category": "flashmla",
     "compute_capability": 10,
 }
 
@@ -1983,7 +1983,7 @@ def run_bench(
         input_bytes = tensor_bytes(*_tirx_benchmark_tensors(case, launches))
         return case, input_bytes
 
-    from tirx_kernels.attention._flashmla_bench import flashmla_reference_builder
+    from tirx_kernels.flashmla._flashmla_bench import flashmla_reference_builder
 
     return bench(
         {"tirx": lambda case: _run_tirx_launches(ex, case["launches"])},

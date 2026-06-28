@@ -953,7 +953,7 @@ def get_kernel(**kwargs: Any):
                                 # makes ptxas branch around the 16-bit bf16 store (`BSYNC` + unpredicated
                                 # `STG.E.U16`), while the per-operand form if-converts the guard to a
                                 # predicated `@P STG.E.U16` — matching DeepGEMM's epilogue and ~6% faster
-                                # on bf16xcompressed (verified in SASS + /tir-bench). A predicated PTX
+                                # on bf16xcompressed (verified in SASS + /bench-suite). A predicated PTX
                                 # store (inline asm) reaches the same instruction but is opaque to ptxas
                                 # scheduling, so it cannot overlap with the surrounding tcgen05 ops and
                                 # loses that 6%. See memory/knowledge/predicated-narrow-global-store.md.

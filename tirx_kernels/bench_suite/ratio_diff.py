@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Ratio-based regression diff for bench_suite.
+"""Ratio-based regression diff for bench-suite.
 
 For each (kernel, config) we measure with multiple impls, compute the
 ratio ref/ours where ref = fastest non-ours impl picked in baseline and
@@ -40,7 +40,7 @@ OUR_IMPLS = {"tir", "tirx"}
 DEFAULT_RATIO_THRESHOLD = 1.0
 HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parent.parent
-DEFAULT_LATEST_RUN = REPO_ROOT / ".bench_suite" / "latest.json"
+DEFAULT_LATEST_RUN = REPO_ROOT / ".bench-suite" / "latest.json"
 DEFAULT_TIR_BASELINE = HERE / "tir.json"
 DEFAULT_REF_BASELINE = HERE / "ref.json"
 DEFAULT_RATIO_BASELINE = HERE / "ratio.json"
@@ -296,7 +296,7 @@ def build_report(
         else "computed from tir.json + ref.json"
     )
 
-    w("# bench_suite bench report")
+    w("# bench-suite bench report")
     w()
     w(f"- Baseline (abs µs): `{baseline_label}`")
     w(f"- Saved ratios: `{ratio_label}` from ratio.json")
@@ -379,7 +379,7 @@ def main() -> None:
         "-o",
         type=Path,
         default=None,
-        help="Write report path (default: .bench_suite/reports/<run>/bench.md)",
+        help="Write report path (default: .bench-suite/reports/<run>/bench.md)",
     )
     ap.add_argument(
         "--refresh-ratio-json",

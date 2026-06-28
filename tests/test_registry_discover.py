@@ -23,8 +23,9 @@ def test_discover_categories_includes_kernel_dirs() -> None:
     categories = discover_categories()
     assert "gemm" in categories
     assert "attention" in categories
+    assert "flashmla" in categories
     assert "bench" not in categories
-    assert "tir_bench" not in categories
+    assert "bench_suite" not in categories
 
 
 def test_discover_kernels_finds_known_gemm() -> None:
@@ -36,3 +37,8 @@ def test_discover_kernels_finds_known_gemm() -> None:
 def test_load_kernel_finds_single_module() -> None:
     mod = load_kernel("nvfp4_gemm")
     assert mod.KERNEL_META["name"] == "nvfp4_gemm"
+
+
+def test_load_kernel_finds_flashmla_unified_entry() -> None:
+    mod = load_kernel("flash_mla_sparse_fwd")
+    assert mod.KERNEL_META["category"] == "flashmla"

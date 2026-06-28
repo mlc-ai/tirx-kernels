@@ -21,7 +21,7 @@ from collections import defaultdict
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-DEFAULT_LOG_DIR = HERE.parents[2] / ".bench_suite" / "logs"
+DEFAULT_LOG_DIR = HERE.parents[2] / ".bench-suite" / "logs"
 OURS_IMPLS = frozenset({"tir", "tirx"})
 FA4_SKIP_BASELINES = frozenset({"flashinfer"})
 

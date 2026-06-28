@@ -29,7 +29,7 @@ import tirx_kernels
 _log = logging.getLogger(__name__)
 
 # CLI / package infra — not kernel categories.
-_SKIP_CATEGORIES = frozenset({"bench", "test", "tir_bench", "experimental"})
+_SKIP_CATEGORIES = frozenset({"bench", "test", "bench_suite", "experimental"})
 
 _KERNEL_CACHE: dict[str, ModuleType] = {}
 
@@ -113,10 +113,7 @@ def _scan_category(category: str, *, strict: bool) -> dict[str, ModuleType]:
 
 
 def discover_kernels(
-    *,
-    min_compute_capability: int | None = None,
-    category: str | None = None,
-    strict: bool = False,
+    *, min_compute_capability: int | None = None, category: str | None = None, strict: bool = False
 ) -> dict[str, ModuleType]:
     """Return ``{name: module}`` for all registered kernels in the installed package.
 
@@ -164,9 +161,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     all_kernels = discover_kernels(
-        min_compute_capability=args.cc,
-        category=args.category,
-        strict=args.strict,
+        min_compute_capability=args.cc, category=args.category, strict=args.strict
     )
 
     if args.format == "json":

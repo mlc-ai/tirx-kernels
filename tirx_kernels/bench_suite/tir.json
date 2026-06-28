@@ -509,6 +509,1126 @@
       }
     },
     {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b16_n1_mp128_ps32_h64_d128_bf16_fixed",
+      "label": "b16_n1_mp128_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9314,
+        "tirx": 3.9608
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b16_n1_mp128_ps32_h64_d128_f32_fixed",
+      "label": "b16_n1_mp128_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.2425999999999995,
+        "tirx": 4.238
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b16_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "label": "b16_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.4202,
+        "tirx": 4.4350000000000005
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b16_n1_mp128_ps64_h64_d128_f32_fixed",
+      "label": "b16_n1_mp128_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.48,
+        "tirx": 4.4806
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b16_n1_mp1_ps32_h64_d128_bf16_fixed",
+      "label": "b16_n1_mp1_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9432,
+        "tirx": 3.769
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b16_n1_mp1_ps32_h64_d128_f32_fixed",
+      "label": "b16_n1_mp1_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9786,
+        "tirx": 3.7932
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b16_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "label": "b16_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.697,
+        "tirx": 3.5372
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b16_n1_mp1_ps64_h64_d128_f32_fixed",
+      "label": "b16_n1_mp1_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6774,
+        "tirx": 3.4704
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b16_n1_mp32_ps32_h64_d128_bf16_fixed",
+      "label": "b16_n1_mp32_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.7481999999999998,
+        "tirx": 3.7768
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b16_n1_mp32_ps32_h64_d128_f32_fixed",
+      "label": "b16_n1_mp32_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9496,
+        "tirx": 3.9704
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b16_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "label": "b16_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.94,
+        "tirx": 3.9608
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b16_n1_mp32_ps64_h64_d128_f32_fixed",
+      "label": "b16_n1_mp32_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.888,
+        "tirx": 3.899
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b16_n1_mp8_ps32_h64_d128_bf16_fixed",
+      "label": "b16_n1_mp8_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.0362,
+        "tirx": 4.054
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b16_n1_mp8_ps32_h64_d128_f32_fixed",
+      "label": "b16_n1_mp8_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9628,
+        "tirx": 3.9842
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b16_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "label": "b16_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.5806,
+        "tirx": 3.6162
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b16_n1_mp8_ps64_h64_d128_f32_fixed",
+      "label": "b16_n1_mp8_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.5888,
+        "tirx": 3.5948
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b1_n1_mp128_ps32_h64_d128_bf16_fixed",
+      "label": "b1_n1_mp128_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6324,
+        "tirx": 3.6582
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b1_n1_mp128_ps32_h64_d128_f32_fixed",
+      "label": "b1_n1_mp128_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.0166,
+        "tirx": 4.0358
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b1_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "label": "b1_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6862,
+        "tirx": 3.7036000000000002
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b1_n1_mp128_ps64_h64_d128_f32_fixed",
+      "label": "b1_n1_mp128_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6353999999999997,
+        "tirx": 3.6448
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b1_n1_mp1_ps32_h64_d128_bf16_fixed",
+      "label": "b1_n1_mp1_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.0046,
+        "tirx": 3.8584
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b1_n1_mp1_ps32_h64_d128_f32_fixed",
+      "label": "b1_n1_mp1_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6338,
+        "tirx": 3.4554
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b1_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "label": "b1_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.5876,
+        "tirx": 3.399
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b1_n1_mp1_ps64_h64_d128_f32_fixed",
+      "label": "b1_n1_mp1_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6008,
+        "tirx": 3.3826
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b1_n1_mp32_ps32_h64_d128_bf16_fixed",
+      "label": "b1_n1_mp32_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.0094,
+        "tirx": 4.0328
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b1_n1_mp32_ps32_h64_d128_f32_fixed",
+      "label": "b1_n1_mp32_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.0074000000000005,
+        "tirx": 4.021199999999999
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b1_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "label": "b1_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.8872,
+        "tirx": 3.9136
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b1_n1_mp32_ps64_h64_d128_f32_fixed",
+      "label": "b1_n1_mp32_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9108,
+        "tirx": 3.9312
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b1_n1_mp8_ps32_h64_d128_bf16_fixed",
+      "label": "b1_n1_mp8_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6248,
+        "tirx": 3.644
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b1_n1_mp8_ps32_h64_d128_f32_fixed",
+      "label": "b1_n1_mp8_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.7002,
+        "tirx": 3.7272
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b1_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "label": "b1_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9046,
+        "tirx": 3.9404
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b1_n1_mp8_ps64_h64_d128_f32_fixed",
+      "label": "b1_n1_mp8_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.626,
+        "tirx": 3.6428
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b2_n1_mp128_ps32_h64_d128_bf16_fixed",
+      "label": "b2_n1_mp128_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.0188,
+        "tirx": 4.0356
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b2_n1_mp128_ps32_h64_d128_f32_fixed",
+      "label": "b2_n1_mp128_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.7228,
+        "tirx": 3.7344
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b2_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "label": "b2_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9376,
+        "tirx": 3.949
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b2_n1_mp128_ps64_h64_d128_f32_fixed",
+      "label": "b2_n1_mp128_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.8182,
+        "tirx": 3.8358000000000003
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b2_n1_mp1_ps32_h64_d128_bf16_fixed",
+      "label": "b2_n1_mp1_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6884,
+        "tirx": 3.5204
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b2_n1_mp1_ps32_h64_d128_f32_fixed",
+      "label": "b2_n1_mp1_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6315999999999997,
+        "tirx": 3.4562
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b2_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "label": "b2_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9118,
+        "tirx": 3.77
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b2_n1_mp1_ps64_h64_d128_f32_fixed",
+      "label": "b2_n1_mp1_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9926,
+        "tirx": 3.843
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b2_n1_mp32_ps32_h64_d128_bf16_fixed",
+      "label": "b2_n1_mp32_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9322,
+        "tirx": 3.948
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b2_n1_mp32_ps32_h64_d128_f32_fixed",
+      "label": "b2_n1_mp32_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9476,
+        "tirx": 3.9744
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b2_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "label": "b2_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.5964,
+        "tirx": 3.6194
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b2_n1_mp32_ps64_h64_d128_f32_fixed",
+      "label": "b2_n1_mp32_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6364,
+        "tirx": 3.6558
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b2_n1_mp8_ps32_h64_d128_bf16_fixed",
+      "label": "b2_n1_mp8_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.7094,
+        "tirx": 3.724
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b2_n1_mp8_ps32_h64_d128_f32_fixed",
+      "label": "b2_n1_mp8_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.632,
+        "tirx": 3.6542
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b2_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "label": "b2_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.62,
+        "tirx": 3.6444
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b2_n1_mp8_ps64_h64_d128_f32_fixed",
+      "label": "b2_n1_mp8_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.5672,
+        "tirx": 3.5728
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b4_n1_mp128_ps32_h64_d128_bf16_fixed",
+      "label": "b4_n1_mp128_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9562,
+        "tirx": 3.9664
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b4_n1_mp128_ps32_h64_d128_f32_fixed",
+      "label": "b4_n1_mp128_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.955,
+        "tirx": 3.9663999999999997
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b4_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "label": "b4_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.8192,
+        "tirx": 3.8416
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b4_n1_mp128_ps64_h64_d128_f32_fixed",
+      "label": "b4_n1_mp128_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.8398,
+        "tirx": 3.8446
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b4_n1_mp1_ps32_h64_d128_bf16_fixed",
+      "label": "b4_n1_mp1_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6558,
+        "tirx": 3.495
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b4_n1_mp1_ps32_h64_d128_f32_fixed",
+      "label": "b4_n1_mp1_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.0200000000000005,
+        "tirx": 3.856
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b4_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "label": "b4_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9966,
+        "tirx": 3.8486
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b4_n1_mp1_ps64_h64_d128_f32_fixed",
+      "label": "b4_n1_mp1_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6862,
+        "tirx": 3.4798
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b4_n1_mp32_ps32_h64_d128_bf16_fixed",
+      "label": "b4_n1_mp32_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.636,
+        "tirx": 3.6502
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b4_n1_mp32_ps32_h64_d128_f32_fixed",
+      "label": "b4_n1_mp32_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6052,
+        "tirx": 3.6248
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b4_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "label": "b4_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.713,
+        "tirx": 3.7512
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b4_n1_mp32_ps64_h64_d128_f32_fixed",
+      "label": "b4_n1_mp32_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.5962,
+        "tirx": 3.6098
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b4_n1_mp8_ps32_h64_d128_bf16_fixed",
+      "label": "b4_n1_mp8_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6874,
+        "tirx": 3.706
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b4_n1_mp8_ps32_h64_d128_f32_fixed",
+      "label": "b4_n1_mp8_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.0228,
+        "tirx": 4.0436
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b4_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "label": "b4_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.5728,
+        "tirx": 3.603
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b4_n1_mp8_ps64_h64_d128_f32_fixed",
+      "label": "b4_n1_mp8_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9758,
+        "tirx": 3.9936
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b8_n1_mp128_ps32_h64_d128_bf16_fixed",
+      "label": "b8_n1_mp128_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6552,
+        "tirx": 3.6796
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b8_n1_mp128_ps32_h64_d128_f32_fixed",
+      "label": "b8_n1_mp128_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.8152,
+        "tirx": 3.8306
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b8_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "label": "b8_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.049,
+        "tirx": 4.0729999999999995
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b8_n1_mp128_ps64_h64_d128_f32_fixed",
+      "label": "b8_n1_mp128_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.885,
+        "tirx": 3.8858
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b8_n1_mp1_ps32_h64_d128_bf16_fixed",
+      "label": "b8_n1_mp1_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.0218,
+        "tirx": 3.8674
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b8_n1_mp1_ps32_h64_d128_f32_fixed",
+      "label": "b8_n1_mp1_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.7258,
+        "tirx": 3.5254
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b8_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "label": "b8_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6104000000000003,
+        "tirx": 3.4458
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b8_n1_mp1_ps64_h64_d128_f32_fixed",
+      "label": "b8_n1_mp1_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.0043999999999995,
+        "tirx": 3.8504
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b8_n1_mp32_ps32_h64_d128_bf16_fixed",
+      "label": "b8_n1_mp32_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.961,
+        "tirx": 3.9808000000000003
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b8_n1_mp32_ps32_h64_d128_f32_fixed",
+      "label": "b8_n1_mp32_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6512000000000002,
+        "tirx": 3.6626
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b8_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "label": "b8_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.546,
+        "tirx": 3.57
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b8_n1_mp32_ps64_h64_d128_f32_fixed",
+      "label": "b8_n1_mp32_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.0102,
+        "tirx": 4.024
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b8_n1_mp8_ps32_h64_d128_bf16_fixed",
+      "label": "b8_n1_mp8_ps32_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.599,
+        "tirx": 3.6382
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b8_n1_mp8_ps32_h64_d128_f32_fixed",
+      "label": "b8_n1_mp8_ps32_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.0412,
+        "tirx": 4.0558
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b8_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "label": "b8_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.665,
+        "tirx": 3.6986
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
+      "config": "b8_n1_mp8_ps64_h64_d128_f32_fixed",
+      "label": "b8_n1_mp8_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9344,
+        "tirx": 3.9604
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
       "config": "s2048_skv4096_h64_d128_bf16_compressed_cp",
       "label": "s2048_skv4096_h64_d128_bf16_compressed_cp",
@@ -950,6 +2070,566 @@
       "impls": {
         "deepgemm": 188.1062,
         "tirx": 185.8836
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b16_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "label": "b16_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.4128,
+        "tirx": 4.4458
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b16_n1_mp128_ps64_h64_d128_f32_fixed",
+      "label": "b16_n1_mp128_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.4496,
+        "tirx": 4.457
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b16_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "label": "b16_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.0494,
+        "tirx": 4.0774
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b16_n1_mp1_ps64_h64_d128_f32_fixed",
+      "label": "b16_n1_mp1_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6564,
+        "tirx": 3.6672
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b16_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "label": "b16_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9352,
+        "tirx": 3.9814
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b16_n1_mp32_ps64_h64_d128_f32_fixed",
+      "label": "b16_n1_mp32_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.045,
+        "tirx": 4.0758
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b16_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "label": "b16_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9756,
+        "tirx": 3.991
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b16_n1_mp8_ps64_h64_d128_f32_fixed",
+      "label": "b16_n1_mp8_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6428,
+        "tirx": 3.6728
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b1_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "label": "b1_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6664,
+        "tirx": 3.7164
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b1_n1_mp128_ps64_h64_d128_f32_fixed",
+      "label": "b1_n1_mp128_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6366,
+        "tirx": 3.6442
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b1_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "label": "b1_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.634,
+        "tirx": 3.6494
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b1_n1_mp1_ps64_h64_d128_f32_fixed",
+      "label": "b1_n1_mp1_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.714,
+        "tirx": 3.7246
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b1_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "label": "b1_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6206,
+        "tirx": 3.6311999999999998
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b1_n1_mp32_ps64_h64_d128_f32_fixed",
+      "label": "b1_n1_mp32_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.646,
+        "tirx": 3.6566
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b1_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "label": "b1_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9424,
+        "tirx": 3.9428
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b1_n1_mp8_ps64_h64_d128_f32_fixed",
+      "label": "b1_n1_mp8_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6136,
+        "tirx": 3.6176
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b2_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "label": "b2_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9892,
+        "tirx": 4.0085999999999995
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b2_n1_mp128_ps64_h64_d128_f32_fixed",
+      "label": "b2_n1_mp128_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6968,
+        "tirx": 3.6966
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b2_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "label": "b2_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.0252,
+        "tirx": 4.0474
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b2_n1_mp1_ps64_h64_d128_f32_fixed",
+      "label": "b2_n1_mp1_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.0064,
+        "tirx": 4.0206
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b2_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "label": "b2_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6052,
+        "tirx": 3.6146
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b2_n1_mp32_ps64_h64_d128_f32_fixed",
+      "label": "b2_n1_mp32_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.7454,
+        "tirx": 3.7694
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b2_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "label": "b2_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6513999999999998,
+        "tirx": 3.6778
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b2_n1_mp8_ps64_h64_d128_f32_fixed",
+      "label": "b2_n1_mp8_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6472,
+        "tirx": 3.6464
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b4_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "label": "b4_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.8926,
+        "tirx": 3.924
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b4_n1_mp128_ps64_h64_d128_f32_fixed",
+      "label": "b4_n1_mp128_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.892,
+        "tirx": 3.9206
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b4_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "label": "b4_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.629,
+        "tirx": 3.6462
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b4_n1_mp1_ps64_h64_d128_f32_fixed",
+      "label": "b4_n1_mp1_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6446,
+        "tirx": 3.6512
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b4_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "label": "b4_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.013199999999999,
+        "tirx": 4.0678
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b4_n1_mp32_ps64_h64_d128_f32_fixed",
+      "label": "b4_n1_mp32_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6666,
+        "tirx": 3.6658
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b4_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "label": "b4_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6478,
+        "tirx": 3.6936
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b4_n1_mp8_ps64_h64_d128_f32_fixed",
+      "label": "b4_n1_mp8_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9584,
+        "tirx": 3.9736000000000002
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b8_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "label": "b8_n1_mp128_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.9904,
+        "tirx": 4.0128
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b8_n1_mp128_ps64_h64_d128_f32_fixed",
+      "label": "b8_n1_mp128_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.4646,
+        "tirx": 4.4799999999999995
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b8_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "label": "b8_n1_mp1_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.7026,
+        "tirx": 3.711
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b8_n1_mp1_ps64_h64_d128_f32_fixed",
+      "label": "b8_n1_mp1_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 4.0408,
+        "tirx": 4.0542
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b8_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "label": "b8_n1_mp32_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.8436,
+        "tirx": 3.8628
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b8_n1_mp32_ps64_h64_d128_f32_fixed",
+      "label": "b8_n1_mp32_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.6528,
+        "tirx": 3.642
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b8_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "label": "b8_n1_mp8_ps64_h64_d128_bf16_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.7612,
+        "tirx": 3.7894
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
+      "config": "b8_n1_mp8_ps64_h64_d128_f32_fixed",
+      "label": "b8_n1_mp8_ps64_h64_d128_f32_fixed",
+      "status": "ok",
+      "impls": {
+        "deepgemm": 3.659,
+        "tirx": 3.6678
       },
       "aggregated": {
         "rounds": 5,
@@ -1782,6 +3462,202 @@
         "cublaslt_nvfp4": 182.9938,
         "flashinfer": 181.85840000000002,
         "tir": 185.4468
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "sparse_flashmla_prefill_head128_phase1",
+      "config": "bench_regular_dqk512_hq128_s4096_kv32768_topk2048",
+      "label": "bench_regular_dqk512_hq128_s4096_kv32768_topk2048",
+      "status": "ok",
+      "impls": {
+        "flashmla": 1848.2204,
+        "tirx": 1805.4558
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "sparse_flashmla_prefill_head128_phase1",
+      "config": "bench_regular_dqk512_hq128_s4096_kv65536_topk2048",
+      "label": "bench_regular_dqk512_hq128_s4096_kv65536_topk2048",
+      "status": "ok",
+      "impls": {
+        "flashmla": 1994.7396,
+        "tirx": 1979.2134
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "sparse_flashmla_prefill_head128_phase1",
+      "config": "bench_regular_dqk512_hq128_s4096_kv8192_topk2048",
+      "label": "bench_regular_dqk512_hq128_s4096_kv8192_topk2048",
+      "status": "ok",
+      "impls": {
+        "flashmla": 1862.202,
+        "tirx": 1826.5718
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "sparse_flashmla_prefill_head128_phase1",
+      "config": "bench_regular_dqk576_hq128_s4096_kv32768_topk2048",
+      "label": "bench_regular_dqk576_hq128_s4096_kv32768_topk2048",
+      "status": "ok",
+      "impls": {
+        "flashmla": 1955.0134,
+        "tirx": 1927.7038
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "sparse_flashmla_prefill_head128_phase1",
+      "config": "bench_regular_dqk576_hq128_s4096_kv65536_topk2048",
+      "label": "bench_regular_dqk576_hq128_s4096_kv65536_topk2048",
+      "status": "ok",
+      "impls": {
+        "flashmla": 2138.2772,
+        "tirx": 2134.222
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "sparse_flashmla_prefill_head128_phase1",
+      "config": "bench_regular_dqk576_hq128_s4096_kv8192_topk2048",
+      "label": "bench_regular_dqk576_hq128_s4096_kv8192_topk2048",
+      "status": "ok",
+      "impls": {
+        "flashmla": 1955.2818,
+        "tirx": 1908.6346
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "sparse_flashmla_prefill_head64_phase1",
+      "config": "bench_dqk512_hq64_s4096_kv32768_topk512",
+      "label": "bench_dqk512_hq64_s4096_kv32768_topk512",
+      "status": "ok",
+      "impls": {
+        "flashmla": 373.077,
+        "tirx": 369.4776
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "sparse_flashmla_prefill_head64_phase1",
+      "config": "bench_dqk512_hq64_s4096_kv49152_topk512",
+      "label": "bench_dqk512_hq64_s4096_kv49152_topk512",
+      "status": "ok",
+      "impls": {
+        "flashmla": 374.3474,
+        "tirx": 370.39119999999997
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "sparse_flashmla_prefill_head64_phase1",
+      "config": "bench_dqk512_hq64_s4096_kv65536_topk512",
+      "label": "bench_dqk512_hq64_s4096_kv65536_topk512",
+      "status": "ok",
+      "impls": {
+        "flashmla": 381.1098,
+        "tirx": 372.9602
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "sparse_flashmla_prefill_head64_phase1",
+      "config": "bench_dqk512_hq64_s4096_kv8192_topk512",
+      "label": "bench_dqk512_hq64_s4096_kv8192_topk512",
+      "status": "ok",
+      "impls": {
+        "flashmla": 369.0582,
+        "tirx": 365.7822
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "sparse_flashmla_prefill_head64_phase1",
+      "config": "bench_dqk576_hq64_s4096_kv32768_topk512",
+      "label": "bench_dqk576_hq64_s4096_kv32768_topk512",
+      "status": "ok",
+      "impls": {
+        "flashmla": 392.2244,
+        "tirx": 385.2106
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "sparse_flashmla_prefill_head64_phase1",
+      "config": "bench_dqk576_hq64_s4096_kv49152_topk512",
+      "label": "bench_dqk576_hq64_s4096_kv49152_topk512",
+      "status": "ok",
+      "impls": {
+        "flashmla": 394.7292,
+        "tirx": 387.44440000000003
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "sparse_flashmla_prefill_head64_phase1",
+      "config": "bench_dqk576_hq64_s4096_kv65536_topk512",
+      "label": "bench_dqk576_hq64_s4096_kv65536_topk512",
+      "status": "ok",
+      "impls": {
+        "flashmla": 404.7574,
+        "tirx": 398.89619999999996
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "mean"
+      }
+    },
+    {
+      "kernel": "sparse_flashmla_prefill_head64_phase1",
+      "config": "bench_dqk576_hq64_s4096_kv8192_topk512",
+      "label": "bench_dqk576_hq64_s4096_kv8192_topk512",
+      "status": "ok",
+      "impls": {
+        "flashmla": 381.4672,
+        "tirx": 375.5956
       },
       "aggregated": {
         "rounds": 5,

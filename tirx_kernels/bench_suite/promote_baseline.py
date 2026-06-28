@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Promote a bench_suite run JSON to a checked-in baseline and refresh baseline.md.
+"""Promote a bench-suite run JSON to a checked-in baseline and refresh baseline.md.
 
 See README.md in this directory for the full baseline refresh workflow.
 """
@@ -97,7 +97,7 @@ def main() -> None:
         "run_json",
         type=Path,
         nargs="?",
-        help="run JSON to promote (e.g. .bench_suite/runs/18.json)",
+        help="run JSON to promote (e.g. .bench-suite/runs/18.json)",
     )
     ap.add_argument("--tir", action="store_true", help="refresh tir.json (our-kernel baseline)")
     ap.add_argument("--ref", action="store_true", help="refresh ref.json (reference baseline)")

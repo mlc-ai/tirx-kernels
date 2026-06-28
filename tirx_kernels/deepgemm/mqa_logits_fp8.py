@@ -776,7 +776,7 @@ def get_kernel(**kwargs: Any):
                             # store (BSYNC + unpredicated STG.E.U16), while the
                             # per-operand form if-converts the guard to a predicated
                             # `@P STG.E.U16` — matching DeepGEMM's epilogue and ~6%
-                            # faster on bf16xcompressed (verified in SASS + tir-bench).
+                            # faster on bf16xcompressed (verified in SASS + bench-suite).
                             if row_k_start <= kv_offset and kv_offset < row_k_end:
                                 store_logits(
                                     q_offset

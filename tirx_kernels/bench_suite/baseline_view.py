@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render a single bench_suite run JSON as a human-readable markdown summary.
+"""Render a single bench-suite run JSON as a human-readable markdown summary.
 
 For each (kernel, config) workload, lists every impl's timing and the
 ref/ours ratio (higher = ours beats ref). Sorted by kernel then config.
@@ -89,7 +89,7 @@ def main() -> None:
     failed = [r for r in results if r.get("status") != "ok"]
 
     lines: list[str] = []
-    lines.append(f"# bench_suite baseline view: `{src_name}`")
+    lines.append(f"# bench-suite baseline view: `{src_name}`")
     lines.append("")
     lines.append(f"- Timestamp: `{payload.get('timestamp')}`")
     lines.append(f"- Label:     `{payload.get('label')}`")
