@@ -29,6 +29,7 @@ import tirx_kernels
 
 _log = logging.getLogger(__name__)
 _STRICT = os.environ.get("TIRX_KERNELS_STRICT", "").lower() in ("1", "true", "yes")
+_KERNEL_CACHE: dict[str, ModuleType] = {}
 
 _BASE_CATEGORIES = ("gemm", "attention")
 _EXTRA_CATEGORIES_ENV = "TIRX_KERNELS_EXTRA_CATEGORIES"
@@ -93,9 +94,14 @@ def _ensure_category_package_path(category: str, paths: list[Path]) -> bool:
     return True
 
 
-def _scan_category(category: str) -> dict[str, ModuleType]:
+def _effective_strict(strict: bool | None) -> bool:
+    return _STRICT if strict is None else strict
+
+
+def _scan_category(category: str, *, strict: bool | None = None) -> dict[str, ModuleType]:
     """Import all modules in tirx_kernels/<category>/ that expose KERNEL_META."""
     result = {}
+    strict = _effective_strict(strict)
     pkg_paths = _category_paths(category)
     if not pkg_paths:
         return result
@@ -117,12 +123,35 @@ def _scan_category(category: str) -> dict[str, ModuleType]:
                 continue
             meta = getattr(mod, "KERNEL_META", None)
             if meta is not None and isinstance(meta, dict) and "name" in meta:
+                _KERNEL_CACHE[meta["name"]] = mod
                 result[meta["name"]] = mod
     return result
 
 
+def load_kernel(name: str, *, strict: bool | None = None) -> ModuleType:
+    """Import a single kernel module by ``KERNEL_META['name']``."""
+    if name in _KERNEL_CACHE:
+        return _KERNEL_CACHE[name]
+    for cat in _discover_categories():
+        modules = _scan_category(cat, strict=strict)
+        if name in modules:
+            return modules[name]
+    raise KeyError(name)
+
+
+def check_workload_imports(workloads: list[dict], *, strict: bool = True) -> list[str]:
+    """Import every unique kernel referenced in a workloads list."""
+    names = sorted({w["kernel"] for w in workloads})
+    for name in names:
+        load_kernel(name, strict=strict)
+    return names
+
+
 def discover_kernels(
-    *, min_compute_capability: int | None = None, category: str | None = None
+    *,
+    min_compute_capability: int | None = None,
+    category: str | None = None,
+    strict: bool | None = None,
 ) -> dict[str, ModuleType]:
     """Return ``{name: module}`` for all registered kernels.
 
@@ -134,11 +163,13 @@ def discover_kernels(
         won't run on sm90a, etc.)
     category : str, optional
         If given, only scan this category subdirectory.
+    strict : bool, optional
+        If True, raise on the first kernel module import failure.
     """
     categories = [category] if category else _discover_categories()
     result: dict[str, ModuleType] = {}
     for cat in categories:
-        result.update(_scan_category(cat))
+        result.update(_scan_category(cat, strict=strict))
     if min_compute_capability is not None:
         result = {
             name: mod
@@ -159,9 +190,16 @@ if __name__ == "__main__":
     )
     parser.add_argument("--category", type=str, default=None)
     parser.add_argument("--cc", type=int, default=None, help="Compute capability filter")
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Raise on the first kernel import failure (for CI import gates)",
+    )
     args = parser.parse_args()
 
-    all_kernels = discover_kernels(min_compute_capability=args.cc, category=args.category)
+    all_kernels = discover_kernels(
+        min_compute_capability=args.cc, category=args.category, strict=args.strict
+    )
 
     if args.format == "json":
         out = []
