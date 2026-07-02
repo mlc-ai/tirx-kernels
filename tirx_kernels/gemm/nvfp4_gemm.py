@@ -41,10 +41,6 @@ def prepare_data(M: int, N: int, K: int, *, return_origin: bool = False):
     return (A_fp4, B_fp4, A_sf, B_sf, alpha, C_ref)
 
 
-def _gemm_io_bytes(M: int, N: int, K: int) -> int:
-    return M * K // 2 + N * K // 2 + M * N * 2
-
-
 _CUBLASLT_EXT = None
 
 
@@ -685,7 +681,12 @@ def run_test(M=1024, N=1024, K=1024):
     assert cosine_sim > 0.97, f"nvfp4_gemm cosine_sim {cosine_sim:.6f} <= 0.97"
 
 
-def run_bench(M=1024, N=1024, K=1024, *, warmup=10, repeat=30, timer="proton", **kwargs):
+# timer=None inherits the global default (proton). Proton matters here: the
+# flashinfer/cublaslt references carry heavy per-call host dispatch (Python + internal
+# cudaDeviceSynchronize), and since the nvfp4 kernel (~28µs) is faster than that dispatch,
+# event wall-clock is host-starved and over-credits us ~4x. Proton measures pure GPU
+# kernel time -> honest ~parity (verified 0.996 vs event 4.11).
+def run_bench(M=1024, N=1024, K=1024, *, warmup=None, repeat=None, timer=None, **kwargs):
     """Benchmark."""
     import torch
 
@@ -696,75 +697,49 @@ def run_bench(M=1024, N=1024, K=1024, *, warmup=10, repeat=30, timer="proton", *
         mod = tvm.IRModule({"main": kernel})
         ex = tvm.compile(mod, target=target, tir_pipeline="tirx")
 
-    def make_input():
-        A_fp4, B_fp4, A_sf, B_sf, alpha, C_ref = prepare_data(M, N, K)
-        alpha_value = float(alpha.item())
-        alpha_tensor = torch.tensor([alpha_value], device="cuda", dtype=torch.float)
-        out_tir = torch.empty_like(C_ref).to("cuda").to(torch.bfloat16)
-        out_fi = torch.empty_like(out_tir)
-        out_cublaslt = torch.empty_like(out_tir)
-        case = {
-            "tir": (A_fp4, B_fp4, A_sf, B_sf, alpha_tensor, out_tir),
-            "flashinfer": (A_fp4, B_fp4, A_sf, B_sf, alpha, out_fi),
-            "cublaslt_nvfp4": (A_fp4, B_fp4, A_sf, B_sf, alpha_value, out_cublaslt),
-        }
-        return case, _gemm_io_bytes(M, N, K)
+    # Allocate inputs once, outside the timed region (Triton-standard pure launch).
+    A_fp4, B_fp4, A_sf, B_sf, alpha, C_ref = prepare_data(M, N, K)
+    alpha_value = float(alpha.item())
+    alpha_tensor = torch.tensor([alpha_value], device="cuda", dtype=torch.float)
+    out_tir = torch.empty_like(C_ref).to("cuda").to(torch.bfloat16)
 
-    funcs = {"tir": lambda case: ex.mod(*case["tir"])}
+    funcs = {"tir": lambda: ex.mod(A_fp4, B_fp4, A_sf, B_sf, alpha_tensor, out_tir)}
 
     def _flashinfer():
-        def run(case):
+        out_fi = torch.empty_like(out_tir)
+
+        def run():
             with flashinfer.autotune(False):  # time with the tuned config, no re-tune
                 return flashinfer.mm_fp4(
-                    case["flashinfer"][0],
-                    case["flashinfer"][1].T,
-                    case["flashinfer"][2],
-                    case["flashinfer"][3].T,
-                    case["flashinfer"][4],
-                    out=case["flashinfer"][5],
+                    A_fp4,
+                    B_fp4.T,
+                    A_sf,
+                    B_sf.T,
+                    alpha,
+                    out=out_fi,
                     block_size=16,
                     backend="auto",
                     use_nvfp4=True,
                 )
 
-        # Autotune once on a throwaway input so the timed runs use the tuned config.
-        A_fp4, B_fp4, A_sf, B_sf, alpha, C_ref = prepare_data(M, N, K)
-        autotune_case = {
-            "flashinfer": (
-                A_fp4,
-                B_fp4,
-                A_sf,
-                B_sf,
-                alpha,
-                torch.empty_like(C_ref).to("cuda").to(torch.bfloat16),
-            )
-        }
+        # Autotune once so the timed runs use the tuned config.
         with flashinfer.autotune(True):
-            run(autotune_case)
+            run()
         torch.cuda.synchronize()
         return run
 
     def _cublaslt():
         ext = _load_cublaslt_nvfp4_ext()
-        return lambda case: ext.nvfp4_cublaslt(
-            case["cublaslt_nvfp4"][0],
-            case["cublaslt_nvfp4"][1],
-            case["cublaslt_nvfp4"][2],
-            case["cublaslt_nvfp4"][3],
-            case["cublaslt_nvfp4"][4],
-            case["cublaslt_nvfp4"][5],
-            M,
-            N,
-            K,
+        out_cublaslt = torch.empty_like(out_tir)
+        return lambda: ext.nvfp4_cublaslt(
+            A_fp4, B_fp4, A_sf, B_sf, alpha_value, out_cublaslt, M, N, K
         )
 
     result = bench(
         funcs,
-        make_input,
         warmup=warmup,
         repeat=repeat,
         timer=timer,
-        proton_name="nvfp4_gemm",
         references={"flashinfer": _flashinfer, "cublaslt_nvfp4": _cublaslt},
         **kwargs,
     )

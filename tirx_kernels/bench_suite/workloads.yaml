@@ -2,9 +2,13 @@
 # Edit freely. Run `python -m tirx_kernels.registry --format=benchrun --cc 10` to see the full set.
 
 defaults:
-  warmup: 100        # high-precision medians (~3-min wall total on 8 GPUs)
-  repeat: 30
-  timer: proton
+  # Intentionally empty: warmup/repeat/timer all defer to each kernel's run_bench
+  # defaults. The global default timer is `proton` (resolved from timer=None in
+  # tvm.tirx.bench.bench) -- pure per-kernel GPU time, cold-cache (per-iter L2 flush),
+  # honest for host-dispatch-heavy references; auto-falls back to `event` (do_bench
+  # CUDA-event wall) when Proton/CUPTI is unavailable. `cudagraph_proton` (graph replay
+  # + Proton) is also selectable but no longer any kernel's default.
+  # Override warmup/repeat/timer per-workload only for a specific exception.
 
 workloads:
   # ── deepgemm_sm100_fp4_mqa_logits

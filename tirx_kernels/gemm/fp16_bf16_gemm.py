@@ -5,7 +5,7 @@ import torch
 import tvm
 from tvm.script import tirx as T
 from tvm.script.tirx import tile as Tx
-from tvm.tirx.bench import bench, tensor_bytes
+from tvm.tirx.bench import bench
 from tvm.tirx.lang.pipeline import Pipeline, PipelineState
 from tvm.tirx.lang.tile_scheduler import ClusterLaunchControlScheduler
 
@@ -465,7 +465,7 @@ def run_test(dtype, M, N, K, **kwargs):
     torch.testing.assert_close(C_tvm.cpu(), C_ref.cpu(), rtol=0.001, atol=0.01)
 
 
-def run_bench(dtype, M, N, K, warmup=10, repeat=30, timer="proton", **kwargs):
+def run_bench(dtype, M, N, K, warmup=None, repeat=None, timer=None, **kwargs):
     """Benchmark fp16/bf16 GEMM."""
     kernel = tir_kernel(dtype, M, N, K)
     target = tvm.target.Target("cuda")
@@ -473,27 +473,21 @@ def run_bench(dtype, M, N, K, warmup=10, repeat=30, timer="proton", **kwargs):
         mod = tvm.IRModule({"main": kernel})
         ex = tvm.compile(mod, target=target, tir_pipeline="tirx")
 
-    def make_input():
-        A, B, C = prepare_data(dtype, M, N, K)
-        case = {
-            "tir": (A, B, torch.zeros_like(C, device="cuda")),
-            "torch-cublas": (A, B, torch.zeros_like(C, device="cuda")),
-            "deepgemm-cublaslt": (A, B, torch.zeros(M, N, dtype=A.dtype, device="cuda")),
-            "deepgemm-bf16": (A, B, torch.zeros(M, N, dtype=torch.bfloat16, device="cuda")),
-        }
-        return case, tensor_bytes(*case["tir"])
+    # Allocate inputs once, outside the timed region (Triton-standard pure launch).
+    A, B, C = prepare_data(dtype, M, N, K)
+    C_tir = torch.zeros_like(C, device="cuda")
 
-    funcs = {"tir": lambda case: ex(*case["tir"])}
+    funcs = {"tir": lambda: ex(A, B, C_tir)}
 
     def _torch_cublas():
-        return lambda case: torch.matmul(
-            case["torch-cublas"][0], case["torch-cublas"][1].T, out=case["torch-cublas"][2]
-        )
+        C_out = torch.zeros_like(C, device="cuda")
+        return lambda: torch.matmul(A, B.T, out=C_out)
 
     def _deepgemm_cublaslt():
         import deep_gemm
 
-        return lambda case: deep_gemm.cublaslt_gemm_nt(*case["deepgemm-cublaslt"], None)
+        C_out = torch.zeros(M, N, dtype=A.dtype, device="cuda")
+        return lambda: deep_gemm.cublaslt_gemm_nt(A, B, C_out, None)
 
     references = {"torch-cublas": _torch_cublas, "deepgemm-cublaslt": _deepgemm_cublaslt}
     if dtype == "bf16":
@@ -501,17 +495,9 @@ def run_bench(dtype, M, N, K, warmup=10, repeat=30, timer="proton", **kwargs):
         def _deepgemm_bf16():
             import deep_gemm
 
-            return lambda case: deep_gemm.bf16_gemm_nt(*case["deepgemm-bf16"])
+            C_out = torch.zeros(M, N, dtype=torch.bfloat16, device="cuda")
+            return lambda: deep_gemm.bf16_gemm_nt(A, B, C_out)
 
         references["deepgemm-bf16"] = _deepgemm_bf16
 
-    return bench(
-        funcs,
-        make_input,
-        warmup=warmup,
-        repeat=repeat,
-        timer=timer,
-        proton_name="gemm",
-        references=references,
-        **kwargs,
-    )
+    return bench(funcs, warmup=warmup, repeat=repeat, timer=timer, references=references, **kwargs)

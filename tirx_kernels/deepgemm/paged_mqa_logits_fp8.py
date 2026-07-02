@@ -1761,55 +1761,43 @@ def run_test(**kwargs: Any) -> None:
 
 
 def run_bench(**kwargs: Any) -> dict[str, Any]:
-    from tvm.tirx.bench import bench, tensor_bytes
+    from tvm.tirx.bench import bench
 
-    warmup = kwargs.pop("warmup", 10)
-    repeat = kwargs.pop("repeat", 30)
-    timer = kwargs.pop("timer", "proton")
+    # Tiny (~8-11µs) paged kernel: event timing is launch-jitter-noisy (sporadic
+    # 10-13% ratio spread) and ~2x inflated by launch overhead. timer=None inherits the
+    # global default (proton) -> pure per-kernel GPU time (~4.5µs, verified stable).
+    timer = kwargs.pop("timer", None)
+    # warmup/repeat: no hardcoded default here; pass through (None = defer to the
+    # timer's own default; the graph timers ignore them anyway). Overridable via the
+    # suite/CLI when a specific case needs a longer rep.
+    warmup = kwargs.pop("warmup", None)
+    repeat = kwargs.pop("repeat", None)
     _rounds = kwargs.pop("rounds", 1)
     _round_cooldown_s = kwargs.pop("round_cooldown_s", 1.0)
     config_kwargs = dict(kwargs)
-    max_diff: float | None = None
     tirx_executable = _compile_tirx_paged_mqa(_make_config(**config_kwargs))
 
-    def make_input() -> tuple[tuple[dict[str, Any], dict[str, Any]], int]:
-        data = prepare_data(**config_kwargs)
-        invocation = _prepare_tirx_invocation(data, executable=tirx_executable)
-        return (data, invocation), tensor_bytes(
-            data["q"],
-            data["fused_kv_cache"],
-            data["weights"],
-            data["context_lens"],
-            data["block_table"],
-            data["schedule_meta"],
-            invocation["logits"],
-        )
-
-    def validate_case(case: tuple[dict[str, Any], dict[str, Any]]) -> None:
-        nonlocal max_diff
-        data, invocation = case
-        tirx_logits = _run_tirx_invocation(data, invocation)
-        torch.cuda.synchronize()
-        max_diff = _assert_correct(data, tirx_logits, name="TIRx")
-        torch.cuda.empty_cache()
+    # Allocate inputs once, outside the timed region (Triton-standard pure launch).
+    data = prepare_data(**config_kwargs)
+    invocation = _prepare_tirx_invocation(data, executable=tirx_executable)
+    tirx_logits = _run_tirx_invocation(data, invocation)
+    torch.cuda.synchronize()
+    max_diff = _assert_correct(data, tirx_logits, name="TIRx")
+    torch.cuda.empty_cache()
 
     def _deepgemm():
-        return lambda case: _run_deepgemm_paged_mqa(case[0], clean_logits=False)
+        return lambda: _run_deepgemm_paged_mqa(data, clean_logits=False)
 
     result = bench(
-        {"tirx": lambda case: _run_tirx_invocation(case[0], case[1])},
-        make_input,
+        {"tirx": lambda: _run_tirx_invocation(data, invocation)},
         warmup=warmup,
         repeat=repeat,
         timer=timer,
         rounds=_rounds,
         round_cooldown_s=_round_cooldown_s,
-        proton_name="deepgemm_sm100_fp8_paged_mqa_logits",
         references={"deepgemm": _deepgemm},
-        validate_case=validate_case,
     )
-    if max_diff is not None:
-        result["max_diff"] = max_diff
+    result["max_diff"] = max_diff
     return result
 
 

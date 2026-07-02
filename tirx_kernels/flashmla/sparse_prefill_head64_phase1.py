@@ -391,21 +391,6 @@ def _run_tirx_launches(
         executable(*launch["args"])
 
 
-def _tirx_benchmark_tensors(
-    case: dict[str, Any], launches: list[dict[str, Any]]
-) -> tuple[Any, ...]:
-    return (
-        case["q"],
-        case["kv"],
-        case["indices"],
-        case["attn_sink"],
-        case["topk_length"],
-        case["out"],
-        case["max_logits"],
-        case["lse"],
-    )
-
-
 def _mbarrier_complete_tx(bar_ptr: Any, transaction_bytes: Any) -> Any:
     func_name = "sparse_flashmla_mbarrier_complete_tx"
     source_code = f"""
@@ -1993,7 +1978,7 @@ def run_test(**kwargs: Any) -> None:
 
 
 def run_bench(
-    *, warmup: int = 10, repeat: int = 30, timer: str = "proton", **kwargs: Any
+    *, warmup: int | None = None, repeat: int | None = None, timer: str | None = None, **kwargs: Any
 ) -> dict[str, Any]:
     _rounds = kwargs.pop("rounds", 1)
     _round_cooldown_s = kwargs.pop("round_cooldown_s", 1.0)
@@ -2001,30 +1986,31 @@ def run_bench(
         raise SkipTest("CUDA is required for sparse FlashMLA phase1 benchmark")
 
     from tirx_kernels.runner import compile_kernel
-    from tvm.tirx.bench import bench, tensor_bytes
+    from tvm.tirx.bench import bench
 
     prim_func = get_kernel(**kwargs)
     ex = compile_kernel(prim_func)
 
-    def make_input() -> tuple[dict[str, Any], int]:
-        case = prepare_data(**kwargs)
-        launches = _build_tirx_launches(case)
-        case["launches"] = launches
-        input_bytes = tensor_bytes(*_tirx_benchmark_tensors(case, launches))
-        return case, input_bytes
+    # Allocate inputs once, outside the timed region (Triton-standard pure launch).
+    case = prepare_data(**kwargs)
+    case["launches"] = _build_tirx_launches(case)
+
+    funcs = {"tirx": lambda: _run_tirx_launches(ex, case["launches"])}
 
     from tirx_kernels.flashmla._flashmla_bench import flashmla_reference_builder
 
+    def _flashmla_ref():
+        run = flashmla_reference_builder()
+        return lambda: run(case)
+
     return bench(
-        {"tirx": lambda case: _run_tirx_launches(ex, case["launches"])},
-        make_input,
+        funcs,
         warmup=warmup,
         repeat=repeat,
         timer=timer,
+        references={"flashmla": _flashmla_ref},
         rounds=_rounds,
         round_cooldown_s=_round_cooldown_s,
-        proton_name=KERNEL_META["name"],
-        references={"flashmla": flashmla_reference_builder},
     )
 
 

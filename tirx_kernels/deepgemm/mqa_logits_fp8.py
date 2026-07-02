@@ -1001,55 +1001,43 @@ def run_test(**kwargs: Any) -> None:
 
 
 def run_bench(**kwargs: Any) -> dict[str, Any]:
-    from tvm.tirx.bench import bench, tensor_bytes
+    from tvm.tirx.bench import bench
 
-    warmup = kwargs.pop("warmup", 10)
-    repeat = kwargs.pop("repeat", 30)
-    timer = kwargs.pop("timer", "proton")
+    warmup = kwargs.pop("warmup", None)
+    repeat = kwargs.pop("repeat", None)
+    timer = kwargs.pop("timer", None)  # None inherits the global default (proton)
     _rounds = kwargs.pop("rounds", 1)
     _round_cooldown_s = kwargs.pop("round_cooldown_s", 1.0)
     config_kwargs = dict(kwargs)
-    errors: dict[str, str] = {}
-    max_diff: float | None = None
     tirx_executable = _compile_tirx_mqa(_make_config(**config_kwargs), 0)
 
-    def make_input() -> tuple[tuple[dict[str, Any], dict[str, Any]], int]:
-        data = prepare_data(**config_kwargs)
-        invocation = _prepare_tirx_invocation(data, executable=tirx_executable)
-        return (data, invocation), tensor_bytes(
-            data["q_in"],
-            data["kv_in"],
-            data["weights"],
-            data["cu_seq_len_k_start"],
-            data["cu_seq_len_k_end"],
-            invocation["logits"],
-        )
+    # Allocate inputs once, outside the timed region (Triton-standard pure launch).
+    data = prepare_data(**config_kwargs)
+    invocation = _prepare_tirx_invocation(data, executable=tirx_executable)
 
-    def validate_case(case: tuple[dict[str, Any], dict[str, Any]]) -> None:
-        nonlocal max_diff
-        data, invocation = case
-        tirx_logits = _run_tirx_invocation(data, invocation)
-        torch.cuda.synchronize()
-        max_diff = _assert_correct(data, tirx_logits, name="TIRx")
-        torch.cuda.empty_cache()
+    # Correctness gate before timing (preserves the old validate_case behavior).
+    tirx_logits = _run_tirx_invocation(data, invocation)
+    torch.cuda.synchronize()
+    max_diff = _assert_correct(data, tirx_logits, name="TIRx")
+    torch.cuda.empty_cache()
+
+    funcs = {"tirx": lambda: _run_tirx_invocation(data, invocation)}
+
+    def _deepgemm():
+        return lambda: _run_deepgemm_mqa(data, clean_logits=False)
+
+    references = {"deepgemm": _deepgemm}
 
     result = bench(
-        {
-            "tirx": lambda case: _run_tirx_invocation(case[0], case[1]),
-            "deepgemm": lambda case: _run_deepgemm_mqa(case[0], clean_logits=False),
-        },
-        make_input,
+        funcs,
         warmup=warmup,
         repeat=repeat,
         timer=timer,
+        references=references,
         rounds=_rounds,
         round_cooldown_s=_round_cooldown_s,
-        proton_name="deepgemm_sm100_fp8_mqa_logits",
-        validate_case=validate_case,
     )
-    result["errors"].update(errors)
-    if max_diff is not None:
-        result["max_diff"] = max_diff
+    result["max_diff"] = max_diff
     return result
 
 

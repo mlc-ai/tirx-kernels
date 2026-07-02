@@ -2206,15 +2206,22 @@ def run_test(**kwargs: Any) -> None:
 
 
 def run_bench(**kwargs: Any) -> dict[str, Any]:
-    from tvm.tirx.bench import bench, bench_impls_mode, tensor_bytes
+    from tvm.tirx.bench import bench, bench_impls_mode
 
-    warmup = kwargs.pop("warmup", 10)
-    repeat = kwargs.pop("repeat", 30)
-    timer = kwargs.pop("timer", "proton")
+    # Tiny (~8-11µs) paged kernel: event timing is launch-jitter-noisy (sporadic
+    # 10-13% ratio spread) and ~2x inflated by launch overhead. timer=None inherits the
+    # global default (proton) -> pure per-kernel GPU time (~4.5µs, verified stable).
+    timer = kwargs.pop("timer", None)
+    # warmup/repeat: no hardcoded default here; pass through (None = defer to the
+    # timer's own default; the graph timers ignore them anyway). Overridable via the
+    # suite/CLI when a specific case needs a longer rep.
+    warmup = kwargs.pop("warmup", None)
+    repeat = kwargs.pop("repeat", None)
     _rounds = kwargs.pop("rounds", 1)
     _round_cooldown_s = kwargs.pop("round_cooldown_s", 1.0)
     config_kwargs = dict(kwargs)
 
+    # Allocate inputs once, outside the timed region (Triton-standard pure launch).
     data = prepare_data(**config_kwargs)
     invocation = _prepare_tirx_invocation(data)
     tirx_logits = _run_tirx_invocation(data, invocation)
@@ -2222,57 +2229,38 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
     tirx_diff = _assert_correct(data, tirx_logits, name="TIRx")
     torch.cuda.empty_cache()
 
-    def make_input() -> tuple[tuple[dict[str, Any], dict[str, Any]], int]:
-        data = prepare_data(**config_kwargs)
-        invocation = _prepare_tirx_invocation(data)
-        return (data, invocation), tensor_bytes(
-            data["q_in"],
-            data["fused_kv_cache"],
-            data["weights"],
-            data["context_lens"],
-            data["block_table"],
-            data["schedule_meta"],
-            invocation["logits"],
-        )
-
     def _deepgemm():
-        return lambda case: _run_deepgemm_paged_mqa(case[0], clean_logits=False)
+        return lambda: _run_deepgemm_paged_mqa(data, clean_logits=False)
 
-    funcs_tirx_first = {"tirx": lambda case: _run_tirx_invocation(case[0], case[1])}
+    funcs_tirx_first = {"tirx": lambda: _run_tirx_invocation(data, invocation)}
 
     if bench_impls_mode() == "baseline":
         result = bench(
             funcs_tirx_first,
-            make_input,
             warmup=warmup,
             repeat=repeat,
             timer=timer,
             rounds=_rounds,
             round_cooldown_s=_round_cooldown_s,
-            proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
             references={"deepgemm": _deepgemm},
         )
     elif bench_impls_mode() == "ours":
         result = bench(
             funcs_tirx_first,
-            make_input,
             warmup=warmup,
             repeat=repeat,
             timer=timer,
             rounds=_rounds,
             round_cooldown_s=_round_cooldown_s,
-            proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
         )
     else:
         result = bench(
             funcs_tirx_first,
-            make_input,
             warmup=warmup,
             repeat=repeat,
             timer=timer,
             rounds=_rounds,
             round_cooldown_s=_round_cooldown_s,
-            proton_name="deepgemm_sm100_fp4_paged_mqa_logits",
             references={"deepgemm": _deepgemm},
         )
     result["max_diff"] = tirx_diff

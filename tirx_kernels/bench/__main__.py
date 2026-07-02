@@ -43,20 +43,22 @@ def main():
         "--warmup",
         type=int,
         default=None,
-        help="Override the kernel module's benchmark warmup default",
+        help="Override the event/proton warmup budget in ms (else bench() default)",
     )
     parser.add_argument(
         "--repeat",
         type=int,
         default=None,
-        help="Override the kernel module's benchmark repeat default",
+        help="Override the event/proton rep budget in ms (else bench() default)",
     )
     parser.add_argument(
         "--timer",
         type=str,
-        choices=("proton", "event"),
+        choices=("event", "proton", "cudagraph_proton"),
         default=None,
-        help="Override the kernel module's benchmark timer",
+        help="Override the kernel module's benchmark timer (all cold-cache: "
+        "'event' = do_bench, 'proton' = do_bench_proton (per-kernel GPU time, same "
+        "setup as event), 'cudagraph_proton' = do_bench_cudagraph_proton [NVIDIA])",
     )
     parser.add_argument(
         "--rounds",

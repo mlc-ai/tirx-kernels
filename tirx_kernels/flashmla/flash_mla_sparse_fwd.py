@@ -127,7 +127,7 @@ def run_test(**kwargs: Any) -> None:
 
 
 def run_bench(
-    *, warmup: int = 10, repeat: int = 30, timer: str = "proton", **kwargs: Any
+    *, warmup: int | None = None, repeat: int | None = None, timer: str | None = None, **kwargs: Any
 ) -> dict[str, Any]:
     name, mod, reason = _select_impl(**kwargs)
     result = mod.run_bench(warmup=warmup, repeat=repeat, timer=timer, **kwargs)

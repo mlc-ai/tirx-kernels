@@ -9,7 +9,7 @@ from deep_gemm.utils.math import per_block_cast_to_fp8, per_token_cast_to_fp8
 from tvm.backend.cuda.operator.tile_primitive.tma_utils import SwizzleMode
 from tvm.script import tirx as T
 from tvm.script.tirx import tile as Tx
-from tvm.tirx.bench import bench, tensor_bytes
+from tvm.tirx.bench import bench
 from tvm.tirx.lang.pipeline import MBarrier, Pipeline, PipelineState
 from tvm.tirx.lang.tile_scheduler import ClusterPersistentScheduler2D
 
@@ -559,7 +559,15 @@ def run_test(M=1024, N=1024, K=1024):
 
 
 def run_bench(
-    M=1024, N=1024, K=1024, *, warmup=10, repeat=30, timer="proton", kernel_fair: bool | None = None, **kwargs
+    M=1024,
+    N=1024,
+    K=1024,
+    *,
+    warmup=None,
+    repeat=None,
+    timer=None,
+    kernel_fair: bool | None = None,
+    **kwargs,
 ):
     """Benchmark DeepGEMM main kernel against the TIRx kernel."""
     import torch
@@ -572,43 +580,31 @@ def run_bench(
     kernel = tir_kernel(M, N, K)
     ex = compile_kernel(kernel)
 
-    def make_input():
-        A_fp8, B_fp8, sfa, sfb, sfa_pack, sfb_pack, C_ref, _, _ = prepare_data(M, N, K)
-        C_tvm = torch.zeros_like(C_ref).to(torch.bfloat16).to("cuda")
-        C_dg = torch.zeros(M, N, dtype=torch.bfloat16, device="cuda")
-        if kernel_fair:
-            sfa_dg = _dg_scale_view(sfa_pack, M)
-            sfb_dg = _dg_scale_view(sfb_pack, N)
-        else:
-            sfa_dg = sfa
-            sfb_dg = sfb
-        case = (A_fp8, B_fp8, sfa, sfb, sfa_pack, sfb_pack, sfa_dg, sfb_dg, C_tvm, C_dg)
-        return case, tensor_bytes(A_fp8, B_fp8, sfa_pack, sfb_pack, C_tvm)
+    # Allocate inputs once, outside the timed region (Triton-standard pure launch).
+    A_fp8, B_fp8, sfa, sfb, sfa_pack, sfb_pack, C_ref, _, _ = prepare_data(M, N, K)
+    C_tvm = torch.zeros_like(C_ref).to(torch.bfloat16).to("cuda")
 
-    funcs = {"tir": lambda case: ex(case[0], case[1], case[4], case[5], case[8])}
+    funcs = {"tir": lambda: ex(A_fp8, B_fp8, sfa_pack, sfb_pack, C_tvm)}
 
     def _deepgemm():
         import deep_gemm
 
+        C_dg = torch.zeros(M, N, dtype=torch.bfloat16, device="cuda")
         if kernel_fair:
-            return lambda case: deep_gemm.fp8_gemm_nt(
-                (case[0], case[6]),
-                (case[1], case[7]),
-                case[9],
-                disable_ue8m0_cast=False,
-                recipe=(1, 1, 128),
+            sfa_dg = _dg_scale_view(sfa_pack, M)
+            sfb_dg = _dg_scale_view(sfb_pack, N)
+            return lambda: deep_gemm.fp8_gemm_nt(
+                (A_fp8, sfa_dg), (B_fp8, sfb_dg), C_dg, disable_ue8m0_cast=False, recipe=(1, 1, 128)
             )
-        return lambda case: deep_gemm.fp8_gemm_nt(
-            (case[0], case[2]), (case[1], case[3]), case[9], disable_ue8m0_cast=False, recipe=None
+        return lambda: deep_gemm.fp8_gemm_nt(
+            (A_fp8, sfa), (B_fp8, sfb), C_dg, disable_ue8m0_cast=False, recipe=None
         )
 
     result = bench(
         funcs,
-        make_input,
         warmup=warmup,
         repeat=repeat,
         timer=timer,
-        proton_name="fp8_blockwise_gemm",
         references={"deepgemm": _deepgemm},
         **kwargs,
     )

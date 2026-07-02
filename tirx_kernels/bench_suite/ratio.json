@@ -1,14 +1,14 @@
 {
-  "timestamp": "12",
-  "label": "3a146e3c-dirty",
+  "timestamp": "3",
+  "label": "d9a54390-dirty",
   "git": {
-    "tir": "66ac7a57",
-    "tirx-kernels": "78d81763-dirty",
+    "tir": "3f9ce073-dirty",
+    "tirx-kernels": "d9a54390-dirty",
     "tirx-bench-ci": null
   },
   "kernel_tree": {
     "tir:python/tvm/tirx": "e35110c95092edafaa381877b62a4fd86bfd237c",
-    "tirx-kernels:tirx_kernels": "1eb348225cd4509323f34e48521550d2f0092042"
+    "tirx-kernels:tirx_kernels": "885728163bd49981325a7b1eaaac963e8617fabc"
   },
   "results": [
     {
@@ -18,9 +18,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 39.0528,
-      "ref_us": 41.449200000000005,
-      "ratio": 1.0613630776794496
+      "ours_us": 42.47243531255956,
+      "ref_us": 41.82179762301943,
+      "ratio": 0.9846809422451994
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -29,9 +29,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 50.4636,
-      "ref_us": 53.7064,
-      "ratio": 1.0642601796146134
+      "ours_us": 55.63060450945666,
+      "ref_us": 54.41452160765288,
+      "ratio": 0.9781400379786084
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -40,9 +40,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 39.1974,
-      "ref_us": 40.2046,
-      "ratio": 1.0256955818498166
+      "ours_us": 42.66250657466567,
+      "ref_us": 41.06750116789165,
+      "ratio": 0.96261341550613
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -51,9 +51,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 50.7348,
-      "ref_us": 51.913199999999996,
-      "ratio": 1.0232266609900895
+      "ours_us": 55.73138828079344,
+      "ref_us": 52.9745087126562,
+      "ratio": 0.9505327311380232
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -62,9 +62,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 39.369,
-      "ref_us": 42.266,
-      "ratio": 1.0735858162513652
+      "ours_us": 41.3630915999923,
+      "ref_us": 43.43346835974063,
+      "ratio": 1.0500537237344394
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -73,9 +73,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 51.3034,
-      "ref_us": 55.6612,
-      "ratio": 1.0849417387541567
+      "ours_us": 54.36191194783848,
+      "ref_us": 57.03446064291916,
+      "ratio": 1.0491621541502265
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -84,9 +84,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 38.6596,
-      "ref_us": 38.2982,
-      "ratio": 0.9906517398007223
+      "ours_us": 40.97637154902835,
+      "ref_us": 39.21463247863677,
+      "ratio": 0.9570059767667898
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -95,9 +95,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 49.6118,
-      "ref_us": 49.2016,
-      "ratio": 0.9917318057397635
+      "ours_us": 53.38079193680752,
+      "ref_us": 50.710640927933234,
+      "ratio": 0.9499791795514158
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -106,9 +106,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 67.82560000000001,
-      "ref_us": 71.5942,
-      "ratio": 1.0555630912221932
+      "ours_us": 75.1228887374703,
+      "ref_us": 72.7788808428792,
+      "ratio": 0.9687976869102753
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -117,9 +117,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 104.1978,
-      "ref_us": 110.3214,
-      "ratio": 1.0587689951227377
+      "ours_us": 116.24892374362102,
+      "ref_us": 111.51213302633302,
+      "ratio": 0.9592530359443614
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -128,9 +128,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 68.4344,
-      "ref_us": 69.763,
-      "ratio": 1.0194142127351158
+      "ours_us": 75.27394528558709,
+      "ref_us": 71.0915780840029,
+      "ratio": 0.9444380497698585
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -139,9 +139,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 105.2054,
-      "ref_us": 106.607,
-      "ratio": 1.0133225100612706
+      "ours_us": 115.45030751111717,
+      "ref_us": 107.92379712399872,
+      "ratio": 0.9348073595525617
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -150,9 +150,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 68.6354,
-      "ref_us": 74.5248,
-      "ratio": 1.0858070325225757
+      "ours_us": 73.39139466818084,
+      "ref_us": 76.62866540704236,
+      "ratio": 1.0441096773470235
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -161,9 +161,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 105.771,
-      "ref_us": 116.139,
-      "ratio": 1.098023087613807
+      "ours_us": 113.7862120995672,
+      "ref_us": 117.48551054925902,
+      "ratio": 1.0325109552504903
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -172,9 +172,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 66.7216,
-      "ref_us": 65.8792,
-      "ratio": 0.9873744034915231
+      "ours_us": 72.23896749570743,
+      "ref_us": 68.17505844728079,
+      "ratio": 0.9437435335898438
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -183,9 +183,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 102.9428,
-      "ref_us": 102.2286,
-      "ratio": 0.9930621665624015
+      "ours_us": 110.55138137581805,
+      "ref_us": 103.74970331732715,
+      "ratio": 0.9384749609290843
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -194,9 +194,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 68.5622,
-      "ref_us": 73.825,
-      "ratio": 1.0767594972156669
+      "ours_us": 73.91368351059576,
+      "ref_us": 74.2017691237899,
+      "ratio": 1.0038975951340978
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -205,9 +205,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 68.4964,
-      "ref_us": 73.8336,
-      "ratio": 1.077919423502549
+      "ours_us": 73.5261034133741,
+      "ref_us": 73.9284555551656,
+      "ratio": 1.0054722353438128
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -216,9 +216,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 68.6648,
-      "ref_us": 71.6704,
-      "ratio": 1.0437720637065862
+      "ours_us": 74.71090775295623,
+      "ref_us": 72.87765370963926,
+      "ratio": 0.9754620295957462
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -227,9 +227,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 68.6962,
-      "ref_us": 71.646,
-      "ratio": 1.0429397841510883
+      "ours_us": 74.05852941795658,
+      "ref_us": 72.34762168270585,
+      "ratio": 0.9768978975318959
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -238,9 +238,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 69.15259999999999,
-      "ref_us": 75.4456,
-      "ratio": 1.0910016398515747
+      "ours_us": 72.04172820253919,
+      "ref_us": 76.46188300147092,
+      "ratio": 1.0613554797922788
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -249,9 +249,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 69.0176,
-      "ref_us": 75.3618,
-      "ratio": 1.091921480897626
+      "ours_us": 71.65491523757784,
+      "ref_us": 76.09503982933359,
+      "ratio": 1.0619653875387913
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -260,9 +260,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 66.9856,
-      "ref_us": 67.4862,
-      "ratio": 1.0074732479816557
+      "ours_us": 71.21966177475097,
+      "ref_us": 68.22678623445651,
+      "ratio": 0.9579768358103112
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -271,9 +271,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 66.8244,
-      "ref_us": 67.2304,
-      "ratio": 1.0060756250710818
+      "ours_us": 71.65101673007763,
+      "ref_us": 68.64849256439346,
+      "ratio": 0.9580951631573461
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -282,9 +282,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 121.8894,
-      "ref_us": 129.7596,
-      "ratio": 1.0645683709986267
+      "ours_us": 134.78416459913856,
+      "ref_us": 131.3786248257754,
+      "ratio": 0.9747333836768468
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -293,9 +293,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 174.6916,
-      "ref_us": 185.761,
-      "ratio": 1.0633653821935343
+      "ours_us": 193.64879862519376,
+      "ref_us": 186.94816087474427,
+      "ratio": 0.9653979895665734
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -304,9 +304,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 123.7708,
-      "ref_us": 126.575,
-      "ratio": 1.0226563939152047
+      "ours_us": 134.4952696752537,
+      "ref_us": 127.74869195960348,
+      "ratio": 0.9498378066980333
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -315,9 +315,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 177.29579999999999,
-      "ref_us": 180.831,
-      "ratio": 1.0199395586359068
+      "ours_us": 192.79050861598236,
+      "ref_us": 181.47894274590453,
+      "ratio": 0.9413271641260658
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -326,9 +326,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 123.9858,
-      "ref_us": 136.5624,
-      "ratio": 1.101435809584646
+      "ours_us": 131.35661908359555,
+      "ref_us": 137.3427937328936,
+      "ratio": 1.0455719299953088
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -337,9 +337,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 178.4298,
-      "ref_us": 197.0844,
-      "ratio": 1.104548679648803
+      "ours_us": 189.88277328185313,
+      "ref_us": 197.75693732514333,
+      "ratio": 1.0414685540304498
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -348,9 +348,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 119.9626,
-      "ref_us": 120.5018,
-      "ratio": 1.0044947341921566
+      "ours_us": 129.11528655868528,
+      "ref_us": 121.91315386975437,
+      "ratio": 0.9442193648723584
     },
     {
       "kernel": "deepgemm_sm100_fp4_mqa_logits",
@@ -359,9 +359,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 171.7834,
-      "ref_us": 172.6364,
-      "ratio": 1.0049655554611214
+      "ours_us": 185.77700667076851,
+      "ref_us": 174.20369153988156,
+      "ratio": 0.9377031886868701
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -370,9 +370,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9608,
-      "ref_us": 3.9314,
-      "ratio": 0.9925772571197738
+      "ours_us": 5.561596651499558,
+      "ref_us": 5.581211637627839,
+      "ratio": 1.0035268624025426
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -381,9 +381,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.238,
-      "ref_us": 4.2425999999999995,
-      "ratio": 1.0010854176498345
+      "ours_us": 5.791469697092313,
+      "ref_us": 5.816099371500963,
+      "ratio": 1.0042527502856513
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -392,9 +392,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.4350000000000005,
-      "ref_us": 4.4202,
-      "ratio": 0.996662908680947
+      "ours_us": 6.4501878037781255,
+      "ref_us": 6.477636035463333,
+      "ratio": 1.004255415891787
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -403,9 +403,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.4806,
-      "ref_us": 4.48,
-      "ratio": 0.9998660893630319
+      "ours_us": 6.224166639282827,
+      "ref_us": 6.265955474933344,
+      "ratio": 1.0067139647879564
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -414,9 +414,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.769,
-      "ref_us": 3.9432,
-      "ratio": 1.046219156274874
+      "ours_us": 4.341181480622506,
+      "ref_us": 4.702087438856654,
+      "ratio": 1.083135422890083
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -425,9 +425,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.7932,
-      "ref_us": 3.9786,
-      "ratio": 1.04887693767795
+      "ours_us": 4.355338374616249,
+      "ref_us": 4.693611314653747,
+      "ratio": 1.0776685784069082
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -436,9 +436,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.5372,
-      "ref_us": 3.697,
-      "ratio": 1.0451769761393193
+      "ours_us": 4.469504442410057,
+      "ref_us": 5.05198813539495,
+      "ratio": 1.1303239991122607
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -447,9 +447,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.4704,
-      "ref_us": 3.6774,
-      "ratio": 1.0596473029045643
+      "ours_us": 4.3524670748826315,
+      "ref_us": 4.677756106891142,
+      "ratio": 1.074736701372355
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -458,9 +458,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.7768,
-      "ref_us": 3.7481999999999998,
-      "ratio": 0.9924274518110568
+      "ours_us": 5.001680443811363,
+      "ref_us": 4.898486652053105,
+      "ratio": 0.9793681757726164
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -469,9 +469,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9704,
-      "ref_us": 3.9496,
-      "ratio": 0.994761233125126
+      "ours_us": 4.968691519201065,
+      "ref_us": 4.829593160583635,
+      "ratio": 0.9720050322947407
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -480,9 +480,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9608,
-      "ref_us": 3.94,
-      "ratio": 0.9947485356493638
+      "ours_us": 5.323504098191327,
+      "ref_us": 5.374757831244103,
+      "ratio": 1.0096278188402614
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -491,9 +491,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.899,
-      "ref_us": 3.888,
-      "ratio": 0.997178763785586
+      "ours_us": 5.1227021609817545,
+      "ref_us": 5.16981614044094,
+      "ratio": 1.009197095200662
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -502,9 +502,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.054,
-      "ref_us": 4.0362,
-      "ratio": 0.9956092747903305
+      "ours_us": 4.674430006780451,
+      "ref_us": 4.676972359700061,
+      "ratio": 1.0005438851188106
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -513,9 +513,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9842,
-      "ref_us": 3.9628,
-      "ratio": 0.9946287836955976
+      "ours_us": 4.587248974869226,
+      "ref_us": 4.633802806486701,
+      "ratio": 1.0101485295157326
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -524,9 +524,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6162,
-      "ref_us": 3.5806,
-      "ratio": 0.9901554117581992
+      "ours_us": 4.834751458481337,
+      "ref_us": 5.138139882323936,
+      "ratio": 1.0627516070780394
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -535,9 +535,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.5948,
-      "ref_us": 3.5888,
-      "ratio": 0.9983309224435295
+      "ours_us": 4.705150422063692,
+      "ref_us": 4.728480201065064,
+      "ratio": 1.0049583492361844
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -546,9 +546,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6582,
-      "ref_us": 3.6324,
-      "ratio": 0.9929473511563064
+      "ours_us": 4.587300389460079,
+      "ref_us": 4.60456279529776,
+      "ratio": 1.0037630859922195
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -557,9 +557,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.0358,
-      "ref_us": 4.0166,
-      "ratio": 0.995242578918678
+      "ours_us": 4.65116638082607,
+      "ref_us": 4.695904732259205,
+      "ratio": 1.0096187381336355
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -568,9 +568,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.7036000000000002,
-      "ref_us": 3.6862,
-      "ratio": 0.9953018684523166
+      "ours_us": 4.667774057025553,
+      "ref_us": 4.684467778909232,
+      "ratio": 1.0035763774509507
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -579,9 +579,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6448,
-      "ref_us": 3.6353999999999997,
-      "ratio": 0.9974209833187005
+      "ours_us": 4.681507448158967,
+      "ref_us": 4.70784114114093,
+      "ratio": 1.0056250456233535
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -590,9 +590,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.8584,
-      "ref_us": 4.0046,
-      "ratio": 1.0378913539290897
+      "ours_us": 4.393181998161537,
+      "ref_us": 4.757185670502242,
+      "ratio": 1.0828564972935413
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -601,9 +601,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.4554,
-      "ref_us": 3.6338,
-      "ratio": 1.0516293337963767
+      "ours_us": 4.312822217444729,
+      "ref_us": 4.688399713822614,
+      "ratio": 1.0870839272851847
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -612,9 +612,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.399,
-      "ref_us": 3.5876,
-      "ratio": 1.0554869079140925
+      "ours_us": 4.299356977965245,
+      "ref_us": 4.642201265106648,
+      "ratio": 1.0797431543597156
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -623,9 +623,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.3826,
-      "ref_us": 3.6008,
-      "ratio": 1.0645065925619346
+      "ours_us": 4.319320052713603,
+      "ref_us": 4.733663373306456,
+      "ratio": 1.095927904284968
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -634,9 +634,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.0328,
-      "ref_us": 4.0094,
-      "ratio": 0.9941975798452689
+      "ours_us": 4.527078714253579,
+      "ref_us": 4.572493598591764,
+      "ratio": 1.0100318300618887
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -645,9 +645,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.021199999999999,
-      "ref_us": 4.0074000000000005,
-      "ratio": 0.9965681886004181
+      "ours_us": 4.582271355176434,
+      "ref_us": 4.616623979461814,
+      "ratio": 1.007496855079648
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -656,9 +656,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9136,
-      "ref_us": 3.8872,
-      "ratio": 0.9932542927228127
+      "ours_us": 4.640126069720765,
+      "ref_us": 4.878221129643128,
+      "ratio": 1.0513121963379524
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -667,9 +667,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9312,
-      "ref_us": 3.9108,
-      "ratio": 0.9948107448107448
+      "ours_us": 4.516255685668492,
+      "ref_us": 4.549515305684276,
+      "ratio": 1.007364423613421
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -678,9 +678,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.644,
-      "ref_us": 3.6248,
-      "ratio": 0.9947310647639955
+      "ours_us": 4.664813243837697,
+      "ref_us": 4.816970681856803,
+      "ratio": 1.032618119968706
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -689,9 +689,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.7272,
-      "ref_us": 3.7002,
-      "ratio": 0.9927559562137799
+      "ours_us": 4.656045968387795,
+      "ref_us": 4.824791906550411,
+      "ratio": 1.036242326495124
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -700,9 +700,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9404,
-      "ref_us": 3.9046,
-      "ratio": 0.9909146279565526
+      "ours_us": 4.535186175951286,
+      "ref_us": 4.694360202679874,
+      "ratio": 1.0350975727463274
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -711,9 +711,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6428,
-      "ref_us": 3.626,
-      "ratio": 0.9953881629515757
+      "ours_us": 4.595749685199382,
+      "ref_us": 4.77424838216663,
+      "ratio": 1.038839951954325
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -722,9 +722,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.0356,
-      "ref_us": 4.0188,
-      "ratio": 0.9958370502527505
+      "ours_us": 4.691333621085048,
+      "ref_us": 4.691316872216097,
+      "ratio": 0.9999964298277839
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -733,9 +733,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.7344,
-      "ref_us": 3.7228,
-      "ratio": 0.9968937446443873
+      "ours_us": 4.692811830363136,
+      "ref_us": 4.703048301092866,
+      "ratio": 1.0021813085842264
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -744,9 +744,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.949,
-      "ref_us": 3.9376,
-      "ratio": 0.9971131932134718
+      "ours_us": 4.9126844876426405,
+      "ref_us": 5.178804768646236,
+      "ratio": 1.0541700330385544
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -755,9 +755,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.8358000000000003,
-      "ref_us": 3.8182,
-      "ratio": 0.9954116481568381
+      "ours_us": 4.76222291621157,
+      "ref_us": 4.798262354474672,
+      "ratio": 1.007567776413913
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -766,9 +766,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.5204,
-      "ref_us": 3.6884,
-      "ratio": 1.0477218497897967
+      "ours_us": 4.2293974290435274,
+      "ref_us": 4.430715103075111,
+      "ratio": 1.0475996113888761
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -777,9 +777,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.4562,
-      "ref_us": 3.6315999999999997,
-      "ratio": 1.0507493779295178
+      "ours_us": 4.241095375688328,
+      "ref_us": 4.43977434318744,
+      "ratio": 1.0468461446630086
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -788,9 +788,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.77,
-      "ref_us": 3.9118,
-      "ratio": 1.0376127320954907
+      "ours_us": 4.231222624684148,
+      "ref_us": 4.436226043469786,
+      "ratio": 1.0484501613291837
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -799,9 +799,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.843,
-      "ref_us": 3.9926,
-      "ratio": 1.038927920895134
+      "ours_us": 4.165030403989737,
+      "ref_us": 4.397658327430368,
+      "ratio": 1.0558526351254949
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -810,9 +810,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.948,
-      "ref_us": 3.9322,
-      "ratio": 0.9959979736575482
+      "ours_us": 4.5622304059730805,
+      "ref_us": 4.587379093249268,
+      "ratio": 1.0055123667676367
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -821,9 +821,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9744,
-      "ref_us": 3.9476,
-      "ratio": 0.993256843800322
+      "ours_us": 4.640548414977846,
+      "ref_us": 4.645367378746043,
+      "ratio": 1.0010384470405789
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -832,9 +832,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6194,
-      "ref_us": 3.5964,
-      "ratio": 0.9936453555837984
+      "ours_us": 4.521887903840914,
+      "ref_us": 4.607530975326284,
+      "ratio": 1.0189396715059267
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -843,9 +843,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6558,
-      "ref_us": 3.6364,
-      "ratio": 0.9946933639695825
+      "ours_us": 4.532418994673067,
+      "ref_us": 4.557218187542666,
+      "ratio": 1.0054715137542987
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -854,9 +854,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.724,
-      "ref_us": 3.7094,
-      "ratio": 0.996079484425349
+      "ours_us": 4.477019812983126,
+      "ref_us": 4.480226671687405,
+      "ratio": 1.0007162931678302
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -865,9 +865,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6542,
-      "ref_us": 3.632,
-      "ratio": 0.993924798861584
+      "ours_us": 4.472911514838609,
+      "ref_us": 4.488759470945623,
+      "ratio": 1.0035430962706147
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -876,9 +876,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6444,
-      "ref_us": 3.62,
-      "ratio": 0.9933047963999561
+      "ours_us": 4.494226190852401,
+      "ref_us": 4.514331629930997,
+      "ratio": 1.0044736153065723
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -887,9 +887,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.5728,
-      "ref_us": 3.5672,
-      "ratio": 0.9984326018808778
+      "ours_us": 4.518627407751667,
+      "ref_us": 4.542589466849534,
+      "ratio": 1.0053029508599802
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -898,9 +898,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9664,
-      "ref_us": 3.9562,
-      "ratio": 0.9974283985478015
+      "ours_us": 4.945116061558567,
+      "ref_us": 4.965621140554613,
+      "ratio": 1.0041465313939635
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -909,9 +909,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9663999999999997,
-      "ref_us": 3.955,
-      "ratio": 0.9971258572004842
+      "ours_us": 4.958796347700155,
+      "ref_us": 4.990810781034839,
+      "ratio": 1.006456089560833
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -920,9 +920,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.8416,
-      "ref_us": 3.8192,
-      "ratio": 0.9941690962099125
+      "ours_us": 5.314467450229999,
+      "ref_us": 5.351936485873582,
+      "ratio": 1.0070503838803193
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -931,9 +931,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.8446,
-      "ref_us": 3.8398,
-      "ratio": 0.9987514956042242
+      "ours_us": 5.205538528770908,
+      "ref_us": 5.244146201454849,
+      "ratio": 1.007416652949653
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -942,9 +942,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.495,
-      "ref_us": 3.6558,
-      "ratio": 1.0460085836909871
+      "ours_us": 4.320454417579748,
+      "ref_us": 4.873034724397177,
+      "ratio": 1.127898654495463
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -953,9 +953,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.856,
-      "ref_us": 4.0200000000000005,
-      "ratio": 1.0425311203319503
+      "ours_us": 4.315863337566755,
+      "ref_us": 4.884177537812735,
+      "ratio": 1.1316803049112278
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -964,9 +964,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.8486,
-      "ref_us": 3.9966,
-      "ratio": 1.0384555422751132
+      "ours_us": 4.235396400550298,
+      "ref_us": 4.411063157244221,
+      "ratio": 1.0414758714606025
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -975,9 +975,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.4798,
-      "ref_us": 3.6862,
-      "ratio": 1.0593137536640036
+      "ours_us": 4.270329532776784,
+      "ref_us": 4.7848956553360384,
+      "ratio": 1.1204979893494678
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -986,9 +986,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6502,
-      "ref_us": 3.636,
-      "ratio": 0.9961098022026191
+      "ours_us": 4.683162092980389,
+      "ref_us": 4.954828497800527,
+      "ratio": 1.0580091825622138
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -997,9 +997,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6248,
-      "ref_us": 3.6052,
-      "ratio": 0.9945928051202825
+      "ours_us": 4.786690643655674,
+      "ref_us": 5.077428516407936,
+      "ratio": 1.0607388056584792
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1008,9 +1008,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.7512,
-      "ref_us": 3.713,
-      "ratio": 0.9898165920238857
+      "ours_us": 4.647011183165634,
+      "ref_us": 4.6633385519726165,
+      "ratio": 1.0035135204464605
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1019,9 +1019,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6098,
-      "ref_us": 3.5962,
-      "ratio": 0.9962324782536429
+      "ours_us": 4.833759681351352,
+      "ref_us": 5.129434314942064,
+      "ratio": 1.0611686664381403
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1030,9 +1030,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.706,
-      "ref_us": 3.6874,
-      "ratio": 0.9949811117107393
+      "ours_us": 4.700755933279064,
+      "ref_us": 5.01904688942183,
+      "ratio": 1.0677105896712102
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1041,9 +1041,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.0436,
-      "ref_us": 4.0228,
-      "ratio": 0.9948560688495401
+      "ours_us": 4.6238980470188205,
+      "ref_us": 4.893541598333501,
+      "ratio": 1.0583152025785967
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1052,9 +1052,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.603,
-      "ref_us": 3.5728,
-      "ratio": 0.9916180960310852
+      "ours_us": 4.6194139132639584,
+      "ref_us": 4.618708341320342,
+      "ratio": 0.9998472594236271
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1063,9 +1063,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9936,
-      "ref_us": 3.9758,
-      "ratio": 0.9955428685897436
+      "ours_us": 4.524320951736397,
+      "ref_us": 4.561683797877049,
+      "ratio": 1.0082582218501348
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1074,9 +1074,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6796,
-      "ref_us": 3.6552,
-      "ratio": 0.9933688444396129
+      "ours_us": 4.959937468053216,
+      "ref_us": 5.1579567262242625,
+      "ratio": 1.039923740862961
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1085,9 +1085,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.8306,
-      "ref_us": 3.8152,
-      "ratio": 0.9959797420769592
+      "ours_us": 5.094880937204111,
+      "ref_us": 5.143614480401206,
+      "ratio": 1.0095651976557942
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1096,9 +1096,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.0729999999999995,
-      "ref_us": 4.049,
-      "ratio": 0.9941075374416893
+      "ours_us": 5.594842173528458,
+      "ref_us": 5.639840213220887,
+      "ratio": 1.0080427719490164
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1107,9 +1107,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.8858,
-      "ref_us": 3.885,
-      "ratio": 0.9997941221884811
+      "ours_us": 5.415019842952406,
+      "ref_us": 5.456621183187572,
+      "ratio": 1.0076825831560543
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1118,9 +1118,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.8674,
-      "ref_us": 4.0218,
-      "ratio": 1.0399234627915395
+      "ours_us": 4.301327230406548,
+      "ref_us": 4.611609222223862,
+      "ratio": 1.0721363372737367
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1129,9 +1129,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.5254,
-      "ref_us": 3.7258,
-      "ratio": 1.0568446133772054
+      "ours_us": 4.3431733697100405,
+      "ref_us": 4.655179644606974,
+      "ratio": 1.0718383192052414
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1140,9 +1140,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.4458,
-      "ref_us": 3.6104000000000003,
-      "ratio": 1.0477682976377038
+      "ours_us": 4.404923019735189,
+      "ref_us": 4.933867628547368,
+      "ratio": 1.1200803297679371
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1151,9 +1151,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.8504,
-      "ref_us": 4.0043999999999995,
-      "ratio": 1.0399958445875752
+      "ours_us": 4.209035964786978,
+      "ref_us": 4.471085611571118,
+      "ratio": 1.062258828144131
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1162,9 +1162,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9808000000000003,
-      "ref_us": 3.961,
-      "ratio": 0.9950261254019291
+      "ours_us": 4.714004032969579,
+      "ref_us": 4.722306436908442,
+      "ratio": 1.001761221221025
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1173,9 +1173,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6626,
-      "ref_us": 3.6512000000000002,
-      "ratio": 0.9968874569977613
+      "ours_us": 4.724148972426214,
+      "ref_us": 4.7194255284134785,
+      "ratio": 0.9990001492246953
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1184,9 +1184,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.57,
-      "ref_us": 3.546,
-      "ratio": 0.9932773109243698
+      "ours_us": 4.994359210518174,
+      "ref_us": 5.248108383161606,
+      "ratio": 1.0508071530195573
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1195,9 +1195,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.024,
-      "ref_us": 4.0102,
-      "ratio": 0.9965705765407555
+      "ours_us": 4.9181634701559425,
+      "ref_us": 4.950541717908258,
+      "ratio": 1.006583402107065
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1206,9 +1206,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6382,
-      "ref_us": 3.599,
-      "ratio": 0.9892254411522182
+      "ours_us": 4.5914727423855055,
+      "ref_us": 4.57586539625447,
+      "ratio": 0.9966007973897006
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1217,9 +1217,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.0558,
-      "ref_us": 4.0412,
-      "ratio": 0.9964002169732236
+      "ours_us": 4.580605278486819,
+      "ref_us": 4.615216295333325,
+      "ratio": 1.0075559920015504
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1228,9 +1228,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6986,
-      "ref_us": 3.665,
-      "ratio": 0.9909154815335532
+      "ours_us": 4.542193385265806,
+      "ref_us": 4.645000310448652,
+      "ratio": 1.0226337622515889
     },
     {
       "kernel": "deepgemm_sm100_fp4_paged_mqa_logits",
@@ -1239,9 +1239,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9604,
-      "ref_us": 3.9344,
-      "ratio": 0.9934350065649935
+      "ours_us": 4.518781418849392,
+      "ref_us": 4.589799758259747,
+      "ratio": 1.0157162590591597
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1250,9 +1250,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 41.5712,
-      "ref_us": 43.7146,
-      "ratio": 1.051559733661766
+      "ours_us": 43.110801856032865,
+      "ref_us": 44.92372794017744,
+      "ratio": 1.0420527108310067
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1261,9 +1261,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 54.5962,
-      "ref_us": 57.7064,
-      "ratio": 1.0569673347229294
+      "ours_us": 56.86124669451224,
+      "ref_us": 58.13174246974578,
+      "ratio": 1.0223437903509098
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1272,9 +1272,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 41.1702,
-      "ref_us": 40.919,
-      "ratio": 0.9938984994000514
+      "ours_us": 42.880464638027554,
+      "ref_us": 42.32187882482871,
+      "ratio": 0.9869734197631926
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1283,9 +1283,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 53.768,
-      "ref_us": 53.858,
-      "ratio": 1.0016738580568367
+      "ours_us": 56.32980802824536,
+      "ref_us": 55.66150229373829,
+      "ratio": 0.9881358421429031
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1294,9 +1294,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 40.702000000000005,
-      "ref_us": 43.3454,
-      "ratio": 1.0649452115375164
+      "ours_us": 43.68311756798535,
+      "ref_us": 44.94491860847364,
+      "ratio": 1.0288853248288543
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1305,9 +1305,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 53.8916,
-      "ref_us": 57.253,
-      "ratio": 1.0623733568867877
+      "ours_us": 56.78060431456964,
+      "ref_us": 58.124162612844735,
+      "ratio": 1.0236622754282723
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1316,9 +1316,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 41.053399999999996,
-      "ref_us": 40.779,
-      "ratio": 0.9933160225462448
+      "ours_us": 43.0351632884638,
+      "ref_us": 41.87442130015923,
+      "ratio": 0.9730280566028263
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1327,9 +1327,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 52.5876,
-      "ref_us": 51.7582,
-      "ratio": 0.9842282211015525
+      "ours_us": 56.15791809235411,
+      "ref_us": 54.57143274297992,
+      "ratio": 0.9717495697264784
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1338,9 +1338,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 70.5332,
-      "ref_us": 75.772,
-      "ratio": 1.0742742424843905
+      "ours_us": 75.37987114012495,
+      "ref_us": 78.15125236183668,
+      "ratio": 1.0367655340848219
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1349,9 +1349,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 108.21000000000001,
-      "ref_us": 116.7262,
-      "ratio": 1.078700674614176
+      "ours_us": 116.76799582218497,
+      "ref_us": 121.15050363191978,
+      "ratio": 1.0375317549888285
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1360,9 +1360,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 69.9804,
-      "ref_us": 70.0708,
-      "ratio": 1.001291790272705
+      "ours_us": 74.15933563924078,
+      "ref_us": 74.01807960833726,
+      "ratio": 0.998095236025432
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1371,9 +1371,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 109.861,
-      "ref_us": 110.6138,
-      "ratio": 1.0068522951729912
+      "ours_us": 114.62781426525633,
+      "ref_us": 115.21523751263474,
+      "ratio": 1.0051246135254666
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1382,9 +1382,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 69.0042,
-      "ref_us": 75.4814,
-      "ratio": 1.0938667501398465
+      "ours_us": 75.69864115984068,
+      "ref_us": 77.51401107619787,
+      "ratio": 1.023981539015
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1393,9 +1393,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 114.7394,
-      "ref_us": 116.2582,
-      "ratio": 1.0132369526073868
+      "ours_us": 117.50177511306786,
+      "ref_us": 121.16865039534287,
+      "ratio": 1.0312069777562636
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1404,9 +1404,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 69.5186,
-      "ref_us": 68.6358,
-      "ratio": 0.9873012402436182
+      "ours_us": 74.23562961728845,
+      "ref_us": 72.78515597916251,
+      "ratio": 0.9804612199613089
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1415,9 +1415,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 116.6902,
-      "ref_us": 106.76859999999999,
-      "ratio": 0.9149748650700743
+      "ours_us": 115.89887244221468,
+      "ref_us": 112.79344242605383,
+      "ratio": 0.9732056925945577
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1426,9 +1426,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 70.6786,
-      "ref_us": 76.8538,
-      "ratio": 1.0873701516442036
+      "ours_us": 75.65370728558091,
+      "ref_us": 79.18117173500718,
+      "ratio": 1.046626458583327
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1437,9 +1437,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 70.084,
-      "ref_us": 76.9674,
-      "ratio": 1.098216426003082
+      "ours_us": 75.89329846044306,
+      "ref_us": 79.17621794143679,
+      "ratio": 1.043257040444814
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1448,9 +1448,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 70.2026,
-      "ref_us": 70.5664,
-      "ratio": 1.0051821442510676
+      "ours_us": 75.14943810579724,
+      "ref_us": 74.13007550188154,
+      "ratio": 0.9864355259385889
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1459,9 +1459,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 70.395,
-      "ref_us": 70.803,
-      "ratio": 1.005795866183678
+      "ours_us": 74.82968194523956,
+      "ref_us": 73.73049623414306,
+      "ratio": 0.985310832780221
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1470,9 +1470,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 70.302,
-      "ref_us": 76.9666,
-      "ratio": 1.0947995789593468
+      "ours_us": 75.52357348622377,
+      "ref_us": 78.73724803582846,
+      "ratio": 1.0425519397621048
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1481,9 +1481,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 71.1504,
-      "ref_us": 77.7792,
-      "ratio": 1.0931660257707616
+      "ours_us": 76.19935627750928,
+      "ref_us": 79.30500746383109,
+      "ratio": 1.0407569215547094
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1492,9 +1492,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 69.96039999999999,
-      "ref_us": 69.9062,
-      "ratio": 0.9992252760132876
+      "ours_us": 75.34562409517196,
+      "ref_us": 73.00496573747918,
+      "ratio": 0.9689343822444658
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1503,9 +1503,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 69.8496,
-      "ref_us": 69.3916,
-      "ratio": 0.9934430547920103
+      "ours_us": 75.15045053880533,
+      "ref_us": 72.62938045829172,
+      "ratio": 0.9664530277272017
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1514,9 +1514,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 126.1686,
-      "ref_us": 137.2644,
-      "ratio": 1.087944227010524
+      "ours_us": 136.38983068380585,
+      "ref_us": 143.31766202445556,
+      "ratio": 1.0507943393280588
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1525,9 +1525,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 186.8726,
-      "ref_us": 199.0896,
-      "ratio": 1.065376090448787
+      "ours_us": 198.12758827854404,
+      "ref_us": 206.81072819441485,
+      "ratio": 1.0438260011708382
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1536,9 +1536,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 125.8938,
-      "ref_us": 126.1572,
-      "ratio": 1.0020922396496095
+      "ours_us": 135.22012552875984,
+      "ref_us": 134.01472194316355,
+      "ratio": 0.9910856199779232
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1547,9 +1547,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 188.0258,
-      "ref_us": 188.8176,
-      "ratio": 1.0042111242180594
+      "ours_us": 195.65721542629132,
+      "ref_us": 194.77690781884164,
+      "ratio": 0.9955007659414364
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1558,9 +1558,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 130.1268,
-      "ref_us": 138.5152,
-      "ratio": 1.0644632773571623
+      "ours_us": 136.74848691482396,
+      "ref_us": 143.0424396042837,
+      "ratio": 1.046025757443152
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1569,9 +1569,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 183.1572,
-      "ref_us": 197.4068,
-      "ratio": 1.0777998353327087
+      "ours_us": 198.65310549141228,
+      "ref_us": 207.21803204807767,
+      "ratio": 1.0431149894962788
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1580,9 +1580,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 128.6312,
-      "ref_us": 129.163,
-      "ratio": 1.0041343002319811
+      "ours_us": 135.91195446921208,
+      "ref_us": 131.77284097218984,
+      "ratio": 0.9695456259665528
     },
     {
       "kernel": "deepgemm_sm100_fp8_mqa_logits",
@@ -1591,9 +1591,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 185.8836,
-      "ref_us": 188.1062,
-      "ratio": 1.0119569450989758
+      "ours_us": 196.37107562023078,
+      "ref_us": 192.00391232194008,
+      "ratio": 0.9777606590762047
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1602,9 +1602,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.4458,
-      "ref_us": 4.4128,
-      "ratio": 0.9925772639344999
+      "ours_us": 6.838321795266035,
+      "ref_us": 6.825870058173499,
+      "ratio": 0.9981791238456845
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1613,9 +1613,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.457,
-      "ref_us": 4.4496,
-      "ratio": 0.9983396903746916
+      "ours_us": 7.093786155120932,
+      "ref_us": 7.085833527600857,
+      "ratio": 0.9988789304686985
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1624,9 +1624,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.0774,
-      "ref_us": 4.0494,
-      "ratio": 0.9931328787953109
+      "ours_us": 4.471353103401232,
+      "ref_us": 4.504141151938182,
+      "ratio": 1.0073329141713296
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1635,9 +1635,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6672,
-      "ref_us": 3.6564,
-      "ratio": 0.9970549738219896
+      "ours_us": 5.122995384783794,
+      "ref_us": 5.358519548133985,
+      "ratio": 1.0459739167538076
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1646,9 +1646,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9814,
-      "ref_us": 3.9352,
-      "ratio": 0.9883960415934094
+      "ours_us": 5.3286088009712005,
+      "ref_us": 5.341533268075271,
+      "ratio": 1.0024254861985207
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1657,9 +1657,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.0758,
-      "ref_us": 4.045,
-      "ratio": 0.9924432013347072
+      "ours_us": 5.477478160041937,
+      "ref_us": 5.497108188357228,
+      "ratio": 1.0035837711701878
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1668,9 +1668,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.991,
-      "ref_us": 3.9756,
-      "ratio": 0.9961413179654222
+      "ours_us": 5.305423879458487,
+      "ref_us": 5.3636539351420245,
+      "ratio": 1.0109755708509913
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1679,9 +1679,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6728,
-      "ref_us": 3.6428,
-      "ratio": 0.991831844913962
+      "ours_us": 4.983587082871557,
+      "ref_us": 5.258901788991937,
+      "ratio": 1.0552442851990345
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1690,9 +1690,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.7164,
-      "ref_us": 3.6664,
-      "ratio": 0.9865461199009794
+      "ours_us": 4.64307901283197,
+      "ref_us": 4.680402009186599,
+      "ratio": 1.0080384150800537
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1701,9 +1701,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6442,
-      "ref_us": 3.6366,
-      "ratio": 0.9979144942648592
+      "ours_us": 4.936735240707276,
+      "ref_us": 4.947019362758904,
+      "ratio": 1.0020831828222885
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1712,9 +1712,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6494,
-      "ref_us": 3.634,
-      "ratio": 0.9957801282402586
+      "ours_us": 4.805358910994046,
+      "ref_us": 4.902243051896311,
+      "ratio": 1.0201616867120176
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1723,9 +1723,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.7246,
-      "ref_us": 3.714,
-      "ratio": 0.9971540568114696
+      "ours_us": 4.79691385626683,
+      "ref_us": 4.957147848463169,
+      "ratio": 1.0334035584122496
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1734,9 +1734,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6311999999999998,
-      "ref_us": 3.6206,
-      "ratio": 0.9970808548138357
+      "ours_us": 4.782478288947633,
+      "ref_us": 5.026239747017229,
+      "ratio": 1.0509696946524423
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1745,9 +1745,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6566,
-      "ref_us": 3.646,
-      "ratio": 0.9971011321993107
+      "ours_us": 4.594607355882679,
+      "ref_us": 4.599496899625282,
+      "ratio": 1.0010641918588197
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1756,9 +1756,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9428,
-      "ref_us": 3.9424,
-      "ratio": 0.9998985492543371
+      "ours_us": 4.572174174763574,
+      "ref_us": 4.752446679040216,
+      "ratio": 1.0394281795456675
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1767,9 +1767,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6176,
-      "ref_us": 3.6136,
-      "ratio": 0.9988942945599293
+      "ours_us": 4.47830235447222,
+      "ref_us": 4.488912922924331,
+      "ratio": 1.0023693282883221
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1778,9 +1778,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.0085999999999995,
-      "ref_us": 3.9892,
-      "ratio": 0.9951604051289727
+      "ours_us": 5.124191375186381,
+      "ref_us": 5.383618251594719,
+      "ratio": 1.0506278664111957
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1789,9 +1789,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6966,
-      "ref_us": 3.6968,
-      "ratio": 1.0000541037710329
+      "ours_us": 4.978058512700911,
+      "ref_us": 5.019472659421227,
+      "ratio": 1.008319337069794
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1800,9 +1800,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.0474,
-      "ref_us": 4.0252,
-      "ratio": 0.9945149972822059
+      "ours_us": 4.58393150291431,
+      "ref_us": 4.867600053688708,
+      "ratio": 1.0618832438037198
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1811,9 +1811,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.0206,
-      "ref_us": 4.0064,
-      "ratio": 0.9964681888275382
+      "ours_us": 4.537874043129406,
+      "ref_us": 4.794227592484748,
+      "ratio": 1.056491993148967
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1822,9 +1822,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6146,
-      "ref_us": 3.6052,
-      "ratio": 0.9973994356221989
+      "ours_us": 4.737592367185203,
+      "ref_us": 5.043320925543938,
+      "ratio": 1.0645324744434228
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1833,9 +1833,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.7694,
-      "ref_us": 3.7454,
-      "ratio": 0.9936329389292725
+      "ours_us": 4.854495212236257,
+      "ref_us": 4.862487234287503,
+      "ratio": 1.0016463137158116
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1844,9 +1844,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6778,
-      "ref_us": 3.6513999999999998,
-      "ratio": 0.992821795638697
+      "ours_us": 4.545402545078857,
+      "ref_us": 4.56038941452437,
+      "ratio": 1.00329714899767
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1855,9 +1855,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6464,
-      "ref_us": 3.6472,
-      "ratio": 1.0002193944712594
+      "ours_us": 4.441079944791696,
+      "ref_us": 4.466128012422991,
+      "ratio": 1.0056400848313192
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1866,9 +1866,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.924,
-      "ref_us": 3.8926,
-      "ratio": 0.9919979612640163
+      "ours_us": 5.36334937884296,
+      "ref_us": 5.377440060555929,
+      "ratio": 1.0026272168224866
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1877,9 +1877,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9206,
-      "ref_us": 3.892,
-      "ratio": 0.9927051981839514
+      "ours_us": 5.178973385033783,
+      "ref_us": 5.415392759527658,
+      "ratio": 1.0456498531498697
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1888,9 +1888,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6462,
-      "ref_us": 3.629,
-      "ratio": 0.995282760133838
+      "ours_us": 4.953493266698692,
+      "ref_us": 5.18450384560501,
+      "ratio": 1.0466358923831298
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1899,9 +1899,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6512,
-      "ref_us": 3.6446,
-      "ratio": 0.998192375109553
+      "ours_us": 4.604702018541559,
+      "ref_us": 4.788486173074413,
+      "ratio": 1.039912279620444
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1910,9 +1910,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.0678,
-      "ref_us": 4.013199999999999,
-      "ratio": 0.9865775111854072
+      "ours_us": 4.802171754203172,
+      "ref_us": 4.771005121343866,
+      "ratio": 0.9935098879310122
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1921,9 +1921,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6658,
-      "ref_us": 3.6666,
-      "ratio": 1.000218233400622
+      "ours_us": 4.976554829489116,
+      "ref_us": 5.227261575969064,
+      "ratio": 1.0503775714464871
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1932,9 +1932,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6936,
-      "ref_us": 3.6478,
-      "ratio": 0.9876001732726879
+      "ours_us": 4.5990388785055085,
+      "ref_us": 4.576876228450627,
+      "ratio": 0.9951810257229041
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1943,9 +1943,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.9736000000000002,
-      "ref_us": 3.9584,
-      "ratio": 0.9961747533722569
+      "ours_us": 5.122363049669619,
+      "ref_us": 5.339030884947806,
+      "ratio": 1.0422984144577885
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1954,9 +1954,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.0128,
-      "ref_us": 3.9904,
-      "ratio": 0.9944178628389154
+      "ours_us": 5.8281936775536884,
+      "ref_us": 5.855121225162589,
+      "ratio": 1.0046202218214895
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1965,9 +1965,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.4799999999999995,
-      "ref_us": 4.4646,
-      "ratio": 0.9965625000000001
+      "ours_us": 6.547135519822423,
+      "ref_us": 6.553092775018759,
+      "ratio": 1.0009099025334514
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1976,9 +1976,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.711,
-      "ref_us": 3.7026,
-      "ratio": 0.9977364591754244
+      "ours_us": 5.073816445791072,
+      "ref_us": 5.351649886025696,
+      "ratio": 1.0547582757876661
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1987,9 +1987,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 4.0542,
-      "ref_us": 4.0408,
-      "ratio": 0.9966947856543832
+      "ours_us": 5.002272723504125,
+      "ref_us": 5.250700885169385,
+      "ratio": 1.0496630582530964
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -1998,9 +1998,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.8628,
-      "ref_us": 3.8436,
-      "ratio": 0.9950295122708915
+      "ours_us": 5.076268020311545,
+      "ref_us": 5.117047382265957,
+      "ratio": 1.0080333350782982
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -2009,9 +2009,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.642,
-      "ref_us": 3.6528,
-      "ratio": 1.0029654036243822
+      "ours_us": 5.263096414599243,
+      "ref_us": 5.323342144616005,
+      "ratio": 1.011446822416106
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -2020,9 +2020,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.7894,
-      "ref_us": 3.7612,
-      "ratio": 0.9925581886314456
+      "ours_us": 4.715355459094671,
+      "ref_us": 4.67390469477327,
+      "ratio": 0.9912094083508691
     },
     {
       "kernel": "deepgemm_sm100_fp8_paged_mqa_logits",
@@ -2031,9 +2031,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 3.6678,
-      "ref_us": 3.659,
-      "ratio": 0.9976007415889633
+      "ours_us": 4.980448836403218,
+      "ref_us": 5.181340255333082,
+      "ratio": 1.0403360069601566
     },
     {
       "kernel": "deepgemm_sm100_tf32_hc_prenorm_gemm",
@@ -2042,9 +2042,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 5.0322,
-      "ref_us": 5.0102,
-      "ratio": 0.9956281546838363
+      "ours_us": 5.679908128841339,
+      "ref_us": 5.422080020480448,
+      "ratio": 0.9546069931920736
     },
     {
       "kernel": "deepgemm_sm100_tf32_hc_prenorm_gemm",
@@ -2053,9 +2053,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 20.4722,
-      "ref_us": 20.6454,
-      "ratio": 1.0084602534168285
+      "ours_us": 23.914899208496063,
+      "ref_us": 21.016717892071807,
+      "ratio": 0.8788127312953657
     },
     {
       "kernel": "deepgemm_sm100_tf32_hc_prenorm_gemm",
@@ -2064,9 +2064,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 56.4038,
-      "ref_us": 56.865,
-      "ratio": 1.0081767540484863
+      "ours_us": 65.11438166221818,
+      "ref_us": 63.20283278980532,
+      "ratio": 0.970643215467682
     },
     {
       "kernel": "deepgemm_sm100_tf32_hc_prenorm_gemm",
@@ -2075,9 +2075,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tirx",
-      "ours_us": 21.7128,
-      "ref_us": 21.9608,
-      "ratio": 1.0114218341254926
+      "ours_us": 25.819394608257923,
+      "ref_us": 23.823420382944956,
+      "ratio": 0.9226947705166338
     },
     {
       "kernel": "flash_attention4",
@@ -2086,9 +2086,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 19.624200000000002,
-      "ref_us": 19.8208,
-      "ratio": 1.0100182427818711
+      "ours_us": 19.72823849373569,
+      "ref_us": 19.95134064153417,
+      "ratio": 1.0113087718332947
     },
     {
       "kernel": "flash_attention4",
@@ -2097,9 +2097,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 19.2028,
-      "ref_us": 19.38,
-      "ratio": 1.0092278209427792
+      "ours_us": 20.40380201360332,
+      "ref_us": 20.297813663692384,
+      "ratio": 0.9948054607744051
     },
     {
       "kernel": "flash_attention4",
@@ -2108,9 +2108,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 20.1002,
-      "ref_us": 20.1028,
-      "ratio": 1.0001293519467467
+      "ours_us": 20.07284505795119,
+      "ref_us": 20.36076521725018,
+      "ratio": 1.014343764347692
     },
     {
       "kernel": "flash_attention4",
@@ -2119,9 +2119,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 20.5508,
-      "ref_us": 20.0346,
-      "ratio": 0.9748817564279737
+      "ours_us": 21.056871891548987,
+      "ref_us": 21.953688237001398,
+      "ratio": 1.0425901981106862
     },
     {
       "kernel": "flash_attention4",
@@ -2130,9 +2130,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 19.2656,
-      "ref_us": 19.5874,
-      "ratio": 1.0167033468980982
+      "ours_us": 19.083277689056764,
+      "ref_us": 19.551847322236853,
+      "ratio": 1.0245539388366596
     },
     {
       "kernel": "flash_attention4",
@@ -2141,9 +2141,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 18.8606,
-      "ref_us": 19.0948,
-      "ratio": 1.0124174204426157
+      "ours_us": 19.291595459472905,
+      "ref_us": 19.81220867075491,
+      "ratio": 1.026986529568054
     },
     {
       "kernel": "flash_attention4",
@@ -2152,9 +2152,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 19.6302,
-      "ref_us": 19.9304,
-      "ratio": 1.0152927631914093
+      "ours_us": 19.473320733024103,
+      "ref_us": 19.489159180307418,
+      "ratio": 1.0008133408523618
     },
     {
       "kernel": "flash_attention4",
@@ -2163,9 +2163,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 18.2838,
-      "ref_us": 18.961,
-      "ratio": 1.0370382524420525
+      "ours_us": 19.807390470379147,
+      "ref_us": 19.9971186502365,
+      "ratio": 1.0095786560143338
     },
     {
       "kernel": "flash_attention4",
@@ -2174,9 +2174,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 56.2074,
-      "ref_us": 56.6262,
-      "ratio": 1.00745097620598
+      "ours_us": 57.286743725750114,
+      "ref_us": 57.58729353352757,
+      "ratio": 1.005246411093224
     },
     {
       "kernel": "flash_attention4",
@@ -2185,9 +2185,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 36.1102,
-      "ref_us": 37.9766,
-      "ratio": 1.051686227160193
+      "ours_us": 36.439503318791544,
+      "ref_us": 38.43540565996095,
+      "ratio": 1.0547730391303147
     },
     {
       "kernel": "flash_attention4",
@@ -2196,9 +2196,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 57.8408,
-      "ref_us": 57.9906,
-      "ratio": 1.0025898673600642
+      "ours_us": 59.3448616918899,
+      "ref_us": 59.578016957226616,
+      "ratio": 1.0039288197611316
     },
     {
       "kernel": "flash_attention4",
@@ -2207,9 +2207,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 38.155,
-      "ref_us": 38.145,
-      "ratio": 0.9997379111518805
+      "ours_us": 40.52859005773724,
+      "ref_us": 40.14138057817042,
+      "ratio": 0.9904460165277105
     },
     {
       "kernel": "flash_attention4",
@@ -2218,9 +2218,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 54.4104,
-      "ref_us": 54.931,
-      "ratio": 1.0095680237601634
+      "ours_us": 55.56711970442375,
+      "ref_us": 56.55396099215774,
+      "ratio": 1.017759446467322
     },
     {
       "kernel": "flash_attention4",
@@ -2229,9 +2229,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 34.5532,
-      "ref_us": 36.6602,
-      "ratio": 1.0609784332565437
+      "ours_us": 34.80826830060756,
+      "ref_us": 37.65937116471344,
+      "ratio": 1.0819087821170386
     },
     {
       "kernel": "flash_attention4",
@@ -2240,9 +2240,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 55.9074,
-      "ref_us": 56.411,
-      "ratio": 1.0090077521043725
+      "ours_us": 56.038227959919375,
+      "ref_us": 56.497378546544354,
+      "ratio": 1.0081935243732794
     },
     {
       "kernel": "flash_attention4",
@@ -2251,9 +2251,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 34.6696,
-      "ref_us": 36.4542,
-      "ratio": 1.0514744906200244
+      "ours_us": 35.273048393115396,
+      "ref_us": 38.056218275135436,
+      "ratio": 1.0789035824463433
     },
     {
       "kernel": "flash_attention4",
@@ -2262,9 +2262,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 205.4442,
-      "ref_us": 206.493,
-      "ratio": 1.0051050358199454
+      "ours_us": 212.5262123661077,
+      "ref_us": 214.22134033027078,
+      "ratio": 1.0079760889035323
     },
     {
       "kernel": "flash_attention4",
@@ -2273,9 +2273,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 111.9902,
-      "ref_us": 115.4514,
-      "ratio": 1.0309062757276977
+      "ours_us": 113.15264287824911,
+      "ref_us": 118.23842934463875,
+      "ratio": 1.044946245505391
     },
     {
       "kernel": "flash_attention4",
@@ -2284,9 +2284,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 211.0658,
-      "ref_us": 212.4378,
-      "ratio": 1.0065003425472057
+      "ours_us": 215.87440409065493,
+      "ref_us": 217.8643248217039,
+      "ratio": 1.0092179558731442
     },
     {
       "kernel": "flash_attention4",
@@ -2295,9 +2295,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 117.1522,
-      "ref_us": 116.4474,
-      "ratio": 0.9939838944552472
+      "ours_us": 121.85822696100387,
+      "ref_us": 120.06865108962782,
+      "ratio": 0.9853142794212103
     },
     {
       "kernel": "flash_attention4",
@@ -2306,9 +2306,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 204.107,
-      "ref_us": 203.5118,
-      "ratio": 0.9970838824734085
+      "ours_us": 205.01892395586378,
+      "ref_us": 208.6979072525693,
+      "ratio": 1.0179446034820547
     },
     {
       "kernel": "flash_attention4",
@@ -2317,9 +2317,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 109.37780000000001,
-      "ref_us": 111.7976,
-      "ratio": 1.02212331935731
+      "ours_us": 109.5566249786629,
+      "ref_us": 114.59505660103635,
+      "ratio": 1.0459892920519844
     },
     {
       "kernel": "flash_attention4",
@@ -2328,9 +2328,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 202.9702,
-      "ref_us": 202.7426,
-      "ratio": 0.9988786531224781
+      "ours_us": 207.90304161863665,
+      "ref_us": 210.9835512779516,
+      "ratio": 1.0148170495021696
     },
     {
       "kernel": "flash_attention4",
@@ -2339,9 +2339,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 110.4246,
-      "ref_us": 113.9544,
-      "ratio": 1.0319657032943748
+      "ours_us": 110.8185250552685,
+      "ref_us": 115.89252179915668,
+      "ratio": 1.0457865392212866
     },
     {
       "kernel": "flash_attention4",
@@ -2350,9 +2350,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 841.0486,
-      "ref_us": 830.1202000000001,
-      "ratio": 0.987006220567991
+      "ours_us": 770.6607514126938,
+      "ref_us": 775.3192765935335,
+      "ratio": 1.0060448455073132
     },
     {
       "kernel": "flash_attention4",
@@ -2361,9 +2361,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 417.5102,
-      "ref_us": 418.737,
-      "ratio": 1.002938371326018
+      "ours_us": 467.6625153341993,
+      "ref_us": 424.5642734297021,
+      "ratio": 0.9078432833692079
     },
     {
       "kernel": "flash_attention4",
@@ -2372,9 +2372,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 841.219,
-      "ref_us": 834.808,
-      "ratio": 0.9923789167862351
+      "ours_us": 777.8879383540767,
+      "ref_us": 793.8104483747728,
+      "ratio": 1.0204688994849134
     },
     {
       "kernel": "flash_attention4",
@@ -2383,9 +2383,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 440.2474,
-      "ref_us": 438.584,
-      "ratio": 0.9962216699065116
+      "ours_us": 438.01895779904305,
+      "ref_us": 437.0447980533739,
+      "ratio": 0.9977759872527798
     },
     {
       "kernel": "flash_attention4",
@@ -2394,9 +2394,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 853.7838,
-      "ref_us": 837.4688,
-      "ratio": 0.9808909468650026
+      "ours_us": 767.994544857662,
+      "ref_us": 767.9092213924283,
+      "ratio": 0.9998889009488348
     },
     {
       "kernel": "flash_attention4",
@@ -2405,9 +2405,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 424.2588,
-      "ref_us": 428.298,
-      "ratio": 1.0095206039332596
+      "ours_us": 411.3739958919894,
+      "ref_us": 418.77734183781644,
+      "ratio": 1.0179966308511412
     },
     {
       "kernel": "flash_attention4",
@@ -2416,9 +2416,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 839.2554,
-      "ref_us": 813.0972,
-      "ratio": 0.9688316572047079
+      "ours_us": 765.9780599182391,
+      "ref_us": 774.5108288818853,
+      "ratio": 1.011139704137945
     },
     {
       "kernel": "flash_attention4",
@@ -2427,9 +2427,9 @@
       "status": "ok",
       "ref_impl": "flashattn_sm100",
       "ours_impl": "tir",
-      "ours_us": 425.03000000000003,
-      "ref_us": 426.0576,
-      "ratio": 1.0024177116909394
+      "ours_us": 410.80053414638627,
+      "ref_us": 420.71979693236716,
+      "ratio": 1.0241461779172036
     },
     {
       "kernel": "fp16_bf16_gemm",
@@ -2438,9 +2438,9 @@
       "status": "ok",
       "ref_impl": "torch-cublas",
       "ours_impl": "tir",
-      "ours_us": 6.4456,
-      "ref_us": 5.376,
-      "ratio": 0.8340573414422242
+      "ours_us": 6.809280696535286,
+      "ref_us": 5.988362101678488,
+      "ratio": 0.879441216856503
     },
     {
       "kernel": "fp16_bf16_gemm",
@@ -2449,42 +2449,42 @@
       "status": "ok",
       "ref_impl": "torch-cublas",
       "ours_impl": "tir",
-      "ours_us": 6283.4044,
-      "ref_us": 6081.9526,
-      "ratio": 0.9679390681904859
+      "ours_us": 5643.136033333333,
+      "ref_us": 5514.359122777778,
+      "ratio": 0.9771799031965762
     },
     {
       "kernel": "fp16_bf16_gemm",
       "config": "bf16_2048x2048x2048",
       "label": "bf16_2048x2048x2048",
       "status": "ok",
-      "ref_impl": "torch-cublas",
+      "ref_impl": "deepgemm-cublaslt",
       "ours_impl": "tir",
-      "ours_us": 15.859399999999999,
-      "ref_us": 17.2414,
-      "ratio": 1.0871407493347793
+      "ours_us": 16.329823987539328,
+      "ref_us": 15.856059136682758,
+      "ratio": 0.9709877552129109
     },
     {
       "kernel": "fp16_bf16_gemm",
       "config": "bf16_4096x4096x4096",
       "label": "bf16_4096x4096x4096",
       "status": "ok",
-      "ref_impl": "deepgemm-bf16",
+      "ref_impl": "deepgemm-cublaslt",
       "ours_impl": "tir",
-      "ours_us": 92.2864,
-      "ref_us": 91.9502,
-      "ratio": 0.9963569930130549
+      "ours_us": 93.95245060711272,
+      "ref_us": 89.47169250690035,
+      "ratio": 0.9523082360145149
     },
     {
       "kernel": "fp16_bf16_gemm",
       "config": "bf16_8192x8192x8192",
       "label": "bf16_8192x8192x8192",
       "status": "ok",
-      "ref_impl": "deepgemm-cublaslt",
+      "ref_impl": "torch-cublas",
       "ours_impl": "tir",
-      "ours_us": 770.5386,
-      "ref_us": 799.621,
-      "ratio": 1.0377429501909443
+      "ours_us": 670.5452557754303,
+      "ref_us": 693.2591746462772,
+      "ratio": 1.0338738044527362
     },
     {
       "kernel": "fp16_bf16_gemm",
@@ -2493,31 +2493,31 @@
       "status": "ok",
       "ref_impl": "torch-cublas",
       "ours_impl": "tir",
-      "ours_us": 6.4952,
-      "ref_us": 5.3986,
-      "ratio": 0.8311676314817096
+      "ours_us": 6.831306125030711,
+      "ref_us": 6.009478962871572,
+      "ratio": 0.8796969207472833
     },
     {
       "kernel": "fp16_bf16_gemm",
       "config": "fp16_16384x16384x16384",
       "label": "fp16_16384x16384x16384",
       "status": "ok",
-      "ref_impl": "deepgemm-cublaslt",
+      "ref_impl": "torch-cublas",
       "ours_impl": "tir",
-      "ours_us": 6523.3726,
-      "ref_us": 6440.7908,
-      "ratio": 0.9873406280671443
+      "ours_us": 5699.551077777778,
+      "ref_us": 5488.146996825397,
+      "ratio": 0.9629086434935843
     },
     {
       "kernel": "fp16_bf16_gemm",
       "config": "fp16_2048x2048x2048",
       "label": "fp16_2048x2048x2048",
       "status": "ok",
-      "ref_impl": "torch-cublas",
+      "ref_impl": "deepgemm-cublaslt",
       "ours_impl": "tir",
-      "ours_us": 16.0552,
-      "ref_us": 17.5884,
-      "ratio": 1.0954955403856694
+      "ours_us": 16.501879106734545,
+      "ref_us": 16.009612644873346,
+      "ratio": 0.9701690662816514
     },
     {
       "kernel": "fp16_bf16_gemm",
@@ -2526,20 +2526,20 @@
       "status": "ok",
       "ref_impl": "deepgemm-cublaslt",
       "ours_impl": "tir",
-      "ours_us": 96.6986,
-      "ref_us": 99.131,
-      "ratio": 1.0251544489785789
+      "ours_us": 95.2903243629124,
+      "ref_us": 91.81521940241714,
+      "ratio": 0.96353139750831
     },
     {
       "kernel": "fp16_bf16_gemm",
       "config": "fp16_8192x8192x8192",
       "label": "fp16_8192x8192x8192",
       "status": "ok",
-      "ref_impl": "torch-cublas",
+      "ref_impl": "deepgemm-cublaslt",
       "ours_impl": "tir",
-      "ours_us": 793.7719999999999,
-      "ref_us": 863.3326,
-      "ratio": 1.0876329726924105
+      "ours_us": 717.8418537891799,
+      "ref_us": 733.976826699902,
+      "ratio": 1.0224770579000826
     },
     {
       "kernel": "fp8_blockwise_gemm",
@@ -2548,9 +2548,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tir",
-      "ours_us": 49.0142,
-      "ref_us": 49.9134,
-      "ratio": 1.0183457038980541
+      "ours_us": 50.39247646663577,
+      "ref_us": 50.70634726054671,
+      "ratio": 1.0062285248893998
     },
     {
       "kernel": "fp8_blockwise_gemm",
@@ -2559,9 +2559,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tir",
-      "ours_us": 117.6808,
-      "ref_us": 118.173,
-      "ratio": 1.0041825004588685
+      "ours_us": 116.30321463476993,
+      "ref_us": 115.50687839091036,
+      "ratio": 0.9931529300685253
     },
     {
       "kernel": "fp8_blockwise_gemm",
@@ -2570,9 +2570,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tir",
-      "ours_us": 72.7242,
-      "ref_us": 76.4026,
-      "ratio": 1.0505801370107888
+      "ours_us": 68.65285026836449,
+      "ref_us": 71.57193299373766,
+      "ratio": 1.042519468805191
     },
     {
       "kernel": "fp8_blockwise_gemm",
@@ -2581,9 +2581,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tir",
-      "ours_us": 82.6742,
-      "ref_us": 82.9742,
-      "ratio": 1.0036287015780012
+      "ours_us": 81.95278148372844,
+      "ref_us": 80.64454588865466,
+      "ratio": 0.9840367151500096
     },
     {
       "kernel": "fp8_blockwise_gemm",
@@ -2592,9 +2592,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tir",
-      "ours_us": 18.1556,
-      "ref_us": 18.6968,
-      "ratio": 1.0298089845557294
+      "ours_us": 19.984001980304342,
+      "ref_us": 20.459498988942983,
+      "ratio": 1.0237938831825215
     },
     {
       "kernel": "fp8_blockwise_gemm",
@@ -2603,9 +2603,9 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tir",
-      "ours_us": 327.3532,
-      "ref_us": 327.639,
-      "ratio": 1.000873063101262
+      "ours_us": 336.1155914054544,
+      "ref_us": 335.67118735466545,
+      "ratio": 0.9986778237542309
     },
     {
       "kernel": "fp8_blockwise_gemm",
@@ -2614,31 +2614,31 @@
       "status": "ok",
       "ref_impl": "deepgemm",
       "ours_impl": "tir",
-      "ours_us": 44.1186,
-      "ref_us": 44.525400000000005,
-      "ratio": 1.009220600835022
+      "ours_us": 43.088723753452214,
+      "ref_us": 43.343452598505785,
+      "ratio": 1.0059117287045003
     },
     {
       "kernel": "nvfp4_gemm",
       "config": "1024x1024x1024",
       "label": "1024x1024x1024",
       "status": "ok",
-      "ref_impl": "cublaslt_nvfp4",
+      "ref_impl": "flashinfer",
       "ours_impl": "tir",
-      "ours_us": 5.1832,
-      "ref_us": 4.2432,
-      "ratio": 0.81864485260071
+      "ours_us": 5.220879504241419,
+      "ref_us": 4.488448097960446,
+      "ratio": 0.859711106972312
     },
     {
       "kernel": "nvfp4_gemm",
       "config": "16384x16384x16384",
       "label": "16384x16384x16384",
       "status": "ok",
-      "ref_impl": "cublaslt_nvfp4",
+      "ref_impl": "flashinfer",
       "ours_impl": "tir",
-      "ours_us": 1667.7848000000001,
-      "ref_us": 1569.8754000000001,
-      "ratio": 0.9412937448524534
+      "ours_us": 1482.7563488474398,
+      "ref_us": 1438.6076958225779,
+      "ratio": 0.9702252814097346
     },
     {
       "kernel": "nvfp4_gemm",
@@ -2647,20 +2647,20 @@
       "status": "ok",
       "ref_impl": "cublaslt_nvfp4",
       "ours_impl": "tir",
-      "ours_us": 8.354,
-      "ref_us": 7.438,
-      "ratio": 0.8903519272204933
+      "ours_us": 8.417200003293287,
+      "ref_us": 7.5396675363566485,
+      "ratio": 0.8957453230773538
     },
     {
       "kernel": "nvfp4_gemm",
       "config": "4096x4096x4096",
       "label": "4096x4096x4096",
       "status": "ok",
-      "ref_impl": "flashinfer",
+      "ref_impl": "cublaslt_nvfp4",
       "ours_impl": "tir",
-      "ours_us": 29.1422,
-      "ref_us": 28.7304,
-      "ratio": 0.9858692892094626
+      "ours_us": 29.5334337914061,
+      "ref_us": 28.631889473442474,
+      "ratio": 0.9694737725273935
     },
     {
       "kernel": "nvfp4_gemm",
@@ -2669,9 +2669,9 @@
       "status": "ok",
       "ref_impl": "flashinfer",
       "ours_impl": "tir",
-      "ours_us": 185.4468,
-      "ref_us": 181.85840000000002,
-      "ratio": 0.9806499761656714
+      "ours_us": 184.59399090262332,
+      "ref_us": 181.79360597215063,
+      "ratio": 0.9848294902950013
     },
     {
       "kernel": "sparse_flashmla_prefill_head128_phase1",
@@ -2680,9 +2680,9 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 1805.4558,
-      "ref_us": 1848.2204,
-      "ratio": 1.023686317881612
+      "ours_us": 1721.5590773170732,
+      "ref_us": 1735.527848979021,
+      "ratio": 1.0081140239948763
     },
     {
       "kernel": "sparse_flashmla_prefill_head128_phase1",
@@ -2691,9 +2691,9 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 1979.2134,
-      "ref_us": 1994.7396,
-      "ratio": 1.0078446316097092
+      "ours_us": 1878.8945904895106,
+      "ref_us": 1905.3873226168128,
+      "ratio": 1.0141001694620877
     },
     {
       "kernel": "sparse_flashmla_prefill_head128_phase1",
@@ -2702,9 +2702,9 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 1826.5718,
-      "ref_us": 1862.202,
-      "ratio": 1.0195065970031947
+      "ours_us": 1693.1184739393939,
+      "ref_us": 1734.047358656924,
+      "ratio": 1.0241736684984013
     },
     {
       "kernel": "sparse_flashmla_prefill_head128_phase1",
@@ -2713,9 +2713,9 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 1927.7038,
-      "ref_us": 1955.0134,
-      "ratio": 1.0141669067623356
+      "ours_us": 1800.4858403080873,
+      "ref_us": 1855.741605989418,
+      "ratio": 1.0306893641950974
     },
     {
       "kernel": "sparse_flashmla_prefill_head128_phase1",
@@ -2724,9 +2724,9 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 2134.222,
-      "ref_us": 2138.2772,
-      "ratio": 1.0019000834964684
+      "ours_us": 1996.3684401444789,
+      "ref_us": 2003.04144629156,
+      "ratio": 1.0033425724495015
     },
     {
       "kernel": "sparse_flashmla_prefill_head128_phase1",
@@ -2735,9 +2735,42 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 1908.6346,
-      "ref_us": 1955.2818,
-      "ratio": 1.0244400892659076
+      "ours_us": 1774.217461360719,
+      "ref_us": 1816.5807797774967,
+      "ratio": 1.023877184922015
+    },
+    {
+      "kernel": "sparse_flashmla_prefill_head128_small_topk_phase1",
+      "config": "bench_smalltopk_dqk512_hq128_s4096_kv32768_topk1280",
+      "label": "bench_smalltopk_dqk512_hq128_s4096_kv32768_topk1280",
+      "status": "ok",
+      "ref_impl": "flashmla",
+      "ours_impl": "tirx",
+      "ours_us": 1171.024307103594,
+      "ref_us": 1165.8678852538267,
+      "ratio": 0.9955966568597356
+    },
+    {
+      "kernel": "sparse_flashmla_prefill_head128_small_topk_phase1",
+      "config": "bench_smalltopk_dqk512_hq128_s4096_kv65536_topk1280",
+      "label": "bench_smalltopk_dqk512_hq128_s4096_kv65536_topk1280",
+      "status": "ok",
+      "ref_impl": "flashmla",
+      "ours_impl": "tirx",
+      "ours_us": 1208.4711033077765,
+      "ref_us": 1210.3268394110748,
+      "ratio": 1.0015356065182022
+    },
+    {
+      "kernel": "sparse_flashmla_prefill_head128_small_topk_phase1",
+      "config": "bench_smalltopk_dqk512_hq128_s4096_kv8192_topk1280",
+      "label": "bench_smalltopk_dqk512_hq128_s4096_kv8192_topk1280",
+      "status": "ok",
+      "ref_impl": "flashmla",
+      "ours_impl": "tirx",
+      "ours_us": 1161.7948522158842,
+      "ref_us": 1153.1357552903887,
+      "ratio": 0.9925467935161013
     },
     {
       "kernel": "sparse_flashmla_prefill_head64_phase1",
@@ -2746,9 +2779,9 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 369.4776,
-      "ref_us": 373.077,
-      "ratio": 1.0097418625648753
+      "ours_us": 381.56650413492997,
+      "ref_us": 379.24803163126654,
+      "ratio": 0.9939238049500184
     },
     {
       "kernel": "sparse_flashmla_prefill_head64_phase1",
@@ -2757,9 +2790,9 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 370.39119999999997,
-      "ref_us": 374.3474,
-      "ratio": 1.0106811392927262
+      "ours_us": 384.29814064762775,
+      "ref_us": 383.1284248361886,
+      "ratio": 0.9969562282828953
     },
     {
       "kernel": "sparse_flashmla_prefill_head64_phase1",
@@ -2768,9 +2801,9 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 372.9602,
-      "ref_us": 381.1098,
-      "ratio": 1.0218511251334594
+      "ours_us": 389.78404121588557,
+      "ref_us": 389.8650674031448,
+      "ratio": 1.0002078745630696
     },
     {
       "kernel": "sparse_flashmla_prefill_head64_phase1",
@@ -2779,9 +2812,9 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 365.7822,
-      "ref_us": 369.0582,
-      "ratio": 1.0089561493150843
+      "ours_us": 372.76603725382427,
+      "ref_us": 373.15691522990545,
+      "ratio": 1.0010485879533468
     },
     {
       "kernel": "sparse_flashmla_prefill_head64_phase1",
@@ -2790,9 +2823,9 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 385.2106,
-      "ref_us": 392.2244,
-      "ratio": 1.0182077024879377
+      "ours_us": 401.81879018297064,
+      "ref_us": 398.24056213196656,
+      "ratio": 0.9910949210479313
     },
     {
       "kernel": "sparse_flashmla_prefill_head64_phase1",
@@ -2801,9 +2834,9 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 387.44440000000003,
-      "ref_us": 394.7292,
-      "ratio": 1.0188021816807777
+      "ours_us": 405.53762073327346,
+      "ref_us": 404.6971683664135,
+      "ratio": 0.9979275600489536
     },
     {
       "kernel": "sparse_flashmla_prefill_head64_phase1",
@@ -2812,9 +2845,9 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 398.89619999999996,
-      "ref_us": 404.7574,
-      "ratio": 1.014693546842512
+      "ours_us": 414.66201634913074,
+      "ref_us": 419.3141670354429,
+      "ratio": 1.0112191387271778
     },
     {
       "kernel": "sparse_flashmla_prefill_head64_phase1",
@@ -2823,9 +2856,9 @@
       "status": "ok",
       "ref_impl": "flashmla",
       "ours_impl": "tirx",
-      "ours_us": 375.5956,
-      "ref_us": 381.4672,
-      "ratio": 1.0156327709909274
+      "ours_us": 383.81364772939213,
+      "ref_us": 382.3221131337005,
+      "ratio": 0.9961139094336133
     }
   ]
 }

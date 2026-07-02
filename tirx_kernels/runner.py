@@ -66,8 +66,10 @@ def run_kernel_bench(
 ):
     """Run a kernel's benchmark.
 
-    Delegates to ``mod.run_bench(**params, warmup=warmup, repeat=repeat)``
-    if available, otherwise runs ``run_test`` without timing.
+    Delegates to ``mod.run_bench(**params, ...)`` if available, otherwise runs
+    ``run_test`` without timing. warmup/repeat are only forwarded when explicitly
+    provided (CLI ``--warmup/--repeat`` or a per-workload override); otherwise each
+    timer uses its own Triton-aligned default inside ``tvm.tirx.bench.bench``.
     """
     if registry is None:
         from tirx_kernels.registry import load_kernel

@@ -872,13 +872,6 @@ def _make_bench_case(config_kwargs: dict[str, Any]) -> TF32HCBenchCase:
     )
 
 
-def _bench_case_input_bytes(case: TF32HCBenchCase) -> int:
-    return sum(
-        tensor.nelement() * tensor.element_size()
-        for tensor in (case.a, case.b, case.d_tirx, case.sqr_tirx)
-    )
-
-
 def _bench_tirx_case(case: TF32HCBenchCase, executable: Any) -> tuple[torch.Tensor, torch.Tensor]:
     executable(case.config.m, case.a, case.b, case.d_tirx, case.sqr_tirx.reshape(-1))
     return case.d_tirx, case.sqr_tirx
@@ -898,9 +891,9 @@ def _bench_deepgemm_case(case: TF32HCBenchCase) -> tuple[torch.Tensor, torch.Ten
 def run_bench(**kwargs: Any) -> dict[str, Any]:
     from tvm.tirx.bench import bench
 
-    timer = kwargs.pop("timer", "proton")
-    warmup = kwargs.pop("warmup", 10)
-    repeat = kwargs.pop("repeat", 30)
+    timer = kwargs.pop("timer", None)  # None inherits the global default (proton)
+    warmup = kwargs.pop("warmup", None)
+    repeat = kwargs.pop("repeat", None)
     _rounds = kwargs.pop("rounds", 1)
     _round_cooldown_s = kwargs.pop("round_cooldown_s", 1.0)
     config_kwargs = dict(kwargs)
@@ -915,39 +908,35 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
         }
     )
     executable = _compile_tirx_tf32_hc(runtime_config)
-    metrics: dict[str, float] = {}
 
-    def make_input() -> tuple[TF32HCBenchCase, int]:
-        case = _make_bench_case(config_kwargs)
-        return case, _bench_case_input_bytes(case)
+    # Allocate inputs once, outside the timed region (Triton-standard pure launch).
+    case = _make_bench_case(config_kwargs)
 
-    def validate_case(case: TF32HCBenchCase) -> None:
-        tirx_d, tirx_sqr = _bench_tirx_case(case, executable)
-        torch.cuda.synchronize()
-        metrics["tirx_diff"] = _assert_correct_case(case, tirx_d, tirx_sqr, name="TIRx")
-        deepgemm_d, deepgemm_sqr = _bench_deepgemm_case(case)
-        torch.cuda.synchronize()
-        metrics["deepgemm_diff"] = _assert_correct_case(
-            case, deepgemm_d, deepgemm_sqr, name="DeepGEMM"
-        )
+    # Correctness gate for our kernel before timing (preserves the tirx half of
+    # the old validate_case; the deepgemm reference is trusted and is not run
+    # here so --impls ours can still skip it entirely).
+    tirx_d, tirx_sqr = _bench_tirx_case(case, executable)
+    torch.cuda.synchronize()
+    tirx_diff = _assert_correct_case(case, tirx_d, tirx_sqr, name="TIRx")
 
-    def run_tirx(case: TF32HCBenchCase) -> tuple[torch.Tensor, torch.Tensor]:
-        return _bench_tirx_case(case, executable)
+    funcs = {"tirx": lambda: _bench_tirx_case(case, executable)}
+
+    def _deepgemm():
+        return lambda: _bench_deepgemm_case(case)
+
+    references = {"deepgemm": _deepgemm}
 
     result = bench(
-        {"deepgemm": _bench_deepgemm_case, "tirx": run_tirx},
-        make_input,
+        funcs,
         warmup=warmup,
         repeat=repeat,
         timer=timer,
+        references=references,
         rounds=_rounds,
         round_cooldown_s=_round_cooldown_s,
-        proton_name="deepgemm_sm100_tf32_hc_prenorm_gemm",
-        validate_case=validate_case,
     )
-
-    result["max_diff"] = max(metrics.get("tirx_diff", 0.0), metrics.get("deepgemm_diff", 0.0))
-    result.update(metrics)
+    result["tirx_diff"] = tirx_diff
+    result["max_diff"] = tirx_diff
     return result
 
 

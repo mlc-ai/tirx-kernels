@@ -11,7 +11,7 @@ import tvm
 import tvm.testing
 from tvm.script import tirx as T
 from tvm.script.tirx import tile as Tx
-from tvm.tirx.bench import CudaProfiler, bench, tensor_bytes
+from tvm.tirx.bench import CudaProfiler, bench
 from tvm.tirx.lang.pipeline import MBarrier, Pipeline, PipelineState, TCGen05Bar
 from tvm.tirx.lang.tile_scheduler import FlashAttentionLinearScheduler, FlashAttentionLPTScheduler
 from tvm.tirx.layout import wg_local_layout
@@ -1150,9 +1150,11 @@ def run_bench(
     num_kv_heads,
     head_dim,
     is_causal=False,
-    warmup=10,
-    repeat=30,
-    timer="proton",
+    warmup=None,
+    repeat=None,
+    timer=None,  # None inherits the global default (proton); the CuTeDSL flashattn
+    # reference cannot be CUDA-graph-captured, so proton (not cudagraph_proton) is what
+    # gives an honest ratio here (verified 0.994 vs event's unstable 0.97-1.38).
     **kwargs,
 ):
     """Benchmark flash attention 4."""
@@ -1163,21 +1165,17 @@ def run_bench(
     )
     ex = compile_kernel(prim_func)
 
-    def make_input():
-        Q, K, V, _ = prepare_data(
-            batch_size, seq_len, seq_len, num_qo_heads, num_kv_heads, head_dim
-        )
-        Q_cuda = Q.cuda()
-        K_cuda = K.cuda()
-        V_cuda = V.cuda()
-        O_tir = torch.empty(
-            (batch_size, seq_len, num_qo_heads, head_dim), dtype=torch.float16, device="cuda"
-        )
-        profiler_buf = torch.zeros(PROFILER_BUFFER_SIZE, dtype=torch.uint64, device="cuda")
-        case = {
-            "tir": (Q_cuda, K_cuda, V_cuda, O_tir, profiler_buf),
-        }
-        return case, tensor_bytes(Q_cuda, K_cuda, V_cuda, O_tir)
+    # Allocate inputs once, outside the timed region (Triton-standard pure launch).
+    Q, K, V, _ = prepare_data(batch_size, seq_len, seq_len, num_qo_heads, num_kv_heads, head_dim)
+    Q_cuda = Q.cuda()
+    K_cuda = K.cuda()
+    V_cuda = V.cuda()
+    O_tir = torch.empty(
+        (batch_size, seq_len, num_qo_heads, head_dim), dtype=torch.float16, device="cuda"
+    )
+    profiler_buf = torch.zeros(PROFILER_BUFFER_SIZE, dtype=torch.uint64, device="cuda")
+
+    funcs = {"tir": lambda: ex(Q_cuda, K_cuda, V_cuda, O_tir, profiler_buf)}
 
     def _flashattn_sm100():
         # Flash-Attention SM100 (CuTeDSL FA4) baseline.
@@ -1186,49 +1184,32 @@ def run_bench(
         # call must happen BEFORE `cute.compile`. Wrapping new tensors after
         # compile poisons the host-side `cuTensorMapEncodeTiled` path (it starts
         # failing ~hundreds of launches later anywhere in the process, including
-        # in unrelated TIR kernels). So we pre-allocate one full FA tensor set
-        # per bench input group, wrap them all up-front, then compile exactly
-        # once using group 0 as the prototype. Each group's storage is
-        # independent, so the bench's L2 eviction protocol applies to FA the
-        # same way it does to TIR/FlashInfer.
+        # in unrelated TIR kernels). So we wrap one FA tensor set up-front, then
+        # compile exactly once using it.
         import cutlass
         import cutlass.cute as cute
         import cutlass.torch as cutlass_torch
         from flash_attn.cute.flash_fwd_sm100 import FlashAttentionForwardSm100
 
-        from tvm.tirx.bench import _compute_group_count, _get_l2_cache_bytes
-
-        # Estimate per-group input footprint to match the bench's group count.
-        elem_bytes = 2  # fp16
-        q_bytes = batch_size * seq_len * num_qo_heads * head_dim * elem_bytes
-        kv_bytes = batch_size * seq_len * num_kv_heads * head_dim * elem_bytes
-        per_group_bytes = q_bytes + 2 * kv_bytes + q_bytes  # Q + K + V + O
-        num_fa_groups = _compute_group_count(per_group_bytes, _get_l2_cache_bytes())
-
-        fa_groups = []
-        fa_keep_alive = []
-        for _ in range(num_fa_groups):
-            Qi, Ki, Vi, _ = prepare_data(
-                batch_size, seq_len, seq_len, num_qo_heads, num_kv_heads, head_dim
-            )
-            Qf_g = Qi.cuda().contiguous()
-            Kf_g = Ki.cuda().contiguous()
-            Vf_g = Vi.cuda().contiguous()
-            Of_g = torch.zeros_like(Qf_g)
-            q_t_g, q_th_g = cutlass_torch.cute_tensor_like(
-                Qf_g, cutlass.Float16, is_dynamic_layout=True, assumed_align=16
-            )
-            k_t_g, k_th_g = cutlass_torch.cute_tensor_like(
-                Kf_g, cutlass.Float16, is_dynamic_layout=True, assumed_align=16
-            )
-            v_t_g, v_th_g = cutlass_torch.cute_tensor_like(
-                Vf_g, cutlass.Float16, is_dynamic_layout=True, assumed_align=16
-            )
-            o_t_g, o_th_g = cutlass_torch.cute_tensor_like(
-                Of_g, cutlass.Float16, is_dynamic_layout=True, assumed_align=16
-            )
-            fa_groups.append((q_t_g, k_t_g, v_t_g, o_t_g))
-            fa_keep_alive.append((q_th_g, k_th_g, v_th_g, o_th_g, Qf_g, Kf_g, Vf_g, Of_g))
+        Qi, Ki, Vi, _ = prepare_data(
+            batch_size, seq_len, seq_len, num_qo_heads, num_kv_heads, head_dim
+        )
+        Qf = Qi.cuda().contiguous()
+        Kf = Ki.cuda().contiguous()
+        Vf = Vi.cuda().contiguous()
+        Of = torch.zeros_like(Qf)
+        q_t, q_th = cutlass_torch.cute_tensor_like(
+            Qf, cutlass.Float16, is_dynamic_layout=True, assumed_align=16
+        )
+        k_t, k_th = cutlass_torch.cute_tensor_like(
+            Kf, cutlass.Float16, is_dynamic_layout=True, assumed_align=16
+        )
+        v_t, v_th = cutlass_torch.cute_tensor_like(
+            Vf, cutlass.Float16, is_dynamic_layout=True, assumed_align=16
+        )
+        o_t, o_th = cutlass_torch.cute_tensor_like(
+            Of, cutlass.Float16, is_dynamic_layout=True, assumed_align=16
+        )
 
         fa_fwd = FlashAttentionForwardSm100(
             head_dim=head_dim,
@@ -1243,13 +1224,12 @@ def run_bench(
         )
         _stream_fa = cutlass_torch.default_stream()
         _scale_fa = 1.0 / math.sqrt(head_dim)
-        proto_q, proto_k, proto_v, proto_o = fa_groups[0]
         compiled_fa = cute.compile(
             fa_fwd,
-            proto_q,
-            proto_k,
-            proto_v,
-            proto_o,
+            q_t,
+            k_t,
+            v_t,
+            o_t,
             None,  # mLSE
             _scale_fa,  # softmax_scale
             None,  # mCuSeqlensQ
@@ -1266,12 +1246,7 @@ def run_bench(
             _stream_fa,  # stream (FA4 sm100 keeps stream as the LAST positional)
         )
 
-        counter = [0]
-
-        def run(case):
-            idx = counter[0] % len(fa_groups)
-            counter[0] += 1
-            q_t, k_t, v_t, o_t = fa_groups[idx]
+        def run():
             compiled_fa(
                 q_t,
                 k_t,
@@ -1293,19 +1268,16 @@ def run_bench(
                 _stream_fa,  # stream (FA4 sm100 keeps stream as the LAST positional)
             )
 
-        # Keep the per-group backing torch storage alive for the run's lifetime
-        # (the cute tensors in fa_groups alias it).
-        run._fa_keep_alive = fa_keep_alive
+        # Keep the backing torch storage alive for the run's lifetime
+        # (the cute tensors alias it).
+        run._fa_keep_alive = (q_th, k_th, v_th, o_th, Qf, Kf, Vf, Of)
         return run
 
-    funcs = {"tir": lambda case: ex(*case["tir"])}
     return bench(
         funcs,
-        make_input,
         warmup=warmup,
         repeat=repeat,
         timer=timer,
-        proton_name="flash_attention4",
         references={"flashattn_sm100": _flashattn_sm100},
         **kwargs,
     )

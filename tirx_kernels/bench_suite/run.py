@@ -1008,6 +1008,8 @@ BASELINE_IMPL_BY_KERNEL = {
     "deepgemm_sm100_fp8_mqa_logits": "deepgemm",
     "deepgemm_sm100_fp4_mqa_logits": "deepgemm",
     "deepgemm_sm100_fp4_paged_mqa_logits": "deepgemm",
+    "deepgemm_sm100_fp8_paged_mqa_logits": "deepgemm",
+    "deepgemm_sm100_tf32_hc_prenorm_gemm": "deepgemm",
     "flash_mla_sparse_fwd": "flashmla",
     "sparse_flashmla_prefill_head64_phase1": "flashmla",
     "sparse_flashmla_prefill_head128_phase1": "flashmla",

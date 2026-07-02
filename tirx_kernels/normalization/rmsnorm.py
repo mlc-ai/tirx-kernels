@@ -6,7 +6,7 @@ import tvm
 from tvm.ir.type import PointerType, PrimType
 from tvm.script import tirx as T
 from tvm.script.tirx import tile as Tx
-from tvm.tirx.bench import ProtonContext, bench, tensor_bytes
+from tvm.tirx.bench import ProtonContext, bench, bench_tk, tensor_bytes
 from tvm.tirx.lang.pipeline import MBarrier, TMABar
 
 eps = 1e-06
@@ -58,7 +58,7 @@ def torch_impl(input, weights):
         output = (scaled * weights_naive).to(torch.float16)
         return output
 
-    result = bench(
+    result = bench_tk(
         {"naive": lambda _: func()},
         lambda: (None, tensor_bytes(input_naive, weights_naive)),
         warmup=10,
@@ -83,7 +83,7 @@ def flashinfer_impl(input, weights, batch_size, dim):
             flashinfer_input, flashinfer_weights, eps, enable_pdl=False, out=out
         )
 
-    result = bench(
+    result = bench_tk(
         {"flashinfer": lambda _: func()},
         lambda: (None, tensor_bytes(flashinfer_input, flashinfer_weights, out)),
         warmup=10,
@@ -105,7 +105,7 @@ def quack_impl(input, weights, batch_size, dim):
     def func():
         return quack.rmsnorm(quack_input, quack_weights, eps=eps)
 
-    result = bench(
+    result = bench_tk(
         {"quack": lambda _: func()},
         lambda: (None, tensor_bytes(quack_input, quack_weights)),
         warmup=10,
@@ -612,7 +612,7 @@ def build_tirx_soln(
         def run():
             return mod(input_cat_tir, weights_tir, output_tir)
 
-        result = bench(
+        result = bench_tk(
             {f"tirx_soln_{funcstr}": lambda _: run()},
             lambda: (None, tensor_bytes(input_cat_tir, weights_tir, output_tir)),
             warmup=10,
@@ -747,7 +747,11 @@ def run_test(hidden_size, batch_size, **kwargs):
     torch.testing.assert_close(output_tir.cpu(), ref.cpu(), rtol=0.001, atol=0.001)
 
 
-def run_bench(hidden_size, batch_size, warmup=10, repeat=30, timer="proton", **kwargs):
+# timer=None inherits the global default (proton). Proton matters here: rmsnorm is a
+# tiny (~2µs) kernel whose event wall is ~3x inflated by launch overhead, and its
+# reference is flashinfer (Python-dispatch-heavy). Proton measures the true ~2µs kernel
+# time and an undistorted ratio.
+def run_bench(hidden_size, batch_size, warmup=None, repeat=None, timer=None, **kwargs):
     """Benchmark rmsnorm kernel."""
 
     import torch
@@ -757,39 +761,29 @@ def run_bench(hidden_size, batch_size, warmup=10, repeat=30, timer="proton", **k
     kernel = _get_rmsnorm_kernel(hidden_size)
     ex = compile_kernel(kernel)
 
-    def make_input():
-        input_data, weights = prepare_data(batch_size, hidden_size)
-        input_cuda = input_data.cuda()
-        weights_cuda = weights.cuda()
-        output_cuda = torch.empty((batch_size, hidden_size), dtype=torch.float16, device="cuda")
-        out_fi = torch.zeros_like(input_cuda)
-        case = {
-            "tir": (input_cuda, weights_cuda, output_cuda),
-            "flashinfer": (input_cuda, weights_cuda, out_fi),
-        }
-        return case, tensor_bytes(input_cuda, weights_cuda, output_cuda)
+    # Allocate inputs once, outside the timed region (Triton-standard pure launch).
+    input_data, weights = prepare_data(batch_size, hidden_size)
+    input_cuda = input_data.cuda()
+    weights_cuda = weights.cuda()
+    output_cuda = torch.empty((batch_size, hidden_size), dtype=torch.float16, device="cuda")
 
-    funcs = {"tir": lambda case: ex(*case["tir"])}
+    funcs = {"tir": lambda: ex(input_cuda, weights_cuda, output_cuda)}
 
     def _flashinfer():
         import flashinfer
 
-        return lambda case: flashinfer.norm.rmsnorm(
-            case["flashinfer"][0],
-            case["flashinfer"][1],
-            eps,
-            enable_pdl=False,
-            out=case["flashinfer"][2],
+        out_fi = torch.zeros_like(input_cuda)
+        return lambda: flashinfer.norm.rmsnorm(
+            input_cuda, weights_cuda, eps, enable_pdl=False, out=out_fi
         )
 
     return bench(
         funcs,
-        make_input,
         warmup=warmup,
         repeat=repeat,
         timer=timer,
-        proton_name="rmsnorm",
         references={"flashinfer": _flashinfer},
+        **kwargs,
     )
 
 
