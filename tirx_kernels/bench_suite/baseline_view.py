@@ -7,8 +7,8 @@ ref/ours ratio (higher = ours beats ref). Sorted by kernel then config.
 Usage:
     python baseline_view.py [run.json] [-o PATH]
 
-Default input: tir.json + ref.json in this directory
-Default output: baseline.md (next to the baselines)
+Default input: baseline.json in this directory
+Default output: baseline.md (next to the baseline)
 """
 
 from __future__ import annotations
@@ -28,7 +28,7 @@ def main() -> None:
         "input",
         nargs="?",
         default=None,
-        help="Combined baseline JSON; default joins tir.json + ref.json",
+        help="Baseline JSON; default is baseline.json in this directory",
     )
     ap.add_argument(
         "--output",
@@ -45,24 +45,9 @@ def main() -> None:
         src_name = in_path.name
         default_out = in_path.with_suffix(".md")
     else:
-        tir = json.loads((here / "tir.json").read_text()) if (here / "tir.json").exists() else {}
-        ref = json.loads((here / "ref.json").read_text()) if (here / "ref.json").exists() else {}
-        ref_idx = {
-            (r["kernel"], r.get("label") or r.get("config")): (r.get("impls") or {})
-            for r in ref.get("results", [])
-        }
-        payload = {k: v for k, v in tir.items() if k != "results"}
-        payload["results"] = [
-            {
-                **r,
-                "impls": {
-                    **ref_idx.get((r["kernel"], r.get("label") or r.get("config")), {}),
-                    **(r.get("impls") or {}),
-                },
-            }
-            for r in tir.get("results", [])
-        ]
-        src_name = "tir.json + ref.json"
+        baseline_path = here / "baseline.json"
+        payload = json.loads(baseline_path.read_text()) if baseline_path.exists() else {}
+        src_name = "baseline.json"
         default_out = here / "baseline.md"
     results = payload.get("results") or []
 

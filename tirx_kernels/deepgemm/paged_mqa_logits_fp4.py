@@ -2206,7 +2206,7 @@ def run_test(**kwargs: Any) -> None:
 
 
 def run_bench(**kwargs: Any) -> dict[str, Any]:
-    from tvm.tirx.bench import bench, bench_impls_mode
+    from tvm.tirx.bench import bench
 
     # Tiny (~8-11µs) paged kernel: event timing is launch-jitter-noisy (sporadic
     # 10-13% ratio spread) and ~2x inflated by launch overhead. timer=None inherits the
@@ -2234,35 +2234,15 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
 
     funcs_tirx_first = {"tirx": lambda: _run_tirx_invocation(data, invocation)}
 
-    if bench_impls_mode() == "baseline":
-        result = bench(
-            funcs_tirx_first,
-            warmup=warmup,
-            repeat=repeat,
-            timer=timer,
-            rounds=_rounds,
-            round_cooldown_s=_round_cooldown_s,
-            references={"deepgemm": _deepgemm},
-        )
-    elif bench_impls_mode() == "ours":
-        result = bench(
-            funcs_tirx_first,
-            warmup=warmup,
-            repeat=repeat,
-            timer=timer,
-            rounds=_rounds,
-            round_cooldown_s=_round_cooldown_s,
-        )
-    else:
-        result = bench(
-            funcs_tirx_first,
-            warmup=warmup,
-            repeat=repeat,
-            timer=timer,
-            rounds=_rounds,
-            round_cooldown_s=_round_cooldown_s,
-            references={"deepgemm": _deepgemm},
-        )
+    result = bench(
+        funcs_tirx_first,
+        warmup=warmup,
+        repeat=repeat,
+        timer=timer,
+        rounds=_rounds,
+        round_cooldown_s=_round_cooldown_s,
+        references={"deepgemm": _deepgemm},
+    )
     result["max_diff"] = tirx_diff
     return result
 

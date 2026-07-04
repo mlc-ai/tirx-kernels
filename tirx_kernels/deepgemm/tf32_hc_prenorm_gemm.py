@@ -913,8 +913,7 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
     case = _make_bench_case(config_kwargs)
 
     # Correctness gate for our kernel before timing (preserves the tirx half of
-    # the old validate_case; the deepgemm reference is trusted and is not run
-    # here so --impls ours can still skip it entirely).
+    # the old validate_case; the deepgemm reference is trusted).
     tirx_d, tirx_sqr = _bench_tirx_case(case, executable)
     torch.cuda.synchronize()
     tirx_diff = _assert_correct_case(case, tirx_d, tirx_sqr, name="TIRx")

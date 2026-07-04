@@ -46,10 +46,17 @@ def _write_baseline(path: Path, doc: dict) -> None:
     path.write_text(json.dumps(slim_baseline_doc(doc), indent=2) + "\n")
 
 
-def merge_ref_baseline(run_json: Path, ref_path: Path) -> int:
-    """Patch ok rows from run_json into ref_path by (kernel, config)."""
+def merge_baseline(run_json: Path, baseline_path: Path) -> int:
+    """Patch ok rows from run_json into baseline_path by (kernel, config).
+
+    If ``baseline_path`` does not exist yet, the slimmed run is written as a
+    fresh baseline."""
     run = json.loads(run_json.read_text())
-    ref = json.loads(ref_path.read_text())
+    if not baseline_path.exists():
+        _write_baseline(baseline_path, run)
+        print(f"[promote] merge: no existing baseline, wrote {baseline_path.relative_to(HERE)}")
+        return 0
+    baseline = json.loads(baseline_path.read_text())
     patch = {
         _result_key(r): slim_baseline_row(r)
         for r in run.get("results") or []
@@ -61,7 +68,7 @@ def merge_ref_baseline(run_json: Path, ref_path: Path) -> int:
 
     merged: list[dict] = []
     seen: set[tuple[str, str]] = set()
-    for row in ref.get("results") or []:
+    for row in baseline.get("results") or []:
         key = _result_key(row)
         if key in patch:
             merged.append(patch[key])
@@ -72,23 +79,19 @@ def merge_ref_baseline(run_json: Path, ref_path: Path) -> int:
         if key not in seen:
             merged.append(row)
 
-    ref["results"] = merged
+    baseline["results"] = merged
     if run.get("git"):
-        ref["git"] = run["git"]
+        baseline["git"] = run["git"]
     if run.get("kernel_tree"):
-        ref["kernel_tree"] = run["kernel_tree"]
+        baseline["kernel_tree"] = run["kernel_tree"]
     if run.get("baselines"):
-        ref["baselines"] = run["baselines"]
-    _write_baseline(ref_path, ref)
+        baseline["baselines"] = run["baselines"]
+    _write_baseline(baseline_path, baseline)
     print(
-        f"[promote] merged {len(patch)} ok row(s) from {run_json} -> {ref_path.relative_to(HERE)}"
+        f"[promote] merged {len(patch)} ok row(s) from {run_json} "
+        f"-> {baseline_path.relative_to(HERE)}"
     )
     return 0
-
-
-def merge_tir_baseline(run_json: Path, tir_path: Path) -> int:
-    """Patch ok rows from run_json into tir_path by (kernel, config)."""
-    return merge_ref_baseline(run_json, tir_path)
 
 
 def main() -> None:
@@ -99,73 +102,45 @@ def main() -> None:
         nargs="?",
         help="run JSON to promote (e.g. .bench-suite/runs/18.json)",
     )
-    ap.add_argument("--tir", action="store_true", help="refresh tir.json (our-kernel baseline)")
-    ap.add_argument("--ref", action="store_true", help="refresh ref.json (reference baseline)")
-    ap.add_argument(
-        "--both", action="store_true", help="refresh both (use for a full --impls all run)"
-    )
     ap.add_argument(
         "--merge",
         action="store_true",
-        help="patch ok rows into existing baseline(s) instead of replacing",
+        help="patch ok rows from run_json into the existing baseline.json instead of replacing it",
     )
     ap.add_argument(
         "--slim",
         action="store_true",
-        help="strip run metadata from checked-in baseline JSON (no run_json needed)",
+        help="strip run metadata from the checked-in baseline JSON (no run_json needed)",
     )
     args = ap.parse_args()
 
+    baseline_path = HERE / "baseline.json"
+
     if args.slim:
-        if not (args.tir or args.ref or args.both):
-            ap.error("pick at least one of --tir / --ref / --both")
-        targets = []
-        if args.tir or args.both:
-            targets.append(HERE / "tir.json")
-        if args.ref or args.both:
-            targets.append(HERE / "ref.json")
-        for path in targets:
-            _write_baseline(path, json.loads(path.read_text()))
-            print(f"[promote] slimmed {path.relative_to(HERE)}")
-    elif not (args.tir or args.ref or args.both):
-        ap.error("pick at least one of --tir / --ref / --both")
-    elif not args.run_json:
-        ap.error("run_json required unless --slim")
-    elif not args.run_json.exists():
-        ap.error(f"run JSON not found: {args.run_json}")
-    elif args.merge:
-        rc = 0
-        if args.tir or args.both:
-            rc |= merge_tir_baseline(args.run_json, HERE / "tir.json")
-        if args.ref or args.both:
-            rc |= merge_ref_baseline(args.run_json, HERE / "ref.json")
-        if rc:
-            sys.exit(1)
+        if not baseline_path.exists():
+            ap.error(f"baseline not found: {baseline_path}")
+        _write_baseline(baseline_path, json.loads(baseline_path.read_text()))
+        print(f"[promote] slimmed {baseline_path.relative_to(HERE)}")
     else:
-        targets = []
-        if args.tir or args.both:
-            targets.append(HERE / "tir.json")
-        if args.ref or args.both:
-            targets.append(HERE / "ref.json")
+        if not args.run_json:
+            ap.error("run_json required (or pass --slim to clean the existing baseline)")
+        if not args.run_json.exists():
+            ap.error(f"run JSON not found: {args.run_json}")
+        if args.merge:
+            rc = merge_baseline(args.run_json, baseline_path)
+            if rc:
+                sys.exit(1)
+        else:
+            run = json.loads(args.run_json.read_text())
+            _write_baseline(baseline_path, run)
+            print(f"[promote] {args.run_json} -> {baseline_path.relative_to(HERE)}")
 
-        run = json.loads(args.run_json.read_text())
-        for dst in targets:
-            _write_baseline(dst, run)
-            print(f"[promote] {args.run_json} -> {dst.relative_to(HERE)}")
-
-    if not (args.slim or args.tir or args.ref or args.both):
-        return
-
-    # Always regenerate the human-facing baseline.md and ratio.json so they never
-    # drift from the JSON baselines. This is the whole reason to promote through
-    # this helper.
+    # Always regenerate the human-facing baseline.md so it never drifts from the
+    # JSON baseline. This is the whole reason to promote through this helper.
     subprocess.run(
         [sys.executable, str(HERE / "baseline_view.py")], check=True, stdout=subprocess.DEVNULL
     )
     print(f"[promote] regenerated {(HERE / 'baseline.md').relative_to(HERE)}")
-    subprocess.run(
-        [sys.executable, str(HERE / "ratio_diff.py"), "--refresh-ratio-json"], check=True
-    )
 
 
 if __name__ == "__main__":

@@ -72,15 +72,6 @@ def main():
         default=1.0,
         help="Seconds to sleep between in-bench rounds (default 1.0)",
     )
-    parser.add_argument(
-        "--impls",
-        type=str,
-        choices=("all", "ours", "baseline"),
-        default=None,
-        help="Which impls to bench: 'all' (default), 'ours' (only our kernel — "
-        "skips reference setup/execution; reference times come from the pinned "
-        "baseline), or 'baseline' (only reference impls). Sets TIRX_BENCH_IMPLS.",
-    )
     args = parser.parse_args()
 
     if args.rounds < 1:
@@ -89,9 +80,6 @@ def main():
     if args.round_cooldown < 0:
         print("ERROR: --round-cooldown must be >= 0", file=sys.stderr)
         sys.exit(2)
-
-    if args.impls is not None:
-        os.environ["TIRX_BENCH_IMPLS"] = args.impls
 
     if args.json or args.json_file:
         os.environ["TIRX_BENCH_JSON"] = "1"

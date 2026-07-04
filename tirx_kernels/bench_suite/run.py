@@ -4,9 +4,9 @@
 See README.md in this directory for setup, baseline workflow, and flags.
 
 Quick start:
-    python -m tirx_kernels.bench_suite --impls ours
-    python -m tirx_kernels.bench_suite --impls all --rounds 5
-    python tirx_kernels/bench_suite/promote_baseline.py .bench-suite/runs/<id>.json --both
+    python -m tirx_kernels.bench_suite
+    python -m tirx_kernels.bench_suite --rounds 5
+    python tirx_kernels/bench_suite/promote_baseline.py .bench-suite/runs/<id>.json --merge
 
 Exit codes:
     0  no regressions (or no baseline yet)
@@ -44,16 +44,10 @@ def _kernels_repo_root() -> Path:
 
 DEFAULT_OUT_DIR = _kernels_repo_root() / ".bench-suite"
 DEFAULT_WORKLOADS = SCRIPT_DIR / "workloads.yaml"
-# Two pinned baselines with independent update cadences: our kernels (refreshed
-# by `--impls ours`) and external references (refreshed by `--impls baseline`).
-# The diff joins them at read time — there is no combined baseline file.
-DEFAULT_TIR_BASELINE = SCRIPT_DIR / "tir.json"
-DEFAULT_REF_BASELINE = SCRIPT_DIR / "ref.json"
-DEFAULT_RATIO_BASELINE = SCRIPT_DIR / "ratio.json"
+# Single pinned baseline: every run benches our kernel + all reference impls,
+# so one JSON holds both. Promote a run over it via promote_baseline.py.
+DEFAULT_BASELINE = SCRIPT_DIR / "baseline.json"
 DEFAULT_REGRESSION_THRESHOLD = 1.0
-OURS_IMPLS = frozenset(
-    {"tir", "tirx"}
-)  # our own kernel labels; keep in sync with ratio_diff.OUR_IMPLS
 POLL_INTERVAL = 5.0  # seconds between GPU re-checks when none is free
 MONITOR_INTERVAL = 0.5  # seconds between nvidia-smi polls during a workload
 # 0 means auto: one worker per probe-OK GPU (see main()).
@@ -594,7 +588,6 @@ def run_one(
     pool: GpuPool,
     log_dir: Path,
     *,
-    impls_mode: str = "all",
     attempt: int = 1,
     rounds: int = 1,
     round_cooldown: float = DEFAULT_ROUND_COOLDOWN_S,
@@ -609,7 +602,7 @@ def run_one(
     gpu = pool.acquire()
     json_tmp = tempfile.NamedTemporaryFile(suffix=".json", delete=False)
     json_tmp.close()
-    log_path = log_dir / f"{kernel}__{config}__{impls_mode}_a{attempt}.log"
+    log_path = log_dir / f"{kernel}__{config}__a{attempt}.log"
 
     cmd = [
         sys.executable,
@@ -635,13 +628,12 @@ def run_one(
 
     env = os.environ.copy()
     env["CUDA_VISIBLE_DEVICES"] = gpu
-    env["TIRX_BENCH_IMPLS"] = impls_mode
 
     # Each workload gets its own scratch cwd so concurrent runs don't race on
     # proton's <proton_name>.hatchet file.
     workdir = tempfile.mkdtemp(prefix=f"bench-suite-{kernel}-{config}-")
 
-    label = f"{kernel}/{config}/{impls_mode}"
+    label = f"{kernel}/{config}"
     worker = threading.current_thread().name
     started = now_iso()
     record: dict = {"kernel": kernel, "config": config, "gpu": gpu, "started_at": started}
@@ -1144,136 +1136,17 @@ def write_summary(out_dir: Path, current: dict) -> Path:
     return path
 
 
-def _flatten(payload: dict) -> dict[tuple[str, str, str], float]:
-    """{(kernel, config, impl) -> avg_us} for all ok results."""
-    out: dict[tuple[str, str, str], float] = {}
-    for r in payload.get("results") or []:
-        if r.get("status") != "ok":
-            continue
-        for impl, us in (r.get("impls") or {}).items():
-            out[(r["kernel"], r.get("label") or r.get("config"), impl)] = us
-    return out
+def load_baseline(path=None):
+    """Load the pinned baseline.json, or None if no baseline exists yet.
 
-
-def load_baseline(combined=None):
-    """Join the tir + ref pinned baselines into one payload for diffing.
-
-    ``combined`` (optional path) overrides both with a single legacy
-    baseline.json. Returns None if no baseline exists yet."""
-    if combined is not None:
-        return json.loads(Path(combined).read_text())
-    if not DEFAULT_TIR_BASELINE.exists() and not DEFAULT_REF_BASELINE.exists():
+    ``path`` (optional) overrides the default baseline location."""
+    p = Path(path) if path is not None else DEFAULT_BASELINE
+    if not p.exists():
         return None
-    tir = json.loads(DEFAULT_TIR_BASELINE.read_text()) if DEFAULT_TIR_BASELINE.exists() else {}
-    ref = json.loads(DEFAULT_REF_BASELINE.read_text()) if DEFAULT_REF_BASELINE.exists() else {}
-    ref_idx = {
-        (r["kernel"], r.get("label") or r.get("config")): {
-            k: v for k, v in (r.get("impls") or {}).items() if k not in OURS_IMPLS
-        }
-        for r in ref.get("results", [])
-    }
-    out = {k: v for k, v in tir.items() if k != "results"}
-    out["ref_timestamp"] = ref.get("timestamp")
-    merged = []
-    for r in tir.get("results", []):
-        key = (r["kernel"], r.get("label") or r.get("config"))
-        nr = dict(r)
-        nr["impls"] = {**(r.get("impls") or {}), **ref_idx.get(key, {})}
-        merged.append(nr)
-    out["results"] = merged
-    return out
-
-
-def diff_report(baseline: dict, current: dict, threshold_pct: float) -> tuple[str, int]:
-    base = baseline
-    base_idx = _flatten(base)
-    cur_idx = _flatten(current)
-
-    regressions: list[tuple] = []
-    improvements: list[tuple] = []
-    unchanged: list[tuple] = []
-    new_rows: list[tuple] = []
-
-    for key, us in cur_idx.items():
-        if key not in base_idx:
-            new_rows.append((key, us))
-            continue
-        old = base_idx[key]
-        if old <= 0:
-            continue
-        delta = (us - old) / old * 100.0
-        row = (key, old, us, delta)
-        if delta >= threshold_pct:
-            regressions.append(row)
-        elif delta <= -threshold_pct:
-            improvements.append(row)
-        else:
-            unchanged.append(row)
-
-    failed = [r for r in (current.get("results") or []) if r.get("status") != "ok"]
-
-    def fmt_table(title: str, rows: list[tuple]) -> list[str]:
-        if not rows:
-            return []
-        lines = [
-            f"## {title} ({len(rows)})",
-            "",
-            "| kernel | config | impl | baseline (µs) | current (µs) | Δ |",
-            "|---|---|---|---:|---:|---:|",
-        ]
-        for (k, c, impl), old, new, d in sorted(rows, key=lambda r: -abs(r[3])):
-            lines.append(f"| {k} | {c} | {impl} | {old:.4f} | {new:.4f} | {d:+.2f}% |")
-        lines.append("")
-        return lines
-
-    md: list[str] = []
-    md.append("# bench-suite regression report")
-    md.append("")
-    md.append(f"- Current:  `{current['timestamp']}` ({current.get('label') or '-'})")
-    md.append(
-        f"- Baseline: `{base.get('timestamp')}` ({base.get('label') or '-'})  "
-        f"from `tir.json` + `ref.json`"
-    )
-    md.append(f"- Threshold: ±{threshold_pct:.1f}%")
-    md.append("")
-    md.append(
-        f"**Summary** — regressions: {len(regressions)}, "
-        f"improvements: {len(improvements)}, unchanged: {len(unchanged)}, "
-        f"failed: {len(failed)}, new: {len(new_rows)}"
-    )
-    md.append("")
-    md += fmt_table("Regressions", regressions)
-    md += fmt_table("Improvements", improvements)
-
-    if failed:
-        md.append(f"## Failed ({len(failed)})")
-        md.append("")
-        for r in failed:
-            first = (r.get("error") or "?").splitlines()[0]
-            md.append(f"- `{r['kernel']}/{r.get('label') or r.get('config')}`: {first}")
-        md.append("")
-
-    if new_rows:
-        md.append(f"## New (no baseline) ({len(new_rows)})")
-        md.append("")
-        md.append("| kernel | config | impl | current (µs) |")
-        md.append("|---|---|---|---:|")
-        for (k, c, impl), us in new_rows:
-            md.append(f"| {k} | {c} | {impl} | {us:.4f} |")
-        md.append("")
-
-    return "\n".join(md), len(regressions)
+    return json.loads(p.read_text())
 
 
 # ── Main ─────────────────────────────────────────────────────────────────────
-
-
-def _roles_for_impls(impls: str) -> list[str]:
-    if impls == "ours":
-        return ["ours"]
-    if impls == "baseline":
-        return ["baseline"]
-    return ["all"]
 
 
 def aggregate_impl_times(values: list[float], method: str) -> float:
@@ -1317,7 +1190,6 @@ def _finalize_bench_record(row: dict, *, rounds: int, bench_aggregate: str) -> N
 
 def run_scheduled_jobs(
     workloads: list[dict],
-    roles: list[str],
     pool: GpuPool,
     log_dir: Path,
     *,
@@ -1325,19 +1197,18 @@ def run_scheduled_jobs(
     round_cooldown: float,
     bench_aggregate: str,
     cpu_workers: int,
-) -> tuple[list[dict], list[tuple[str, str, str, int, str]]]:
-    """Run one subprocess job per (workload, role); failed jobs go back on the queue."""
-    jobs = [(w, role) for w in workloads for role in roles]
-    n_jobs = len(jobs)
+) -> tuple[list[dict], list[tuple[str, str, int, str]]]:
+    """Run one subprocess job per workload; failed jobs go back on the queue."""
+    n_jobs = len(workloads)
     if not n_jobs:
         return [], []
 
-    pending: queue.Queue[tuple[dict, str, int] | None] = queue.Queue()
-    for w, role in jobs:
-        pending.put((w, role, 1))
+    pending: queue.Queue[tuple[dict, int] | None] = queue.Queue()
+    for w in workloads:
+        pending.put((w, 1))
 
     records: list[dict] = []
-    retry_log: list[tuple[str, str, str, int, str]] = []
+    retry_log: list[tuple[str, str, int, str]] = []
     state_lock = threading.Lock()
     done_cv = threading.Condition(state_lock)
     n_done = 0
@@ -1356,14 +1227,13 @@ def run_scheduled_jobs(
                 pending.task_done()
                 return
 
-            workload, role, attempt = item
+            workload, attempt = item
             kernel = workload["kernel"]
             config = workload["config"]
             record = run_one(
                 workload,
                 pool,
                 log_dir,
-                impls_mode=role,
                 attempt=attempt,
                 rounds=rounds,
                 round_cooldown=round_cooldown,
@@ -1381,12 +1251,12 @@ def run_scheduled_jobs(
                 if record.get("intruder_pids"):
                     detail = f"intruders {record['intruder_pids']}"
                 with state_lock:
-                    retry_log.append((kernel, config, role, attempt, detail[:240]))
+                    retry_log.append((kernel, config, attempt, detail[:240]))
                 log(
-                    f"[bench-suite] >>> REQUEUE {kernel}/{config}/{role} "
+                    f"[bench-suite] >>> REQUEUE {kernel}/{config} "
                     f"attempt {attempt} ({reason}): {detail[:160]} <<<"
                 )
-                pending.put((workload, role, attempt + 1))
+                pending.put((workload, attempt + 1))
             pending.task_done()
 
     n_workers = min(cpu_workers, n_jobs)
@@ -1421,7 +1291,7 @@ def main() -> None:
         "--baseline",
         type=Path,
         default=None,
-        help="Optional combined baseline JSON to diff against instead of tir.json + ref.json",
+        help="Optional baseline JSON to diff against instead of the pinned baseline.json",
     )
     ap.add_argument(
         "--threshold",
@@ -1491,18 +1361,6 @@ def main() -> None:
         default="mean",
         help="How to combine in-bench round samples per impl (default mean). "
         "trimmed_mean drops the fastest and slowest round.",
-    )
-    ap.add_argument(
-        "--impls",
-        choices=("all", "ours", "baseline"),
-        default="ours",
-        help="Which impls to bench. 'all' (default): our kernel + "
-        "reference impls, ratio report (use to "
-        "(re)populate tir.json + ref.json). 'ours': only our kernel — "
-        "fast per-change iteration; reference times come from "
-        "the pinned baseline, diff is absolute-µs (current ours "
-        "vs baseline ours) — promote with cp to tir.json. 'baseline': "
-        "only reference impls — promote with cp to ref.json.",
     )
     ap.add_argument(
         "--cpu-workers",
@@ -1624,7 +1482,6 @@ def main() -> None:
 
     _repo_git = collect_repo_git()
     label = args.label or _repo_git.get("tirx-kernels") or _repo_git.get("tir") or "local"
-    roles = _roles_for_impls(args.impls)
     agg_note = (
         f", {args.rounds} in-bench round(s), aggregate={args.bench_aggregate}, "
         f"round_cooldown={args.round_cooldown:g}s"
@@ -1633,13 +1490,12 @@ def main() -> None:
     )
     print(
         f"[bench-suite] {len(workloads)} workloads, {n_gpus} probe-OK GPU(s) in pool, "
-        f"{cpu_workers} worker(s), roles={roles}, label={label}{agg_note}",
+        f"{cpu_workers} worker(s), label={label}{agg_note}",
         flush=True,
     )
 
     results, retry_log = run_scheduled_jobs(
         workloads,
-        roles,
         pool,
         log_dir,
         rounds=args.rounds,
@@ -1650,8 +1506,8 @@ def main() -> None:
 
     if retry_log:
         log(f"[bench-suite] requeue summary: {len(retry_log)} failed attempt(s) before success")
-        for k, c, role, att, detail in retry_log:
-            log(f"[bench-suite]   - {k}/{c}/{role}: attempt {att} → {detail}")
+        for k, c, att, detail in retry_log:
+            log(f"[bench-suite]   - {k}/{c}: attempt {att} → {detail}")
     else:
         log("[bench-suite] requeue summary: none (every job succeeded on first try)")
 
@@ -1672,12 +1528,12 @@ def main() -> None:
     if args.no_report:
         return
 
-    # Two pinned baselines (tir.json + ref.json), joined at read time. Promote a
-    # fresh run by cp-ing it over the matching file (per-mode hints below).
+    # Single pinned baseline (baseline.json). Promote a fresh run over it via
+    # promote_baseline.py.
     baseline = load_baseline(args.baseline)
     if baseline is None:
-        print("[bench-suite] no baseline (tir.json / ref.json) — skipping regression report")
-        print(f"[bench-suite]   set baseline: promote_baseline.py {run_path} --tir/--ref")
+        print("[bench-suite] no baseline (baseline.json) — skipping regression report")
+        print(f"[bench-suite]   set baseline: promote_baseline.py {run_path} --merge")
         return
 
     reports_dir = out_dir / "reports" / current["timestamp"]
@@ -1690,38 +1546,12 @@ def main() -> None:
 
     sys.path.insert(0, str(SCRIPT_DIR))
     from ratio_diff import build_report as _build_bench_report
-    from ratio_diff import load_ratio_baseline
 
-    n_regress = 0
-    if args.impls == "all":
-        try:
-            bench_md, n_regress = _build_bench_report(
-                baseline,
-                current,
-                threshold_pct=args.threshold,
-                ratio_baseline=load_ratio_baseline(DEFAULT_RATIO_BASELINE),
-            )
-        except Exception as e:
-            print(f"[bench-suite] bench report failed: {e}", file=sys.stderr)
-            sys.exit(3)
-    else:
-        bench_md, n_regress = diff_report(baseline, current, args.threshold)
-        bench_md = bench_md.replace(
-            "# bench-suite regression report",
-            "# bench-suite bench report\n\n_Absolute-µs diff only "
-            f"(--impls {args.impls}; run with --impls all for ref+ours+ratio)._",
-            1,
-        )
-        if args.impls == "baseline":
-            print(f"[bench-suite]   promote reference times: promote_baseline.py {run_path} --ref")
-        else:
-            print(
-                "[bench-suite] --impls ours: absolute-µs diff only "
-                "(run --impls all for ref+ours+ratio vs ratio.json)"
-            )
-            print(
-                f"[bench-suite]   promote your kernel times: promote_baseline.py {run_path} --tir"
-            )
+    try:
+        bench_md, n_regress = _build_bench_report(baseline, current, threshold_pct=args.threshold)
+    except Exception as e:
+        print(f"[bench-suite] bench report failed: {e}", file=sys.stderr)
+        sys.exit(3)
 
     bench_path = reports_dir / "bench.md"
     bench_path.write_text(bench_md)
