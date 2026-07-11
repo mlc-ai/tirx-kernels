@@ -8,6 +8,7 @@ High-performance GPU kernels written in [TIRx](https://github.com/apache/tvm).
 | -------------------- | ----------------- | ------- |
 | `fp16_bf16_gemm`     | fp16 / bf16       | sm_100a |
 | `fp8_blockwise_gemm` | fp8 (blockwise)   | sm_100a |
+| `grouped_fp8_gemm_contiguous` | fp8 (m-grouped) | sm_100a |
 | `nvfp4_gemm`         | nvfp4             | sm_100a |
 | `flash_attention4`   | bf16              | sm_100a |
 | `deepgemm_sm100_fp4_mqa_logits` | fp4 / bf16 | sm_100a |
