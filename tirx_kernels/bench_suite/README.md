@@ -5,7 +5,7 @@ sweep in `workloads.yaml` against the **working tree**, assigns GPUs
 automatically, and writes run JSON + reports under `.bench-suite/`.
 
 ```bash
-cd /path/to/tirx-kernels-staging
+cd /path/to/tirx-kernels
 pip install -e .
 
 export TVM_PATH=/path/to/tvm

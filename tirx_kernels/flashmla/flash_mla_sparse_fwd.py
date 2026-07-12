@@ -34,20 +34,11 @@ def _config(cfg: dict[str, Any], *, h_q: int, d_qk: int | None = None) -> dict[s
 
 
 CONFIGS = [
-    _config(_head64.CONFIGS[0], h_q=_head64.B_H),
-    _config(_head128.CONFIGS[0], h_q=_head128.B_H),
-    _config(_head128.CONFIGS[1], h_q=_head128.B_H),
-    _config(_small_topk.CONFIGS[0], h_q=_small_topk.B_H, d_qk=_small_topk.D_QK),
+    *[_config(cfg, h_q=_head64.B_H) for cfg in _head64.CONFIGS],
+    *[_config(cfg, h_q=_head128.B_H) for cfg in _head128.CONFIGS],
+    *[_config(cfg, h_q=_small_topk.B_H, d_qk=_small_topk.D_QK) for cfg in _small_topk.CONFIGS],
 ]
-
-BENCH_CONFIGS = [
-    *[_config(cfg, h_q=_head64.B_H) for cfg in _head64.BENCH_CONFIGS],
-    *[_config(cfg, h_q=_head128.B_H) for cfg in _head128.BENCH_CONFIGS],
-    *[
-        _config(cfg, h_q=_small_topk.B_H, d_qk=_small_topk.D_QK)
-        for cfg in _small_topk.BENCH_CONFIGS
-    ],
-]
+BENCH_CONFIGS = CONFIGS
 
 
 def _required_int(kwargs: dict[str, Any], name: str) -> int:

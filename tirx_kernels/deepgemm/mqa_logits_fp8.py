@@ -166,35 +166,8 @@ DEEPGEMM_TEST_COVERAGE = [
     )
 ]
 
-CONFIGS = [
-    _make_case(
-        seq_len=32,
-        seq_len_kv=256,
-        logits_dtype="float32",
-        compressed_logits=False,
-        disable_cp=True,
-        seed=0,
-    ),
-    _make_case(
-        seq_len=32,
-        seq_len_kv=256,
-        logits_dtype="bfloat16",
-        compressed_logits=True,
-        disable_cp=True,
-        seed=1,
-    ),
-    _make_case(
-        seq_len=32,
-        seq_len_kv=256,
-        logits_dtype="float32",
-        compressed_logits=True,
-        disable_cp=False,
-        seed=2,
-    ),
-    DEEPGEMM_TEST_COVERAGE[0],
-]
-
-BENCH_CONFIGS = DEEPGEMM_TEST_COVERAGE
+CONFIGS = DEEPGEMM_TEST_COVERAGE
+BENCH_CONFIGS = CONFIGS
 
 
 def load_deep_gemm_mqa() -> tuple[Any, str]:

@@ -239,7 +239,7 @@ _SGLANG_TARGET_VERIFY_BENCH_CONFIGS = [
 
 SGLANG_BENCH_CONFIGS = _SGLANG_DECODE_BENCH_CONFIGS + _SGLANG_TARGET_VERIFY_BENCH_CONFIGS
 
-CONFIGS = [
+_SMOKE_CONFIGS = [
     _make_case(
         batch_size=1,
         next_n=1,
@@ -335,7 +335,8 @@ CONFIGS = [
     ),
 ]
 
-BENCH_CONFIGS = DSA_INDEXER_LIKE_COVERAGE + SGLANG_BENCH_CONFIGS
+CONFIGS = _SMOKE_CONFIGS + DSA_INDEXER_LIKE_COVERAGE + SGLANG_BENCH_CONFIGS
+BENCH_CONFIGS = CONFIGS
 
 
 def load_deep_gemm_paged_mqa() -> tuple[Any, str]:
@@ -884,7 +885,7 @@ def get_kernel(**kwargs: Any):
             T.evaluate(
                 T.call_intrin(
                     "",
-                    "tirx.ptx_cp_async_bulk_tensor_global_to_cluster",
+                    "tirx.ptx_cp_async_bulk_tensor_g2s_cluster",
                     2,
                     dst,
                     barrier_ptr,
@@ -893,6 +894,9 @@ def get_kernel(**kwargs: Any):
                     tma_no_cta_group_modifier,
                     cache_policy_evict_normal,
                     has_cache_policy_evict_normal,
+                    "tile",
+                    0,
+                    0,
                     coord0,
                     coord1,
                 )
@@ -907,7 +911,7 @@ def get_kernel(**kwargs: Any):
             T.evaluate(
                 T.call_intrin(
                     "",
-                    "tirx.ptx_cp_async_bulk_tensor_global_to_cluster",
+                    "tirx.ptx_cp_async_bulk_tensor_g2s_cluster",
                     2,
                     dst,
                     barrier_ptr,
@@ -916,6 +920,9 @@ def get_kernel(**kwargs: Any):
                     tma_no_cta_group_modifier,
                     cache_policy_evict_normal,
                     has_cache_policy_evict_normal,
+                    "tile",
+                    0,
+                    0,
                     coord0,
                     coord1,
                 )
@@ -930,7 +937,7 @@ def get_kernel(**kwargs: Any):
             T.evaluate(
                 T.call_intrin(
                     "",
-                    "tirx.ptx_cp_async_bulk_tensor_global_to_cluster",
+                    "tirx.ptx_cp_async_bulk_tensor_g2s_cluster",
                     3,
                     dst,
                     barrier_ptr,
@@ -939,6 +946,9 @@ def get_kernel(**kwargs: Any):
                     tma_no_cta_group_modifier,
                     cache_policy_evict_normal,
                     has_cache_policy_evict_normal,
+                    "tile",
+                    0,
+                    0,
                     coord0,
                     coord1,
                     coord2,
@@ -954,7 +964,7 @@ def get_kernel(**kwargs: Any):
             T.evaluate(
                 T.call_intrin(
                     "",
-                    "tirx.ptx_cp_async_bulk_tensor_global_to_cluster",
+                    "tirx.ptx_cp_async_bulk_tensor_g2s_cluster",
                     2,
                     dst,
                     barrier_ptr,
@@ -963,6 +973,9 @@ def get_kernel(**kwargs: Any):
                     tma_no_cta_group_modifier,
                     cache_policy_evict_normal,
                     has_cache_policy_evict_normal,
+                    "tile",
+                    0,
+                    0,
                     coord0,
                     coord1,
                 )

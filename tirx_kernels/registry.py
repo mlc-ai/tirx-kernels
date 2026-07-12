@@ -168,20 +168,12 @@ if __name__ == "__main__":
         out = []
         for name, mod in sorted(all_kernels.items()):
             configs = getattr(mod, "CONFIGS", [])
-            bench_configs = getattr(mod, "BENCH_CONFIGS", configs)
-            out.append(
-                {
-                    "name": name,
-                    "meta": mod.KERNEL_META,
-                    "configs": configs,
-                    "bench_configs": bench_configs,
-                }
-            )
+            out.append({"name": name, "meta": mod.KERNEL_META, "configs": configs})
         print(json.dumps(out, indent=2))
     elif args.format == "benchrun":
         # Output in bench-run.sh format: KERNEL|SIZE|COMMAND
         for name, mod in sorted(all_kernels.items()):
-            for cfg in getattr(mod, "BENCH_CONFIGS", getattr(mod, "CONFIGS", [])):
+            for cfg in getattr(mod, "CONFIGS", []):
                 label = cfg.get("label", "default")
                 print(
                     f"{name}|{label}|python -m tirx_kernels.bench --kernel {name} --config {label} --json-file {{json_file}}"
@@ -190,7 +182,6 @@ if __name__ == "__main__":
         for name, mod in sorted(all_kernels.items()):
             meta = mod.KERNEL_META
             n_configs = len(getattr(mod, "CONFIGS", []))
-            n_bench_configs = len(getattr(mod, "BENCH_CONFIGS", getattr(mod, "CONFIGS", [])))
             print(
-                f"  {name:30s}  {meta.get('category', '?'):12s}  sm{meta.get('compute_capability', '?') * 10}  ({n_configs} configs, {n_bench_configs} bench configs)"
+                f"  {name:30s}  {meta.get('category', '?'):12s}  sm{meta.get('compute_capability', '?') * 10}  ({n_configs} configs)"
             )

@@ -231,8 +231,8 @@ void nvfp4_cublaslt(torch::Tensor A, torch::Tensor B, torch::Tensor A_scale,
     return _CUBLASLT_EXT
 
 
-def _tma_g2c_args(bar, stage, cta_mask, cta_group):
-    """Shared kwargs for the A/B and SF TMA g2c loads; only the mbarrier and
+def _tma_g2s_args(bar, stage, cta_mask, cta_group):
+    """Shared kwargs for the A/B and SF TMA g2s loads; only the mbarrier and
     cta_mask vary."""
     return {
         "dispatch": "tma",
@@ -326,8 +326,8 @@ def _kernel(
     b_n = T.meta_var(cta_n * MMA_N + id_in_pair * CTA_N)
     d_n = T.meta_var(cta_n * MMA_N)
     pool = T.SMEMPool()
-    A_smem_packed = pool.alloc_mma((PIPE_DEPTH, CTA_M, CTA_K // 2), "uint8")
-    B_smem_packed = pool.alloc_mma((PIPE_DEPTH, CTA_N, CTA_K // 2), "uint8")
+    A_smem_packed = pool.alloc_tcgen05_mma_AB((PIPE_DEPTH, CTA_M, CTA_K // 2), "uint8")
+    B_smem_packed = pool.alloc_tcgen05_mma_AB((PIPE_DEPTH, CTA_N, CTA_K // 2), "uint8")
     SFA_smem = pool.alloc(
         (PIPE_DEPTH, CTA_M, SF_CTA_K),
         "uint8",
@@ -340,7 +340,7 @@ def _kernel(
         layout=sf_smem_layout(SFB_N, 16, sf_per_mma=4, pipe_depth=PIPE_DEPTH),
         align=1024,
     )
-    output_smem = pool.alloc_mma(
+    output_smem = pool.alloc_tcgen05_mma_AB(
         (WB_PIPE_DEPTH, CTA_M, EPI_TILE), "bfloat16", swizzle_mode=D_SWIZZLE_MODE
     )
     tmem_addr = pool.alloc([1], "uint32", align=4)
@@ -405,12 +405,12 @@ def _kernel(
             if id_in_pair == 0:
                 tile_bytes = T.meta_var(A_BYTES + B_BYTES)
                 T.ptx.mbarrier.arrive.expect_tx(
-                    tile_full_bar.ptr_to([stage]), tile_bytes, cta_id=pair_leader_rank
+                    tile_full_bar.ptr_to([stage]), tile_bytes, remote=pair_leader_rank, pred=True
                 )
             single_cta_mask: T.int32 = 1 << id_in_pair
-            # Barrier pre-mapped to the cluster leader (the g2c primitive maps
+            # Barrier pre-mapped to the cluster leader (the g2s primitive maps
             # neither the barrier nor expect_tx — both handled above).
-            tile_copy = T.meta_var(_tma_g2c_args(tile_full_bar, stage, single_cta_mask, CTA_GROUP))
+            tile_copy = T.meta_var(_tma_g2s_args(tile_full_bar, stage, single_cta_mask, CTA_GROUP))
             Tx.copy_async(
                 A_smem_packed[stage, 0:CTA_M, 0 : CTA_K // 2],
                 A_packed[a_m : a_m + CTA_M, k : k + CTA_K // 2],
@@ -440,18 +440,18 @@ def _kernel(
             if id_in_pair == 0:
                 scale_bytes = T.meta_var(SFA_BYTES + SFB_BYTES)
                 T.ptx.mbarrier.arrive.expect_tx(
-                    scale_full_bar.ptr_to([stage]), scale_bytes, cta_id=pair_leader_rank
+                    scale_full_bar.ptr_to([stage]), scale_bytes, remote=pair_leader_rank, pred=True
                 )
             single_cta_mask: T.int32 = 1 << id_in_pair
             # SFA: each CTA loads its half (single_cta_mask). SFB: multicast to
             # both CTAs (pair_mask).
-            sfa_copy = T.meta_var(_tma_g2c_args(scale_full_bar, stage, single_cta_mask, CTA_GROUP))
+            sfa_copy = T.meta_var(_tma_g2s_args(scale_full_bar, stage, single_cta_mask, CTA_GROUP))
             Tx.copy_async(
                 SFA_smem[stage, 0:CTA_M, 0:SF_CTA_K],
                 SFA_in[sf_m : sf_m + CTA_M, sf_k : sf_k + SF_CTA_K],
                 **sfa_copy,
             )
-            sfb_copy = T.meta_var(_tma_g2c_args(scale_full_bar, stage, pair_mask, CTA_GROUP))
+            sfb_copy = T.meta_var(_tma_g2s_args(scale_full_bar, stage, pair_mask, CTA_GROUP))
             if SFB_N == 128:
                 if id_in_pair == 0:
                     Tx.copy_async(
@@ -556,7 +556,7 @@ def _kernel(
                         T.ptx.tcgen05.wait.ld()
                         if tid_in_wg == 0:
                             tmem_pipe.empty.arrive(
-                                epi_cur.stage, cta_id=pair_leader_rank, pred=True, count=1
+                                epi_cur.stage, remote=pair_leader_rank, pred=True, count=1
                             )
                     Tx.wg.mul(reg_ldst, reg_ldst, alpha_local)
                     Tx.wg.cast(reg_ldst_16b, reg_ldst)
@@ -574,7 +574,7 @@ def _kernel(
                 Tx.wg.cast(reg_all_16b, reg_all)
                 if tid_in_wg == 0:
                     tmem_pipe.empty.arrive(
-                        epi_cur.stage, cta_id=pair_leader_rank, pred=True, count=1
+                        epi_cur.stage, remote=pair_leader_rank, pred=True, count=1
                     )
                 T.cuda.warpgroup_sync(1)
                 for no in T.unroll(MMA_N // EPI_TILE):
@@ -590,8 +590,11 @@ def _kernel(
         T.cuda.warpgroup_sync(1)
     if warp_id == int(WarpRole.EPILOGUE):
         if T.ptx.elect_sync():
-            T.ptx.mbarrier.arrive.cluster_count(
-                tmem_finished.ptr_to([0]), pair_leader_rank + 1 - id_in_pair, 1
+            T.ptx.mbarrier.arrive(
+                tmem_finished.ptr_to([0]),
+                remote=pair_leader_rank + 1 - id_in_pair,
+                pred=True,
+                count=1,
             )
         T.ptx.mbarrier.try_wait_acquire_cluster(tmem_finished.ptr_to([0]), 0)
         T.ptx.tcgen05.dealloc(tmem_pool.addr, n_cols=512, cta_group=CTA_GROUP)

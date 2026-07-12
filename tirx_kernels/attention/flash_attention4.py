@@ -250,10 +250,10 @@ def _kernel(
     lane_id = T.lane_id([32])
     tid_in_wg = T.thread_id_in_wg([128])
     pool = T.SMEMPool()
-    Q_smem = pool.alloc_mma((SMEM_PIPE_DEPTH_Q, BLK_M, HEAD_DIM), "float16")
-    K_smem = pool.alloc_mma((SMEM_PIPE_DEPTH_KV, BLK_N, HEAD_DIM), "float16")
+    Q_smem = pool.alloc_tcgen05_mma_AB((SMEM_PIPE_DEPTH_Q, BLK_M, HEAD_DIM), "float16")
+    K_smem = pool.alloc_tcgen05_mma_AB((SMEM_PIPE_DEPTH_KV, BLK_N, HEAD_DIM), "float16")
     V_smem = K_smem.view(SMEM_PIPE_DEPTH_KV, BLK_N, HEAD_DIM)
-    O_smem = pool.alloc_mma((TMEM_PIPE_DEPTH, BLK_M, HEAD_DIM), "float16")
+    O_smem = pool.alloc_tcgen05_mma_AB((TMEM_PIPE_DEPTH, BLK_M, HEAD_DIM), "float16")
     sScale = pool.alloc((SSCALE_TOTAL_SIZE,), "float32", align=1024)
     tmem_addr = pool.alloc([1], "uint32")
     ACC_SCALE_BASE: T.let = 0
@@ -322,23 +322,15 @@ def _kernel(
     T.ptx.fence.proxy_async("shared::cta")
     T.ptx.fence.mbarrier_init()
     T.cuda.cta_sync()
-    S_region = T.meta_var(
-        T.TMEMStages(tmem, col_start=0, width=MMA_N, stages=SMEM_PIPE_DEPTH_Q, stride=MMA_N)
-    )
-    O_region = T.meta_var(
-        T.TMEMStages(
-            tmem,
-            col_start=MMA_N * SMEM_PIPE_DEPTH_Q,
-            width=MMA_N,
-            stages=SMEM_PIPE_DEPTH_Q,
-            stride=MMA_N,
-        )
-    )
-    P_region = T.meta_var(
-        T.TMEMStages(
-            tmem_as_f16, col_start=MMA_N, width=BLK_N, stages=SMEM_PIPE_DEPTH_Q, stride=MMA_N * 2
-        )
-    )
+    # S and O share the (128, N_COLS_TMEM) f32 tmem as 2*SMEM_PIPE_DEPTH_Q
+    # MMA_N-wide stages: S in the low SMEM_PIPE_DEPTH_Q, O in the high ones
+    # (indexed SMEM_PIPE_DEPTH_Q + stage). Indexing a constant stage at the use
+    # site keeps the column offset in the region so allocated_addr stays 0.
+    S_region = T.meta_var(tmem.rearrange("m (s n) -> s m n", n=MMA_N))
+    O_region = S_region
+    # P overlays the f16 view of the S stages: the high MMA_N-wide half (two=1)
+    # of each stage's 2*MMA_N f16 columns, indexed [stage, 1, :, cols].
+    P_region = T.meta_var(tmem_as_f16.rearrange("m (s two n) -> s two m n", two=2, n=MMA_N))
     scheduler = (
         FlashAttentionLPTScheduler(
             "fa_scheduler",
@@ -506,7 +498,7 @@ def _kernel(
                 @T.inline
                 def gemm_qk(q_stage, kv_stage):
                     Tx.warp.gemm_async(
-                        S_region[q_stage],
+                        S_region[q_stage, :, :],
                         Q_smem[q_stage, 0:BLK_M, 0:HEAD_DIM],
                         K_smem[kv_stage, 0:BLK_N, 0:HEAD_DIM],
                         dispatch="tcgen05",
@@ -528,8 +520,8 @@ def _kernel(
                 @T.inline
                 def gemm_pv_part1(i_q, kv_stage, should_accumulate):
                     Tx.warp.gemm_async(
-                        O_region[i_q],
-                        P_region[i_q, 0:K_SPLIT],
+                        O_region[SMEM_PIPE_DEPTH_Q + i_q, :, :],
+                        P_region[i_q, 1, :, 0:K_SPLIT],
                         V_smem[kv_stage, 0:K_SPLIT, 0:HEAD_DIM],
                         transB=True,
                         accum=should_accumulate,
@@ -541,8 +533,8 @@ def _kernel(
                 def gemm_pv_part2(i_q, kv_stage):
                     p_ready_2.wait(i_q, phase_tmem)
                     Tx.warp.gemm_async(
-                        O_region[i_q],
-                        P_region[i_q, K_SPLIT:BLK_N],
+                        O_region[SMEM_PIPE_DEPTH_Q + i_q, :, :],
+                        P_region[i_q, 1, :, K_SPLIT:BLK_N],
                         V_smem[kv_stage, K_SPLIT:BLK_N, 0:HEAD_DIM],
                         transB=True,
                         accum=True,
@@ -725,7 +717,9 @@ def _kernel(
                             :, chunk_idx * SOFTMAX_LD_CHUNK : (chunk_idx + 1) * SOFTMAX_LD_CHUNK
                         ],
                         S_region[
-                            wg_id, chunk_idx * SOFTMAX_LD_CHUNK : (chunk_idx + 1) * SOFTMAX_LD_CHUNK
+                            wg_id,
+                            :,
+                            chunk_idx * SOFTMAX_LD_CHUNK : (chunk_idx + 1) * SOFTMAX_LD_CHUNK,
                         ],
                     )
                 if apply_mask:
@@ -810,7 +804,7 @@ def _kernel(
                 P_SPLIT_Q = T.meta_var(2 if is_causal else 3)
                 for i in T.unroll(P_SPLIT_Q):
                     Tx.wg.copy_async(
-                        P_region[wg_id, i * BLK_N // 4 : (i + 1) * BLK_N // 4],
+                        P_region[wg_id, 1, :, i * BLK_N // 4 : (i + 1) * BLK_N // 4],
                         p_chunk[:, i * BLK_N // 4 : (i + 1) * BLK_N // 4],
                     )
                 T.ptx.tcgen05.wait.st()
@@ -818,7 +812,10 @@ def _kernel(
                 for i in T.unroll(4 - P_SPLIT_Q):
                     Tx.wg.copy_async(
                         P_region[
-                            wg_id, (P_SPLIT_Q + i) * BLK_N // 4 : (P_SPLIT_Q + 1 + i) * BLK_N // 4
+                            wg_id,
+                            1,
+                            :,
+                            (P_SPLIT_Q + i) * BLK_N // 4 : (P_SPLIT_Q + 1 + i) * BLK_N // 4,
                         ],
                         p_chunk[:, (P_SPLIT_Q + i) * BLK_N // 4 : (P_SPLIT_Q + 1 + i) * BLK_N // 4],
                     )
@@ -900,7 +897,11 @@ def _kernel(
                         for d_tile in T.unroll(ceildiv(HEAD_DIM, EPI_LD_SM)):
                             Tx.wg.copy_async(
                                 o_row_f32_sm,
-                                O_region[epi_q, d_tile * EPI_LD_SM : (d_tile + 1) * EPI_LD_SM],
+                                O_region[
+                                    SMEM_PIPE_DEPTH_Q + epi_q,
+                                    :,
+                                    d_tile * EPI_LD_SM : (d_tile + 1) * EPI_LD_SM,
+                                ],
                             )
                             Tx.wg.mul(o_row_f32_sm, o_row_f32_sm, norm_scale_sm)
                             Tx.wg.cast(o_row_f16_sm, o_row_f32_sm)
@@ -963,11 +964,21 @@ def _kernel(
                                 d_start: T.let = d_tile * RESCALE_TILE
                                 if d_start < HEAD_DIM:
                                     Tx.wg.copy_async(
-                                        o_row, O_region[i_q, d_start : d_start + RESCALE_TILE]
+                                        o_row,
+                                        O_region[
+                                            SMEM_PIPE_DEPTH_Q + i_q,
+                                            :,
+                                            d_start : d_start + RESCALE_TILE,
+                                        ],
                                     )
                                     Tx.wg.mul(o_row, o_row, acc_scale)
                                     Tx.wg.copy_async(
-                                        O_region[i_q, d_start : d_start + RESCALE_TILE], o_row
+                                        O_region[
+                                            SMEM_PIPE_DEPTH_Q + i_q,
+                                            :,
+                                            d_start : d_start + RESCALE_TILE,
+                                        ],
+                                        o_row,
                                     )
                             T.ptx.tcgen05.wait.st()
                     p_o_rescale.arrive(i_q)
@@ -998,7 +1009,10 @@ def _kernel(
                         d_start: T.let = d_tile * TMEM_EPI_LD_SIZE
                         if d_start < HEAD_DIM:
                             Tx.wg.copy_async(
-                                o_row_f32, O_region[i_q, d_start : d_start + TMEM_EPI_LD_SIZE]
+                                o_row_f32,
+                                O_region[
+                                    SMEM_PIPE_DEPTH_Q + i_q, :, d_start : d_start + TMEM_EPI_LD_SIZE
+                                ],
                             )
                             Tx.wg.mul(o_row_f32, o_row_f32, norm_scale)
                             Tx.wg.cast(o_row_f16, o_row_f32)

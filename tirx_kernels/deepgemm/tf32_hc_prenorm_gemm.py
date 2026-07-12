@@ -211,18 +211,12 @@ DEEPGEMM_TEST_COVERAGE = [
 ]
 
 CONFIGS = [
-    _make_case(m=13, n=24, k=512, num_splits=1, seed=0),
-    _make_case(m=137, n=24, k=1024, num_splits=4, seed=1),
-    _make_case(m=13, n=24, k=7168, num_splits=16, seed=2),
-    DEEPGEMM_TEST_COVERAGE[0],
-]
-
-BENCH_CONFIGS = [
     _make_case(m=13, n=24, k=7168, num_splits=1, seed=2000),
     _make_case(m=137, n=24, k=7680, num_splits=16, seed=2001),
     _make_case(m=4096, n=24, k=7168, num_splits=1, seed=2002),
     _make_case(m=4096, n=24, k=28672, num_splits=16, seed=2003),
 ]
+BENCH_CONFIGS = CONFIGS
 
 
 def load_deep_gemm_hc() -> tuple[Any, str]:

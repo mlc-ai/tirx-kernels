@@ -163,35 +163,8 @@ DEEPGEMM_TEST_COVERAGE = [
     )
 ]
 
-CONFIGS = [
-    _make_case(
-        seq_len=32,
-        seq_len_kv=256,
-        logits_dtype="float32",
-        compressed_logits=False,
-        disable_cp=True,
-        seed=0,
-    ),
-    _make_case(
-        seq_len=32,
-        seq_len_kv=256,
-        logits_dtype="bfloat16",
-        compressed_logits=True,
-        disable_cp=True,
-        seed=1,
-    ),
-    _make_case(
-        seq_len=32,
-        seq_len_kv=256,
-        logits_dtype="float32",
-        compressed_logits=True,
-        disable_cp=False,
-        seed=2,
-    ),
-    DEEPGEMM_TEST_COVERAGE[0],
-]
-
-BENCH_CONFIGS = DEEPGEMM_TEST_COVERAGE
+CONFIGS = DEEPGEMM_TEST_COVERAGE
+BENCH_CONFIGS = CONFIGS
 
 
 def load_deep_gemm_mqa() -> tuple[Any, str]:
@@ -738,12 +711,15 @@ def get_kernel(**kwargs: Any):
                 num_kv_stages, num_sfkv, layout=sf_smem_kv_post_layout
             )
             # e8m0 views of the same SF SMEM under the cp (sf_smem) layout, the
-            # SMEM source for T.copy_async into the SF TMEM.
+            # SMEM source for T.copy_async into the SF TMEM. Declared at the
+            # natural (rows=128, SF_K) SF footprint so the copy region matches
+            # the (128, SF_K) SF TMEM tile; the lane/super-block packing lives
+            # in sf_smem_*_cp_layout, not in the buffer shape.
             smem_sf_q_cp = smem_sf_q.view("float8_e8m0fnu").view(
-                num_q_stages, num_sfq, 4, layout=sf_smem_q_cp_layout
+                num_q_stages, 128, num_sfq // 32, layout=sf_smem_q_cp_layout
             )
             smem_sf_kv_cp = smem_sf_kv.view("float8_e8m0fnu").view(
-                num_kv_stages, num_sfkv, 4, layout=sf_smem_kv_cp_layout
+                num_kv_stages, 128, num_sfkv // 32, layout=sf_smem_kv_cp_layout
             )
             # SFA/SFB TMEM views in the dispatcher-canonical sf_tmem_layout (the
             # gemm validator expects sf_per_mma == sf_mma_k = 2 for fp4+e8m0, not

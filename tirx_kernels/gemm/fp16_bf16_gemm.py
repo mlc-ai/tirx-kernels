@@ -151,9 +151,9 @@ def _kernel(
     # Teardown handshake: 1-arrival cross-CTA mbarrier (OVERLAP) vs the full cluster_sync.
     tmem_fin = Pipeline(pool, 1, full="mbar", empty="mbar", init_full=1)
     pool.move_base_to(1024)
-    Asmem = pool.alloc_mma((PIPE_DEPTH, NUM_CONSUMER, BLK_M, BLK_K), ab_type)
-    Bsmem = pool.alloc_mma((PIPE_DEPTH, BLK_N, BLK_K), ab_type)
-    Dsmem = pool.alloc_mma(
+    Asmem = pool.alloc_tcgen05_mma_AB((PIPE_DEPTH, NUM_CONSUMER, BLK_M, BLK_K), ab_type)
+    Bsmem = pool.alloc_tcgen05_mma_AB((PIPE_DEPTH, BLK_N, BLK_K), ab_type)
+    Dsmem = pool.alloc_tcgen05_mma_AB(
         (NUM_CONSUMER, NUM_D_TILES, BLK_M, EPI_N),
         ab_type,
         swizzle_mode=_swizzle_for_row_bytes(EPI_N * (ab_type.bits // 8)),
@@ -315,7 +315,7 @@ def _kernel(
                     T.ptx.tcgen05.wait.ld()
                     Tx.wg.cast(Dreg_16b, Dreg)
                     if i == WB_PIPE_DEPTH - 1:
-                        tmem_pipe.empty.arrive(slot, cta_id=0, pred=True)
+                        tmem_pipe.empty.arrive(slot, remote=0, pred=True)
                     db = T.meta_var(i % NUM_D_TILES)
                     T.ptx.cp_async.bulk.wait_group(NUM_D_TILES - 1, read=True)
                     T.cuda.warpgroup_sync(wg_id + 10)
@@ -352,7 +352,7 @@ def _kernel(
                     Tx.wg.copy_async(Dreg, tmem[:, tn : tn + NOL])
                     T.ptx.tcgen05.wait.ld()
                     Tx.wg.cast(Dreg_16b[:, i * NOL : (i + 1) * NOL], Dreg)
-                tmem_pipe.empty.arrive(wg_id, cta_id=0, pred=True)
+                tmem_pipe.empty.arrive(wg_id, remote=0, pred=True)
                 for i in T.unroll(WB_PIPE_DEPTH):
                     db = T.meta_var(i % NUM_D_TILES)
                     T.ptx.cp_async.bulk.wait_group(NUM_D_TILES - 1, read=True)
@@ -401,7 +401,7 @@ def _kernel(
             # cross-CTA mbarrier handshake before dealloc -- lighter than a full cluster_sync.
             T.cuda.warpgroup_sync(wg_id + 10)
             if (warp_id == 0) & (lane_id == 0):
-                tmem_fin.full.arrive(0, cta_id=1 - cbx, pred=True)
+                tmem_fin.full.arrive(0, remote=1 - cbx, pred=True)
             if warp_id == 0:
                 tmem_fin.full.wait(0, 0)
     if not OVERLAP_EPILOGUE:
@@ -436,14 +436,7 @@ CONFIGS = [
     for d in ["fp16", "bf16"]
     for s in [1024, 2048, 4096, 8192, 16384]
 ]
-# Benchmark on the square fp16/bf16 B200 shapes. Both dtypes must be here so the
-# bench-suite workloads for fp16_* and bf16_* resolve to a config (fp16 compares
-# against the cublasLt/torch baselines; the native deepgemm baseline is bf16-only).
-BENCH_CONFIGS = [
-    {"dtype": d, "M": s, "N": s, "K": s, "label": f"{d}_{s}x{s}x{s}"}
-    for d in ["fp16", "bf16"]
-    for s in [1024, 2048, 4096, 8192, 16384]
-]
+BENCH_CONFIGS = CONFIGS
 
 
 def get_kernel(dtype, M, N, K, **kwargs):

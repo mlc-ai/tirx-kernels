@@ -29,13 +29,12 @@ KERNEL_META : dict
 
 CONFIGS : list[dict]
     Each dict has a "label" key (str) plus arbitrary kernel-specific
-    parameters.  The union of tir test parametrize configs and bench-ci
-    benchmark configs.
+    parameters.  The same config matrix is used by correctness tests and
+    benchmark runs.
 
 BENCH_CONFIGS : list[dict]   (optional)
-    Benchmark-only configs.  If present, ``python -m tirx_kernels.bench``
-    uses these instead of ``CONFIGS`` so expensive benchmark sweeps do not
-    automatically become pytest correctness cases.
+    Backward-compatible alias for ``CONFIGS``.  New code should not give it
+    a different value.
 
 Functions
 ---------

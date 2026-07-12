@@ -106,7 +106,7 @@ def main():
     results = []
 
     for name, mod in sorted(all_kernels.items()):
-        configs = getattr(mod, "BENCH_CONFIGS", getattr(mod, "CONFIGS", []))
+        configs = getattr(mod, "CONFIGS", [])
         for cfg in configs:
             label = cfg.get("label", "default")
             if args.config and label != args.config:

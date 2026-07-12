@@ -1765,24 +1765,33 @@ def get_kernel(
     def tma_store_2d(src, tensormap, coord0, coord1):
         return T.ptx.cp_async.bulk.tensor.s2g(2, src, T.address_of(tensormap), "", coord0, coord1)
 
-    def sm100_tma_2sm_load_2d_addr(dst, bar, tensormap_addr, coord0, coord1):
-        bar_addr = T.cuda.sm100_tma_2sm_mbarrier_addr(bar)
+    def sm100_tma_2sm_load_2d_addr(dst, mbar, tensormap_addr, coord0, coord1):
+        mbar_addr = T.cuda.sm100_2sm_leader_smem_addr(mbar)
         T.evaluate(
-            T.ptx.cp_async.bulk.tensor.g2c_bar_addr(
-                2, dst, bar_addr, tensormap_addr, 1, 2, "evict_normal", coord0, coord1
+            T.ptx.cp_async.bulk.tensor.g2s_cluster(
+                2,
+                dst,
+                mbar_addr,
+                tensormap_addr,
+                1,
+                2,
+                "evict_normal",
+                coord0,
+                coord1,
+                mbar_is_shared_addr=True,
             )
         )
 
-    def sm100_tma_2sm_load_2d(dst, bar, tensormap, coord0, coord1):
-        sm100_tma_2sm_load_2d_addr(dst, bar, T.address_of(tensormap), coord0, coord1)
+    def sm100_tma_2sm_load_2d(dst, mbar, tensormap, coord0, coord1):
+        sm100_tma_2sm_load_2d_addr(dst, mbar, T.address_of(tensormap), coord0, coord1)
 
     @T.inline
     def sm100_tma_2sm_load_2d_select(
-        dst, bar, tensor_map_l1, tensor_map_l2, block_phase_value, coord0, coord1
+        dst, mbar, tensor_map_l1, tensor_map_l2, block_phase_value, coord0, coord1
     ):
         sm100_tma_2sm_load_2d_addr(
             dst,
-            bar,
+            mbar,
             T.Select(
                 block_phase_value == 1, T.address_of(tensor_map_l1), T.address_of(tensor_map_l2)
             ),
@@ -3110,7 +3119,7 @@ def get_kernel(
 
         @T.inline
         def tmem_empty_barrier_arrive_cta0(tmem_empty_barrier_ptr):
-            T.ptx.mbarrier.arrive(tmem_empty_barrier_ptr, cta_id=0, pred=True)
+            T.ptx.mbarrier.arrive(tmem_empty_barrier_ptr, remote=0, pred=True)
 
         @T.inline
         def umma_arrive_multicast_2x1sm(barrier_ptr):
@@ -3182,7 +3191,7 @@ def get_kernel(
 
         @T.inline
         def full_barrier_arrive_cta0(full_barrier_ptr):
-            T.ptx.mbarrier.arrive(full_barrier_ptr, cta_id=0, pred=True)
+            T.ptx.mbarrier.arrive(full_barrier_ptr, remote=0, pred=True)
 
         @T.inline
         def make_instr_desc_block_scaled():
@@ -5239,86 +5248,7 @@ KERNEL_META = {
     "compute_capability": 10,
 }
 
-# One case per block_m bucket in `_get_block_config_for_mega_moe` so a per-PR
-# sm100a run covers all heuristic-selected block_m paths (16, 32, 64, 96, 128, 192).
-# Each tpe (= tokens * ranks * topk / experts) is set just below the bucket boundary.
 CONFIGS = [
-    {
-        "num_processes": 1,
-        "num_max_tokens_per_rank": 4,
-        "num_tokens": 2,
-        "hidden": 1024,
-        "intermediate_hidden": 512,
-        "num_experts": 2,
-        "num_topk": 1,
-        "activation_clamp": 10.0,
-        "fast_math": 1,
-        "label": "p1_tok2_h1024_i512_e2_k1_bm16",
-    },
-    {
-        "num_processes": 1,
-        "num_max_tokens_per_rank": 16,
-        "num_tokens": 16,
-        "hidden": 1024,
-        "intermediate_hidden": 512,
-        "num_experts": 2,
-        "num_topk": 2,
-        "activation_clamp": 10.0,
-        "fast_math": 1,
-        "label": "p1_tok16_h1024_i512_e2_k2_bm32",
-    },
-    {
-        "num_processes": 1,
-        "num_max_tokens_per_rank": 32,
-        "num_tokens": 32,
-        "hidden": 1024,
-        "intermediate_hidden": 512,
-        "num_experts": 2,
-        "num_topk": 2,
-        "activation_clamp": 10.0,
-        "fast_math": 1,
-        "label": "p1_tok32_h1024_i512_e2_k2_bm64",
-    },
-    {
-        "num_processes": 1,
-        "num_max_tokens_per_rank": 64,
-        "num_tokens": 64,
-        "hidden": 1024,
-        "intermediate_hidden": 512,
-        "num_experts": 2,
-        "num_topk": 2,
-        "activation_clamp": 10.0,
-        "fast_math": 1,
-        "label": "p1_tok64_h1024_i512_e2_k2_bm96",
-    },
-    {
-        "num_processes": 1,
-        "num_max_tokens_per_rank": 96,
-        "num_tokens": 96,
-        "hidden": 1024,
-        "intermediate_hidden": 512,
-        "num_experts": 2,
-        "num_topk": 2,
-        "activation_clamp": 10.0,
-        "fast_math": 1,
-        "label": "p1_tok96_h1024_i512_e2_k2_bm128",
-    },
-    {
-        "num_processes": 1,
-        "num_max_tokens_per_rank": 192,
-        "num_tokens": 192,
-        "hidden": 1024,
-        "intermediate_hidden": 512,
-        "num_experts": 2,
-        "num_topk": 2,
-        "activation_clamp": 10.0,
-        "fast_math": 1,
-        "label": "p1_tok192_h1024_i512_e2_k2_bm192",
-    },
-]
-
-
-BENCH_CONFIGS = [
     {
         "num_processes": 1,
         "num_max_tokens_per_rank": 8,
@@ -5440,6 +5370,7 @@ BENCH_CONFIGS = [
         "label": "t8192_h7168_i3072_e384_k6_g6",
     },
 ]
+BENCH_CONFIGS = CONFIGS
 
 
 def _make_config(

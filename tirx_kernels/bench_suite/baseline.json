@@ -1,14 +1,14 @@
 {
-  "timestamp": "3",
-  "label": "d9a54390-dirty",
+  "timestamp": "163",
+  "label": "5ec3e10a",
   "git": {
-    "tir": "3f9ce073-dirty",
-    "tirx-kernels": "d9a54390-dirty",
+    "tir": "f2214f20",
+    "tirx-kernels": "5ec3e10a",
     "tirx-bench-ci": null
   },
   "kernel_tree": {
-    "tir:python/tvm/tirx": "e35110c95092edafaa381877b62a4fd86bfd237c",
-    "tirx-kernels:tirx_kernels": "885728163bd49981325a7b1eaaac963e8617fabc"
+    "tir:python/tvm/tirx": "38e8068c4c99a2e376ae5c3b6cd47052a4b9da78",
+    "tirx-kernels:tirx_kernels": "744a74f46a9e8dacf82a01a81db629c0ffdbf7c2"
   },
   "baselines": {
     "torch": {
@@ -25,7 +25,7 @@
       "source_dir": "/home/bohanhou/DeepGEMM",
       "editable": true,
       "git_dir": "/home/bohanhou/DeepGEMM",
-      "git_sha": "714dd1a4-dirty"
+      "git_sha": "1f6f3f37-dirty"
     },
     "flashinfer": {
       "importable": true,
@@ -62,11 +62,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 42.47243531255956,
-        "deepgemm": 41.82179762301943
+        "tirx": 42.71530097087379,
+        "deepgemm": 42.09839908675799
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -76,11 +76,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 55.63060450945666,
-        "deepgemm": 54.41452160765288
+        "tirx": 55.935215805471124,
+        "deepgemm": 54.843129100529104
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -90,11 +90,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 42.66250657466567,
-        "deepgemm": 41.06750116789165
+        "tirx": 42.78272284969592,
+        "deepgemm": 41.174954706927174
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -104,11 +104,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 55.73138828079344,
-        "deepgemm": 52.9745087126562
+        "tirx": 56.1704065934066,
+        "deepgemm": 53.5630524691358
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -118,11 +118,11 @@
       "label": "s2048_skv4096_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 41.3630915999923,
-        "deepgemm": 43.43346835974063
+        "tirx": 41.503541701769166,
+        "deepgemm": 43.57580659536542
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -132,11 +132,11 @@
       "label": "s2048_skv4096_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 54.36191194783848,
-        "deepgemm": 57.03446064291916
+        "tirx": 54.256415279138096,
+        "deepgemm": 56.805479581151836
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -146,11 +146,11 @@
       "label": "s2048_skv4096_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 40.97637154902835,
-        "deepgemm": 39.21463247863677
+        "tirx": 40.961394936708864,
+        "deepgemm": 39.27008859649123
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -160,11 +160,11 @@
       "label": "s2048_skv4096_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 53.38079193680752,
-        "deepgemm": 50.710640927933234
+        "tirx": 53.15235135135135,
+        "deepgemm": 50.49532135728543
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -174,11 +174,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 75.1228887374703,
-        "deepgemm": 72.7788808428792
+        "tirx": 74.75309134615385,
+        "deepgemm": 72.50060490797546
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -188,11 +188,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 116.24892374362102,
-        "deepgemm": 111.51213302633302
+        "tirx": 116.26095833333333,
+        "deepgemm": 111.48830769230769
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -202,11 +202,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 75.27394528558709,
-        "deepgemm": 71.0915780840029
+        "tirx": 75.44545006016848,
+        "deepgemm": 71.26777372262774
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -216,11 +216,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 115.45030751111717,
-        "deepgemm": 107.92379712399872
+        "tirx": 115.29809134615385,
+        "deepgemm": 107.7644626391097
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -230,11 +230,11 @@
       "label": "s2048_skv8192_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 73.39139466818084,
-        "deepgemm": 76.62866540704236
+        "tirx": 73.90525030978934,
+        "deepgemm": 76.92175573549258
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -244,11 +244,11 @@
       "label": "s2048_skv8192_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 113.7862120995672,
-        "deepgemm": 117.48551054925902
+        "tirx": 114.24208199356913,
+        "deepgemm": 117.8965615514334
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -258,11 +258,11 @@
       "label": "s2048_skv8192_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 72.23896749570743,
-        "deepgemm": 68.17505844728079
+        "tirx": 72.07299519807924,
+        "deepgemm": 67.93349003984065
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -272,11 +272,11 @@
       "label": "s2048_skv8192_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 110.55138137581805,
-        "deepgemm": 103.74970331732715
+        "tirx": 111.16152119309263,
+        "deepgemm": 104.0997251184834
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -286,11 +286,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 73.91368351059576,
-        "deepgemm": 74.2017691237899
+        "tirx": 74.49606586826347,
+        "deepgemm": 74.59658395989975
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -300,11 +300,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 73.5261034133741,
-        "deepgemm": 73.9284555551656
+        "tirx": 74.4294207920792,
+        "deepgemm": 74.59424808184144
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -314,11 +314,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 74.71090775295623,
-        "deepgemm": 72.87765370963926
+        "tirx": 75.15881189320388,
+        "deepgemm": 73.19972078720788
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -328,11 +328,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 74.05852941795658,
-        "deepgemm": 72.34762168270585
+        "tirx": 74.63177481840194,
+        "deepgemm": 72.60185491606714
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -342,11 +342,11 @@
       "label": "s4096_skv4096_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 72.04172820253919,
-        "deepgemm": 76.46188300147092
+        "tirx": 72.50120047449585,
+        "deepgemm": 77.00967978290367
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -356,11 +356,11 @@
       "label": "s4096_skv4096_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 71.65491523757784,
-        "deepgemm": 76.09503982933359
+        "tirx": 72.18976674641148,
+        "deepgemm": 76.6126658227848
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -370,11 +370,11 @@
       "label": "s4096_skv4096_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 71.21966177475097,
-        "deepgemm": 68.22678623445651
+        "tirx": 72.26199641148325,
+        "deepgemm": 69.29004310344827
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -384,11 +384,11 @@
       "label": "s4096_skv4096_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 71.65101673007763,
-        "deepgemm": 68.64849256439346
+        "tirx": 71.7013497005988,
+        "deepgemm": 68.70005218446602
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -398,11 +398,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 134.78416459913856,
-        "deepgemm": 131.3786248257754
+        "tirx": 134.7800561594203,
+        "deepgemm": 131.0728233151184
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -412,11 +412,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 193.64879862519376,
-        "deepgemm": 186.94816087474427
+        "tirx": 196.1438195121951,
+        "deepgemm": 188.9574914004914
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -426,11 +426,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 134.4952696752537,
-        "deepgemm": 127.74869195960348
+        "tirx": 133.56824909747291,
+        "deepgemm": 127.1601646017699
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -440,11 +440,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 192.79050861598236,
-        "deepgemm": 181.47894274590453
+        "tirx": 195.31137439613528,
+        "deepgemm": 183.37807875894987
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -454,11 +454,11 @@
       "label": "s4096_skv8192_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 131.35661908359555,
-        "deepgemm": 137.3427937328936
+        "tirx": 131.80645454545453,
+        "deepgemm": 137.46179190751445
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -468,11 +468,11 @@
       "label": "s4096_skv8192_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 189.88277328185313,
-        "deepgemm": 197.75693732514333
+        "tirx": 190.34682338902147,
+        "deepgemm": 197.70311139240508
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -482,11 +482,11 @@
       "label": "s4096_skv8192_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 129.11528655868528,
-        "deepgemm": 121.91315386975437
+        "tirx": 128.83721678321677,
+        "deepgemm": 121.50968541300527
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -496,11 +496,11 @@
       "label": "s4096_skv8192_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 185.77700667076851,
-        "deepgemm": 174.20369153988156
+        "tirx": 186.09511888111888,
+        "deepgemm": 174.60436866359447
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -510,11 +510,11 @@
       "label": "b16_n1_mp128_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.561596651499558,
-        "deepgemm": 5.581211637627839
+        "tirx": 5.5807352352352355,
+        "deepgemm": 5.606800898203592
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -524,11 +524,11 @@
       "label": "b16_n1_mp128_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.791469697092313,
-        "deepgemm": 5.816099371500963
+        "tirx": 5.902391304347827,
+        "deepgemm": 5.941793835270339
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -538,11 +538,11 @@
       "label": "b16_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 6.4501878037781255,
-        "deepgemm": 6.477636035463333
+        "tirx": 6.477357957631722,
+        "deepgemm": 6.514711929631666
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -552,11 +552,11 @@
       "label": "b16_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 6.224166639282827,
-        "deepgemm": 6.265955474933344
+        "tirx": 6.3586905637254905,
+        "deepgemm": 6.359817510548523
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -566,11 +566,11 @@
       "label": "b16_n1_mp1_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.341181480622506,
-        "deepgemm": 4.702087438856654
+        "tirx": 5.144161764705882,
+        "deepgemm": 5.674977450980392
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -580,11 +580,11 @@
       "label": "b16_n1_mp1_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.355338374616249,
-        "deepgemm": 4.693611314653747
+        "tirx": 4.462524231370505,
+        "deepgemm": 4.7824244044725335
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -594,11 +594,11 @@
       "label": "b16_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.469504442410057,
-        "deepgemm": 5.05198813539495
+        "tirx": 4.589912743972445,
+        "deepgemm": 5.12142046659597
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -608,11 +608,11 @@
       "label": "b16_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.3524670748826315,
-        "deepgemm": 4.677756106891142
+        "tirx": 4.462866666666667,
+        "deepgemm": 4.786738853503184
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -622,11 +622,11 @@
       "label": "b16_n1_mp32_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.001680443811363,
-        "deepgemm": 4.898486652053105
+        "tirx": 5.2097634930260766,
+        "deepgemm": 5.235004333694475
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -636,11 +636,11 @@
       "label": "b16_n1_mp32_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.968691519201065,
-        "deepgemm": 4.829593160583635
+        "tirx": 5.270950642673522,
+        "deepgemm": 5.298949604743083
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -650,11 +650,11 @@
       "label": "b16_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.323504098191327,
-        "deepgemm": 5.374757831244103
+        "tirx": 5.292398286937901,
+        "deepgemm": 5.318942175066313
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -664,11 +664,11 @@
       "label": "b16_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.1227021609817545,
-        "deepgemm": 5.16981614044094
+        "tirx": 5.230515474378488,
+        "deepgemm": 5.270466072313026
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -678,11 +678,11 @@
       "label": "b16_n1_mp8_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.674430006780451,
-        "deepgemm": 4.676972359700061
+        "tirx": 4.8671484983314794,
+        "deepgemm": 4.90473486328125
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -692,11 +692,11 @@
       "label": "b16_n1_mp8_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.587248974869226,
-        "deepgemm": 4.633802806486701
+        "tirx": 4.848272312373226,
+        "deepgemm": 5.16267885375494
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -706,11 +706,11 @@
       "label": "b16_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.834751458481337,
-        "deepgemm": 5.138139882323936
+        "tirx": 4.785938850817079,
+        "deepgemm": 5.050110572259942
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -720,11 +720,11 @@
       "label": "b16_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.705150422063692,
-        "deepgemm": 4.728480201065064
+        "tirx": 4.704376023391813,
+        "deepgemm": 4.745217319360177
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -734,11 +734,11 @@
       "label": "b1_n1_mp128_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.587300389460079,
-        "deepgemm": 4.60456279529776
+        "tirx": 4.802467274678111,
+        "deepgemm": 4.835193096548275
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -748,11 +748,11 @@
       "label": "b1_n1_mp128_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.65116638082607,
-        "deepgemm": 4.695904732259205
+        "tirx": 4.659889242520687,
+        "deepgemm": 4.686769398907104
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -762,11 +762,11 @@
       "label": "b1_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.667774057025553,
-        "deepgemm": 4.684467778909232
+        "tirx": 4.6173949790794975,
+        "deepgemm": 4.6648014629049115
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -776,11 +776,11 @@
       "label": "b1_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.681507448158967,
-        "deepgemm": 4.70784114114093
+        "tirx": 4.660239142385926,
+        "deepgemm": 4.6885291262135915
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -790,11 +790,11 @@
       "label": "b1_n1_mp1_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.393181998161537,
-        "deepgemm": 4.757185670502242
+        "tirx": 4.390772797527048,
+        "deepgemm": 4.75616962146622
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -804,11 +804,11 @@
       "label": "b1_n1_mp1_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.312822217444729,
-        "deepgemm": 4.688399713822614
+        "tirx": 4.643457767277023,
+        "deepgemm": 5.032304258594151
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -818,11 +818,11 @@
       "label": "b1_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.299356977965245,
-        "deepgemm": 4.642201265106648
+        "tirx": 4.294143928035981,
+        "deepgemm": 4.684610623781676
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -832,11 +832,11 @@
       "label": "b1_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.319320052713603,
-        "deepgemm": 4.733663373306456
+        "tirx": 4.631355985037407,
+        "deepgemm": 5.024312620423892
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -846,11 +846,11 @@
       "label": "b1_n1_mp32_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.527078714253579,
-        "deepgemm": 4.572493598591764
+        "tirx": 4.7799797570850195,
+        "deepgemm": 4.815013056092843
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -860,11 +860,11 @@
       "label": "b1_n1_mp32_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.582271355176434,
-        "deepgemm": 4.616623979461814
+        "tirx": 4.7347179183914845,
+        "deepgemm": 4.79595291005291
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -874,11 +874,11 @@
       "label": "b1_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.640126069720765,
-        "deepgemm": 4.878221129643128
+        "tirx": 4.555359543436906,
+        "deepgemm": 4.8226768079800495
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -888,11 +888,11 @@
       "label": "b1_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.516255685668492,
-        "deepgemm": 4.549515305684276
+        "tirx": 4.722787819253439,
+        "deepgemm": 5.002254554170662
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -902,11 +902,11 @@
       "label": "b1_n1_mp8_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.664813243837697,
-        "deepgemm": 4.816970681856803
+        "tirx": 4.625147922998987,
+        "deepgemm": 4.747596312469675
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -916,11 +916,11 @@
       "label": "b1_n1_mp8_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.656045968387795,
-        "deepgemm": 4.824791906550411
+        "tirx": 4.78570122928915,
+        "deepgemm": 5.1114693434617475
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -930,11 +930,11 @@
       "label": "b1_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.535186175951286,
-        "deepgemm": 4.694360202679874
+        "tirx": 4.661782674772037,
+        "deepgemm": 4.985029485257371
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -944,11 +944,11 @@
       "label": "b1_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.595749685199382,
-        "deepgemm": 4.77424838216663
+        "tirx": 4.774315463917525,
+        "deepgemm": 4.942328550932568
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -958,11 +958,11 @@
       "label": "b2_n1_mp128_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.691333621085048,
-        "deepgemm": 4.691316872216097
+        "tirx": 4.818519076305221,
+        "deepgemm": 4.873870086289549
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -972,11 +972,11 @@
       "label": "b2_n1_mp128_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.692811830363136,
-        "deepgemm": 4.703048301092866
+        "tirx": 4.875294909303687,
+        "deepgemm": 4.921720212765957
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -986,11 +986,11 @@
       "label": "b2_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.9126844876426405,
-        "deepgemm": 5.178804768646236
+        "tirx": 4.875603459747173,
+        "deepgemm": 5.155142787524366
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1000,11 +1000,11 @@
       "label": "b2_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.76222291621157,
-        "deepgemm": 4.798262354474672
+        "tirx": 4.804933514986376,
+        "deepgemm": 4.832043499275012
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1014,11 +1014,11 @@
       "label": "b2_n1_mp1_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.2293974290435274,
-        "deepgemm": 4.430715103075111
+        "tirx": 4.450989230769231,
+        "deepgemm": 4.749130299896588
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1028,11 +1028,11 @@
       "label": "b2_n1_mp1_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.241095375688328,
-        "deepgemm": 4.43977434318744
+        "tirx": 4.617421453287196,
+        "deepgemm": 5.113345915201655
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1042,11 +1042,11 @@
       "label": "b2_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.231222624684148,
-        "deepgemm": 4.436226043469786
+        "tirx": 4.280241356816699,
+        "deepgemm": 4.579906750849927
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1056,11 +1056,11 @@
       "label": "b2_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.165030403989737,
-        "deepgemm": 4.397658327430368
+        "tirx": 4.680804580152672,
+        "deepgemm": 5.20238163064833
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1070,11 +1070,11 @@
       "label": "b2_n1_mp32_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.5622304059730805,
-        "deepgemm": 4.587379093249268
+        "tirx": 4.72775500770416,
+        "deepgemm": 4.9721900097943195
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1084,11 +1084,11 @@
       "label": "b2_n1_mp32_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.640548414977846,
-        "deepgemm": 4.645367378746043
+        "tirx": 4.709147752808989,
+        "deepgemm": 4.757922365038561
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1098,11 +1098,11 @@
       "label": "b2_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.521887903840914,
-        "deepgemm": 4.607530975326284
+        "tirx": 4.782315160955347,
+        "deepgemm": 4.851597229621737
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1112,11 +1112,11 @@
       "label": "b2_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.532418994673067,
-        "deepgemm": 4.557218187542666
+        "tirx": 4.752292569659443,
+        "deepgemm": 5.022170778906628
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1126,11 +1126,11 @@
       "label": "b2_n1_mp8_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.477019812983126,
-        "deepgemm": 4.480226671687405
+        "tirx": 4.500961737331955,
+        "deepgemm": 4.482214592274678
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1140,11 +1140,11 @@
       "label": "b2_n1_mp8_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.472911514838609,
-        "deepgemm": 4.488759470945623
+        "tirx": 4.732190960451978,
+        "deepgemm": 4.806768123667377
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1154,11 +1154,11 @@
       "label": "b2_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.494226190852401,
-        "deepgemm": 4.514331629930997
+        "tirx": 4.6657200220022,
+        "deepgemm": 4.910584895833334
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1168,11 +1168,11 @@
       "label": "b2_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.518627407751667,
-        "deepgemm": 4.542589466849534
+        "tirx": 4.701239170225747,
+        "deepgemm": 4.7742702312138725
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1182,11 +1182,11 @@
       "label": "b4_n1_mp128_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.945116061558567,
-        "deepgemm": 4.965621140554613
+        "tirx": 5.2175362537764345,
+        "deepgemm": 5.243595073891625
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1196,11 +1196,11 @@
       "label": "b4_n1_mp128_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.958796347700155,
-        "deepgemm": 4.990810781034839
+        "tirx": 4.9681256890848955,
+        "deepgemm": 4.994303974221268
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1210,11 +1210,11 @@
       "label": "b4_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.314467450229999,
-        "deepgemm": 5.351936485873582
+        "tirx": 5.308456168831169,
+        "deepgemm": 5.368047290640394
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1224,11 +1224,11 @@
       "label": "b4_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.205538528770908,
-        "deepgemm": 5.244146201454849
+        "tirx": 5.2479292811221505,
+        "deepgemm": 5.307029469548134
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1238,11 +1238,11 @@
       "label": "b4_n1_mp1_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.320454417579748,
-        "deepgemm": 4.873034724397177
+        "tirx": 4.624866081229418,
+        "deepgemm": 5.166952634122764
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1252,11 +1252,11 @@
       "label": "b4_n1_mp1_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.315863337566755,
-        "deepgemm": 4.884177537812735
+        "tirx": 4.305321591650359,
+        "deepgemm": 4.883419889502762
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1266,11 +1266,11 @@
       "label": "b4_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.235396400550298,
-        "deepgemm": 4.411063157244221
+        "tirx": 4.654007888349515,
+        "deepgemm": 5.203958045977011
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1280,11 +1280,11 @@
       "label": "b4_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.270329532776784,
-        "deepgemm": 4.7848956553360384
+        "tirx": 4.274547692307692,
+        "deepgemm": 4.458565488565489
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1294,11 +1294,11 @@
       "label": "b4_n1_mp32_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.683162092980389,
-        "deepgemm": 4.954828497800527
+        "tirx": 4.633745982374287,
+        "deepgemm": 4.666236131566029
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1308,11 +1308,11 @@
       "label": "b4_n1_mp32_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.786690643655674,
-        "deepgemm": 5.077428516407936
+        "tirx": 5.143465667915106,
+        "deepgemm": 5.3925900587920905
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1322,11 +1322,11 @@
       "label": "b4_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.647011183165634,
-        "deepgemm": 4.6633385519726165
+        "tirx": 4.703170166935918,
+        "deepgemm": 4.723897908366534
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1336,11 +1336,11 @@
       "label": "b4_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.833759681351352,
-        "deepgemm": 5.129434314942064
+        "tirx": 4.857088326446282,
+        "deepgemm": 5.134187212276215
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1350,11 +1350,11 @@
       "label": "b4_n1_mp8_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.700755933279064,
-        "deepgemm": 5.01904688942183
+        "tirx": 4.717279608650876,
+        "deepgemm": 4.980065036674817
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1364,11 +1364,11 @@
       "label": "b4_n1_mp8_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.6238980470188205,
-        "deepgemm": 4.893541598333501
+        "tirx": 4.734146153846154,
+        "deepgemm": 4.781957186544342
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1378,11 +1378,11 @@
       "label": "b4_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.6194139132639584,
-        "deepgemm": 4.618708341320342
+        "tirx": 4.764653653095371,
+        "deepgemm": 4.809470455824423
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1392,11 +1392,11 @@
       "label": "b4_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.524320951736397,
-        "deepgemm": 4.561683797877049
+        "tirx": 4.532034020618557,
+        "deepgemm": 4.560356137797186
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1406,11 +1406,11 @@
       "label": "b8_n1_mp128_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.959937468053216,
-        "deepgemm": 5.1579567262242625
+        "tirx": 4.905185656154628,
+        "deepgemm": 5.217200775945684
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1420,11 +1420,11 @@
       "label": "b8_n1_mp128_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.094880937204111,
-        "deepgemm": 5.143614480401206
+        "tirx": 5.298521627188466,
+        "deepgemm": 5.369932392996109
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1434,11 +1434,11 @@
       "label": "b8_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.594842173528458,
-        "deepgemm": 5.639840213220887
+        "tirx": 5.563488654353562,
+        "deepgemm": 5.609391326794011
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1448,11 +1448,11 @@
       "label": "b8_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.415019842952406,
-        "deepgemm": 5.456621183187572
+        "tirx": 5.469692544987146,
+        "deepgemm": 5.522623931623931
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1462,11 +1462,11 @@
       "label": "b8_n1_mp1_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.301327230406548,
-        "deepgemm": 4.611609222223862
+        "tirx": 4.527442329873126,
+        "deepgemm": 4.866563978494624
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1476,11 +1476,11 @@
       "label": "b8_n1_mp1_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.3431733697100405,
-        "deepgemm": 4.655179644606974
+        "tirx": 4.418901020408163,
+        "deepgemm": 4.720321428571428
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1490,11 +1490,11 @@
       "label": "b8_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.404923019735189,
-        "deepgemm": 4.933867628547368
+        "tirx": 4.280881706528765,
+        "deepgemm": 4.8594995004995
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1504,11 +1504,11 @@
       "label": "b8_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.209035964786978,
-        "deepgemm": 4.471085611571118
+        "tirx": 4.386868048533873,
+        "deepgemm": 4.920249621020718
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1518,11 +1518,11 @@
       "label": "b8_n1_mp32_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.714004032969579,
-        "deepgemm": 4.722306436908442
+        "tirx": 4.782987100737101,
+        "deepgemm": 4.777949249093734
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1532,11 +1532,11 @@
       "label": "b8_n1_mp32_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.724148972426214,
-        "deepgemm": 4.7194255284134785
+        "tirx": 5.238632788868724,
+        "deepgemm": 5.317879454926625
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1546,11 +1546,11 @@
       "label": "b8_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.994359210518174,
-        "deepgemm": 5.248108383161606
+        "tirx": 4.952827643171807,
+        "deepgemm": 4.990862648221344
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1560,11 +1560,11 @@
       "label": "b8_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.9181634701559425,
-        "deepgemm": 4.950541717908258
+        "tirx": 4.8306063893912,
+        "deepgemm": 4.846394780677402
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1574,11 +1574,11 @@
       "label": "b8_n1_mp8_ps32_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.5914727423855055,
-        "deepgemm": 4.57586539625447
+        "tirx": 5.1218396471198755,
+        "deepgemm": 5.369828585961343
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1588,11 +1588,11 @@
       "label": "b8_n1_mp8_ps32_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.580605278486819,
-        "deepgemm": 4.615216295333325
+        "tirx": 4.765023036649215,
+        "deepgemm": 5.035218929254302
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1602,11 +1602,11 @@
       "label": "b8_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.542193385265806,
-        "deepgemm": 4.645000310448652
+        "tirx": 4.641076406814662,
+        "deepgemm": 4.678895699456253
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1616,11 +1616,11 @@
       "label": "b8_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.518781418849392,
-        "deepgemm": 4.589799758259747
+        "tirx": 4.7631252620545075,
+        "deepgemm": 4.8435538382277175
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1630,11 +1630,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 43.110801856032865,
-        "deepgemm": 44.92372794017744
+        "tirx": 42.85716259398496,
+        "deepgemm": 44.51608706786172
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1644,11 +1644,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 56.86124669451224,
-        "deepgemm": 58.13174246974578
+        "tirx": 57.11721294117647,
+        "deepgemm": 58.16959592711682
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1658,11 +1658,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 42.880464638027554,
-        "deepgemm": 42.32187882482871
+        "tirx": 43.224094034378155,
+        "deepgemm": 42.57477211796247
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1672,11 +1672,11 @@
       "label": "s2048_skv4096_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 56.32980802824536,
-        "deepgemm": 55.66150229373829
+        "tirx": 56.165746987951806,
+        "deepgemm": 55.3137088607595
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1686,11 +1686,11 @@
       "label": "s2048_skv4096_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 43.68311756798535,
-        "deepgemm": 44.94491860847364
+        "tirx": 43.199735714285715,
+        "deepgemm": 44.763303317535545
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1700,11 +1700,11 @@
       "label": "s2048_skv4096_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 56.78060431456964,
-        "deepgemm": 58.124162612844735
+        "tirx": 57.14,
+        "deepgemm": 58.09415154749199
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1714,11 +1714,11 @@
       "label": "s2048_skv4096_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 43.0351632884638,
-        "deepgemm": 41.87442130015923
+        "tirx": 42.83145445445445,
+        "deepgemm": 41.819407169117646
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1728,11 +1728,11 @@
       "label": "s2048_skv4096_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 56.15791809235411,
-        "deepgemm": 54.57143274297992
+        "tirx": 55.355327922077926,
+        "deepgemm": 53.53223463114754
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1742,11 +1742,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 75.37987114012495,
-        "deepgemm": 78.15125236183668
+        "tirx": 74.80119029374202,
+        "deepgemm": 77.83107033248082
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1756,11 +1756,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 116.76799582218497,
-        "deepgemm": 121.15050363191978
+        "tirx": 117.26361428571428,
+        "deepgemm": 120.945811827957
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1770,11 +1770,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 74.15933563924078,
-        "deepgemm": 74.01807960833726
+        "tirx": 73.30898722860792,
+        "deepgemm": 72.9853918918919
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1784,11 +1784,11 @@
       "label": "s2048_skv8192_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 114.62781426525633,
-        "deepgemm": 115.21523751263474
+        "tirx": 114.72568070175438,
+        "deepgemm": 114.90910189982728
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1798,11 +1798,11 @@
       "label": "s2048_skv8192_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 75.69864115984068,
-        "deepgemm": 77.51401107619787
+        "tirx": 75.71179524438573,
+        "deepgemm": 77.94541251596424
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1812,11 +1812,11 @@
       "label": "s2048_skv8192_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 117.50177511306786,
-        "deepgemm": 121.16865039534287
+        "tirx": 116.36637127845884,
+        "deepgemm": 121.59024057450628
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1826,11 +1826,11 @@
       "label": "s2048_skv8192_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 74.23562961728845,
-        "deepgemm": 72.78515597916251
+        "tirx": 74.25217662007624,
+        "deepgemm": 72.81332951653944
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1840,11 +1840,11 @@
       "label": "s2048_skv8192_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 115.89887244221468,
-        "deepgemm": 112.79344242605383
+        "tirx": 115.6440459770115,
+        "deepgemm": 113.19281569965871
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1854,11 +1854,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 75.65370728558091,
-        "deepgemm": 79.18117173500718
+        "tirx": 75.8224359313078,
+        "deepgemm": 79.15683486238532
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1868,11 +1868,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 75.89329846044306,
-        "deepgemm": 79.17621794143679
+        "tirx": 76.2796456582633,
+        "deepgemm": 80.00033940182055
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1882,11 +1882,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 75.14943810579724,
-        "deepgemm": 74.13007550188154
+        "tirx": 75.21076291390729,
+        "deepgemm": 73.76311648079306
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1896,11 +1896,11 @@
       "label": "s4096_skv4096_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 74.82968194523956,
-        "deepgemm": 73.73049623414306
+        "tirx": 75.31165912117177,
+        "deepgemm": 74.36563137755103
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1910,11 +1910,11 @@
       "label": "s4096_skv4096_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 75.52357348622377,
-        "deepgemm": 78.73724803582846
+        "tirx": 75.98233333333333,
+        "deepgemm": 78.86557290322581
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1924,11 +1924,11 @@
       "label": "s4096_skv4096_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 76.19935627750928,
-        "deepgemm": 79.30500746383109
+        "tirx": 75.8781170212766,
+        "deepgemm": 78.98974804177546
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1938,11 +1938,11 @@
       "label": "s4096_skv4096_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 75.34562409517196,
-        "deepgemm": 73.00496573747918
+        "tirx": 75.7589503916449,
+        "deepgemm": 73.16793384615384
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1952,11 +1952,11 @@
       "label": "s4096_skv4096_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 75.15045053880533,
-        "deepgemm": 72.62938045829172
+        "tirx": 75.03811695137976,
+        "deepgemm": 72.33207065217391
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1966,11 +1966,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 136.38983068380585,
-        "deepgemm": 143.31766202445556
+        "tirx": 136.5031586073501,
+        "deepgemm": 143.52870658682633
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1980,11 +1980,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 198.12758827854404,
-        "deepgemm": 206.81072819441485
+        "tirx": 196.41876486486487,
+        "deepgemm": 208.7397313829787
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -1994,11 +1994,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 135.22012552875984,
-        "deepgemm": 134.01472194316355
+        "tirx": 135.46813114754096,
+        "deepgemm": 131.36052650176677
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2008,11 +2008,11 @@
       "label": "s4096_skv8192_h64_d128_bf16_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 195.65721542629132,
-        "deepgemm": 194.77690781884164
+        "tirx": 195.72252791878174,
+        "deepgemm": 193.61337134502924
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2022,11 +2022,11 @@
       "label": "s4096_skv8192_h64_d128_f32_compressed_cp",
       "status": "ok",
       "impls": {
-        "tirx": 136.74848691482396,
-        "deepgemm": 143.0424396042837
+        "tirx": 136.49307753479127,
+        "deepgemm": 143.4408414634146
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2036,11 +2036,11 @@
       "label": "s4096_skv8192_h64_d128_f32_compressed_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 198.65310549141228,
-        "deepgemm": 207.21803204807767
+        "tirx": 198.7637690288714,
+        "deepgemm": 209.17336260623227
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2050,11 +2050,11 @@
       "label": "s4096_skv8192_h64_d128_f32_dense_cp",
       "status": "ok",
       "impls": {
-        "tirx": 135.91195446921208,
-        "deepgemm": 131.77284097218984
+        "tirx": 136.2379258555133,
+        "deepgemm": 127.43903821656049
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2064,11 +2064,11 @@
       "label": "s4096_skv8192_h64_d128_f32_dense_nocp",
       "status": "ok",
       "impls": {
-        "tirx": 196.37107562023078,
-        "deepgemm": 192.00391232194008
+        "tirx": 196.41661167512692,
+        "deepgemm": 189.60269669669668
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2078,11 +2078,11 @@
       "label": "b16_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 6.838321795266035,
-        "deepgemm": 6.825870058173499
+        "tirx": 6.840888685015291,
+        "deepgemm": 6.839675175175175
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2092,11 +2092,11 @@
       "label": "b16_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 7.093786155120932,
-        "deepgemm": 7.085833527600857
+        "tirx": 7.054956140350877,
+        "deepgemm": 7.057845637583893
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2106,11 +2106,11 @@
       "label": "b16_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.471353103401232,
-        "deepgemm": 4.504141151938182
+        "tirx": 4.486983912817852,
+        "deepgemm": 4.49265306122449
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2120,11 +2120,11 @@
       "label": "b16_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.122995384783794,
-        "deepgemm": 5.358519548133985
+        "tirx": 4.685648050579558,
+        "deepgemm": 4.741840247973295
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2134,11 +2134,11 @@
       "label": "b16_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.3286088009712005,
-        "deepgemm": 5.341533268075271
+        "tirx": 5.392896516393442,
+        "deepgemm": 5.4317892677473445
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2148,11 +2148,11 @@
       "label": "b16_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.477478160041937,
-        "deepgemm": 5.497108188357228
+        "tirx": 5.565987872105844,
+        "deepgemm": 5.584885269121813
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2162,11 +2162,11 @@
       "label": "b16_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.305423879458487,
-        "deepgemm": 5.3636539351420245
+        "tirx": 4.783799883653287,
+        "deepgemm": 4.759140625
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2176,11 +2176,11 @@
       "label": "b16_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.983587082871557,
-        "deepgemm": 5.258901788991937
+        "tirx": 4.802601671309192,
+        "deepgemm": 4.76931342570473
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2190,11 +2190,11 @@
       "label": "b1_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.64307901283197,
-        "deepgemm": 4.680402009186599
+        "tirx": 4.705909144196951,
+        "deepgemm": 4.719723845428841
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2204,11 +2204,11 @@
       "label": "b1_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.936735240707276,
-        "deepgemm": 4.947019362758904
+        "tirx": 4.9299402985074625,
+        "deepgemm": 5.15563397260274
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2218,11 +2218,11 @@
       "label": "b1_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.805358910994046,
-        "deepgemm": 4.902243051896311
+        "tirx": 5.106724668435013,
+        "deepgemm": 5.3738776104905295
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2232,11 +2232,11 @@
       "label": "b1_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.79691385626683,
-        "deepgemm": 4.957147848463169
+        "tirx": 4.505509903504317,
+        "deepgemm": 4.663733583489681
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2246,11 +2246,11 @@
       "label": "b1_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.782478288947633,
-        "deepgemm": 5.026239747017229
+        "tirx": 4.729187393526405,
+        "deepgemm": 4.987892282065519
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2260,11 +2260,11 @@
       "label": "b1_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.594607355882679,
-        "deepgemm": 4.599496899625282
+        "tirx": 5.189115732368896,
+        "deepgemm": 5.425044498777506
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2274,11 +2274,11 @@
       "label": "b1_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.572174174763574,
-        "deepgemm": 4.752446679040216
+        "tirx": 5.034614873035067,
+        "deepgemm": 5.2671413793103445
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2288,11 +2288,11 @@
       "label": "b1_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.47830235447222,
-        "deepgemm": 4.488912922924331
+        "tirx": 4.501012939001849,
+        "deepgemm": 4.501177892030848
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2302,11 +2302,11 @@
       "label": "b2_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.124191375186381,
-        "deepgemm": 5.383618251594719
+        "tirx": 5.205313345091123,
+        "deepgemm": 5.196101686507936
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2316,11 +2316,11 @@
       "label": "b2_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.978058512700911,
-        "deepgemm": 5.019472659421227
+        "tirx": 4.7397360672975815,
+        "deepgemm": 4.740846265761396
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2330,11 +2330,11 @@
       "label": "b2_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.58393150291431,
-        "deepgemm": 4.867600053688708
+        "tirx": 4.558727034120735,
+        "deepgemm": 4.815327672327673
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2344,11 +2344,11 @@
       "label": "b2_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.537874043129406,
-        "deepgemm": 4.794227592484748
+        "tirx": 4.963714554579674,
+        "deepgemm": 5.127028957528958
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2358,11 +2358,11 @@
       "label": "b2_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.737592367185203,
-        "deepgemm": 5.043320925543938
+        "tirx": 4.772608548168249,
+        "deepgemm": 5.003138267355134
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2372,11 +2372,11 @@
       "label": "b2_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.854495212236257,
-        "deepgemm": 4.862487234287503
+        "tirx": 4.891379098360656,
+        "deepgemm": 4.896620621608288
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2386,11 +2386,11 @@
       "label": "b2_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.545402545078857,
-        "deepgemm": 4.56038941452437
+        "tirx": 4.769396850393701,
+        "deepgemm": 4.979291750503019
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2400,11 +2400,11 @@
       "label": "b2_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.441079944791696,
-        "deepgemm": 4.466128012422991
+        "tirx": 4.744474042999475,
+        "deepgemm": 4.977162398921833
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2414,11 +2414,11 @@
       "label": "b4_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.36334937884296,
-        "deepgemm": 5.377440060555929
+        "tirx": 5.327362655153805,
+        "deepgemm": 5.329055806938159
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2428,11 +2428,11 @@
       "label": "b4_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.178973385033783,
-        "deepgemm": 5.415392759527658
+        "tirx": 5.301792701469843,
+        "deepgemm": 5.332872451398767
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2442,11 +2442,11 @@
       "label": "b4_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.953493266698692,
-        "deepgemm": 5.18450384560501
+        "tirx": 4.625837125748503,
+        "deepgemm": 4.834009713453133
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2456,11 +2456,11 @@
       "label": "b4_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.604702018541559,
-        "deepgemm": 4.788486173074413
+        "tirx": 4.614139232673268,
+        "deepgemm": 4.826869888475836
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2470,11 +2470,11 @@
       "label": "b4_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.802171754203172,
-        "deepgemm": 4.771005121343866
+        "tirx": 4.73920539083558,
+        "deepgemm": 4.729011667476908
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2484,11 +2484,11 @@
       "label": "b4_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.976554829489116,
-        "deepgemm": 5.227261575969064
+        "tirx": 4.963867616033755,
+        "deepgemm": 4.979425471698113
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2498,11 +2498,11 @@
       "label": "b4_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.5990388785055085,
-        "deepgemm": 4.576876228450627
+        "tirx": 4.787251824817519,
+        "deepgemm": 4.798184172661871
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2512,11 +2512,11 @@
       "label": "b4_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.122363049669619,
-        "deepgemm": 5.339030884947806
+        "tirx": 4.570751796572692,
+        "deepgemm": 4.559584914611006
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2526,11 +2526,11 @@
       "label": "b8_n1_mp128_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.8281936775536884,
-        "deepgemm": 5.855121225162589
+        "tirx": 5.9220550029256875,
+        "deepgemm": 5.866612133267031
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2540,11 +2540,11 @@
       "label": "b8_n1_mp128_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 6.547135519822423,
-        "deepgemm": 6.553092775018759
+        "tirx": 6.2932912723449,
+        "deepgemm": 6.256004411764706
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2554,11 +2554,11 @@
       "label": "b8_n1_mp1_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.073816445791072,
-        "deepgemm": 5.351649886025696
+        "tirx": 4.49433676092545,
+        "deepgemm": 4.448500696055684
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2568,11 +2568,11 @@
       "label": "b8_n1_mp1_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.002272723504125,
-        "deepgemm": 5.250700885169385
+        "tirx": 4.486326047358834,
+        "deepgemm": 4.439347598668569
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2582,11 +2582,11 @@
       "label": "b8_n1_mp32_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.076268020311545,
-        "deepgemm": 5.117047382265957
+        "tirx": 5.280583717357911,
+        "deepgemm": 5.533143549951504
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2596,11 +2596,11 @@
       "label": "b8_n1_mp32_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 5.263096414599243,
-        "deepgemm": 5.323342144616005
+        "tirx": 5.288646811070999,
+        "deepgemm": 5.556938469493279
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2610,11 +2610,11 @@
       "label": "b8_n1_mp8_ps64_h64_d128_bf16_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.715355459094671,
-        "deepgemm": 4.67390469477327
+        "tirx": 4.846651187335092,
+        "deepgemm": 4.868479899497487
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2624,11 +2624,11 @@
       "label": "b8_n1_mp8_ps64_h64_d128_f32_fixed",
       "status": "ok",
       "impls": {
-        "tirx": 4.980448836403218,
-        "deepgemm": 5.181340255333082
+        "tirx": 4.626985235661556,
+        "deepgemm": 4.6046568532818535
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2638,11 +2638,11 @@
       "label": "m137_n24_k7680_s16",
       "status": "ok",
       "impls": {
-        "tirx": 5.679908128841339,
-        "deepgemm": 5.422080020480448
+        "tirx": 5.871088235294118,
+        "deepgemm": 5.582502236135957
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2652,11 +2652,11 @@
       "label": "m13_n24_k7168_s1",
       "status": "ok",
       "impls": {
-        "tirx": 23.914899208496063,
-        "deepgemm": 21.016717892071807
+        "tirx": 24.3509010989011,
+        "deepgemm": 21.430987303506647
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2666,11 +2666,11 @@
       "label": "m4096_n24_k28672_s16",
       "status": "ok",
       "impls": {
-        "tirx": 65.11438166221818,
-        "deepgemm": 63.20283278980532
+        "tirx": 65.22960204081632,
+        "deepgemm": 63.28145734840698
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2680,11 +2680,11 @@
       "label": "m4096_n24_k7168_s1",
       "status": "ok",
       "impls": {
-        "tirx": 25.819394608257923,
-        "deepgemm": 23.823420382944956
+        "tirx": 25.937653846153847,
+        "deepgemm": 23.777964262922783
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2694,11 +2694,11 @@
       "label": "s1024_h32kv16",
       "status": "ok",
       "impls": {
-        "tir": 19.72823849373569,
-        "flashattn_sm100": 19.95134064153417
+        "tir": 19.883488267148014,
+        "flashattn_sm100": 19.93366119500985
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2708,11 +2708,11 @@
       "label": "s1024_h32kv16_causal",
       "status": "ok",
       "impls": {
-        "tir": 20.40380201360332,
-        "flashattn_sm100": 20.297813663692384
+        "tir": 20.633378018318066,
+        "flashattn_sm100": 20.20329364548495
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2722,11 +2722,11 @@
       "label": "s1024_h32kv32",
       "status": "ok",
       "impls": {
-        "tir": 20.07284505795119,
-        "flashattn_sm100": 20.36076521725018
+        "tir": 20.302728295819936,
+        "flashattn_sm100": 20.400581473968895
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2736,11 +2736,11 @@
       "label": "s1024_h32kv32_causal",
       "status": "ok",
       "impls": {
-        "tir": 21.056871891548987,
-        "flashattn_sm100": 21.953688237001398
+        "tir": 21.03932164767748,
+        "flashattn_sm100": 21.529503355704698
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2750,11 +2750,11 @@
       "label": "s1024_h32kv4",
       "status": "ok",
       "impls": {
-        "tir": 19.083277689056764,
-        "flashattn_sm100": 19.551847322236853
+        "tir": 19.242253289473684,
+        "flashattn_sm100": 19.67908288043478
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2764,11 +2764,11 @@
       "label": "s1024_h32kv4_causal",
       "status": "ok",
       "impls": {
-        "tir": 19.291595459472905,
-        "flashattn_sm100": 19.81220867075491
+        "tir": 19.039356453028972,
+        "flashattn_sm100": 19.823527851458888
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2778,11 +2778,11 @@
       "label": "s1024_h32kv8",
       "status": "ok",
       "impls": {
-        "tir": 19.473320733024103,
-        "flashattn_sm100": 19.489159180307418
+        "tir": 19.59831532329495,
+        "flashattn_sm100": 19.677642533936652
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2792,11 +2792,11 @@
       "label": "s1024_h32kv8_causal",
       "status": "ok",
       "impls": {
-        "tir": 19.807390470379147,
-        "flashattn_sm100": 19.9971186502365
+        "tir": 19.591394366197182,
+        "flashattn_sm100": 19.70046753246753
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2806,11 +2806,11 @@
       "label": "s2048_h32kv16",
       "status": "ok",
       "impls": {
-        "tir": 57.286743725750114,
-        "flashattn_sm100": 57.58729353352757
+        "tir": 57.36892030848329,
+        "flashattn_sm100": 58.06671794871795
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2820,11 +2820,11 @@
       "label": "s2048_h32kv16_causal",
       "status": "ok",
       "impls": {
-        "tir": 36.439503318791544,
-        "flashattn_sm100": 38.43540565996095
+        "tir": 36.21125586353945,
+        "flashattn_sm100": 38.756196130167105
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2834,11 +2834,11 @@
       "label": "s2048_h32kv32",
       "status": "ok",
       "impls": {
-        "tir": 59.3448616918899,
-        "flashattn_sm100": 59.578016957226616
+        "tir": 59.05725252525253,
+        "flashattn_sm100": 59.644271276595745
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2848,11 +2848,11 @@
       "label": "s2048_h32kv32_causal",
       "status": "ok",
       "impls": {
-        "tir": 40.52859005773724,
-        "flashattn_sm100": 40.14138057817042
+        "tir": 40.715097826086954,
+        "flashattn_sm100": 40.26011410601977
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2862,11 +2862,11 @@
       "label": "s2048_h32kv4",
       "status": "ok",
       "impls": {
-        "tir": 55.56711970442375,
-        "flashattn_sm100": 56.55396099215774
+        "tir": 55.31331869510665,
+        "flashattn_sm100": 56.03653155080214
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2876,11 +2876,11 @@
       "label": "s2048_h32kv4_causal",
       "status": "ok",
       "impls": {
-        "tir": 34.80826830060756,
-        "flashattn_sm100": 37.65937116471344
+        "tir": 34.92906974248927,
+        "flashattn_sm100": 38.027647737355814
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2890,11 +2890,11 @@
       "label": "s2048_h32kv8",
       "status": "ok",
       "impls": {
-        "tir": 56.038227959919375,
-        "flashattn_sm100": 56.497378546544354
+        "tir": 56.859910669975186,
+        "flashattn_sm100": 57.71930683090706
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2904,11 +2904,11 @@
       "label": "s2048_h32kv8_causal",
       "status": "ok",
       "impls": {
-        "tir": 35.273048393115396,
-        "flashattn_sm100": 38.056218275135436
+        "tir": 35.095755849440486,
+        "flashattn_sm100": 37.83786390532545
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2918,11 +2918,11 @@
       "label": "s4096_h32kv16",
       "status": "ok",
       "impls": {
-        "tir": 212.5262123661077,
-        "flashattn_sm100": 214.22134033027078
+        "tir": 209.96466849315067,
+        "flashattn_sm100": 214.72687823834195
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2932,11 +2932,11 @@
       "label": "s4096_h32kv16_causal",
       "status": "ok",
       "impls": {
-        "tir": 113.15264287824911,
-        "flashattn_sm100": 118.23842934463875
+        "tir": 112.18946619217083,
+        "flashattn_sm100": 114.40953686200378
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2946,11 +2946,11 @@
       "label": "s4096_h32kv32",
       "status": "ok",
       "impls": {
-        "tir": 215.87440409065493,
-        "flashattn_sm100": 217.8643248217039
+        "tir": 215.85344186046513,
+        "flashattn_sm100": 219.99063221884498
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2960,11 +2960,11 @@
       "label": "s4096_h32kv32_causal",
       "status": "ok",
       "impls": {
-        "tir": 121.85822696100387,
-        "flashattn_sm100": 120.06865108962782
+        "tir": 122.98373027522935,
+        "flashattn_sm100": 121.32823033707865
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2974,11 +2974,11 @@
       "label": "s4096_h32kv4",
       "status": "ok",
       "impls": {
-        "tir": 205.01892395586378,
-        "flashattn_sm100": 208.6979072525693
+        "tir": 208.14721138211382,
+        "flashattn_sm100": 210.98662790697676
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -2988,11 +2988,11 @@
       "label": "s4096_h32kv4_causal",
       "status": "ok",
       "impls": {
-        "tir": 109.5566249786629,
-        "flashattn_sm100": 114.59505660103635
+        "tir": 108.754,
+        "flashattn_sm100": 115.6558735042735
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3002,11 +3002,11 @@
       "label": "s4096_h32kv8",
       "status": "ok",
       "impls": {
-        "tir": 207.90304161863665,
-        "flashattn_sm100": 210.9835512779516
+        "tir": 206.0879234828496,
+        "flashattn_sm100": 211.61139276485787
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3016,11 +3016,11 @@
       "label": "s4096_h32kv8_causal",
       "status": "ok",
       "impls": {
-        "tir": 110.8185250552685,
-        "flashattn_sm100": 115.89252179915668
+        "tir": 109.47689357798166,
+        "flashattn_sm100": 116.91524790619766
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3030,11 +3030,11 @@
       "label": "s8192_h32kv16",
       "status": "ok",
       "impls": {
-        "tir": 770.6607514126938,
-        "flashattn_sm100": 775.3192765935335
+        "tir": 765.7912380952381,
+        "flashattn_sm100": 759.8213999999999
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3044,11 +3044,11 @@
       "label": "s8192_h32kv16_causal",
       "status": "ok",
       "impls": {
-        "tir": 467.6625153341993,
-        "flashattn_sm100": 424.5642734297021
+        "tir": 467.3903523316062,
+        "flashattn_sm100": 429.1735
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3058,11 +3058,11 @@
       "label": "s8192_h32kv32",
       "status": "ok",
       "impls": {
-        "tir": 777.8879383540767,
-        "flashattn_sm100": 793.8104483747728
+        "tir": 786.8264603174603,
+        "flashattn_sm100": 803.3429074074074
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3072,11 +3072,11 @@
       "label": "s8192_h32kv32_causal",
       "status": "ok",
       "impls": {
-        "tir": 438.01895779904305,
-        "flashattn_sm100": 437.0447980533739
+        "tir": 436.8399330143541,
+        "flashattn_sm100": 434.9411576576577
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3086,11 +3086,11 @@
       "label": "s8192_h32kv4",
       "status": "ok",
       "impls": {
-        "tir": 767.994544857662,
-        "flashattn_sm100": 767.9092213924283
+        "tir": 753.1619527559054,
+        "flashattn_sm100": 771.7754262295082
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3100,11 +3100,11 @@
       "label": "s8192_h32kv4_causal",
       "status": "ok",
       "impls": {
-        "tir": 411.3739958919894,
-        "flashattn_sm100": 418.77734183781644
+        "tir": 408.16558823529414,
+        "flashattn_sm100": 412.52186813186813
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3114,11 +3114,11 @@
       "label": "s8192_h32kv8",
       "status": "ok",
       "impls": {
-        "tir": 765.9780599182391,
-        "flashattn_sm100": 774.5108288818853
+        "tir": 766.9758661417324,
+        "flashattn_sm100": 772.4355
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3128,11 +3128,11 @@
       "label": "s8192_h32kv8_causal",
       "status": "ok",
       "impls": {
-        "tir": 410.80053414638627,
-        "flashattn_sm100": 420.71979693236716
+        "tir": 411.02918721461185,
+        "flashattn_sm100": 424.4888755555555
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3142,13 +3142,13 @@
       "label": "bf16_1024x1024x1024",
       "status": "ok",
       "impls": {
-        "tir": 6.809280696535286,
-        "torch-cublas": 5.988362101678488,
-        "deepgemm-cublaslt": 5.990508138526958,
-        "deepgemm-bf16": 7.918459426692266
+        "tir": 6.823816397228637,
+        "torch-cublas": 5.997986444855207,
+        "deepgemm-cublaslt": 5.995657142857143,
+        "deepgemm-bf16": 7.902590147282885
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3158,13 +3158,13 @@
       "label": "bf16_16384x16384x16384",
       "status": "ok",
       "impls": {
-        "tir": 5643.136033333333,
-        "torch-cublas": 5514.359122777778,
-        "deepgemm-cublaslt": 5748.184083591331,
-        "deepgemm-bf16": 7121.672294166667
+        "tir": 5895.477631578947,
+        "torch-cublas": 5584.087368421053,
+        "deepgemm-cublaslt": 5635.976411764706,
+        "deepgemm-bf16": 6640.186937500001
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3174,13 +3174,13 @@
       "label": "bf16_2048x2048x2048",
       "status": "ok",
       "impls": {
-        "tir": 16.329823987539328,
-        "torch-cublas": 15.86566962496018,
-        "deepgemm-cublaslt": 15.856059136682758,
-        "deepgemm-bf16": 18.41068267081773
+        "tir": 16.399586552217453,
+        "torch-cublas": 15.698985496736764,
+        "deepgemm-cublaslt": 15.696251324308419,
+        "deepgemm-bf16": 18.454927810650886
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3190,13 +3190,13 @@
       "label": "bf16_4096x4096x4096",
       "status": "ok",
       "impls": {
-        "tir": 93.95245060711272,
-        "torch-cublas": 89.54110080260143,
-        "deepgemm-cublaslt": 89.47169250690035,
-        "deepgemm-bf16": 89.67797427762706
+        "tir": 92.13950074294205,
+        "torch-cublas": 88.09351519536902,
+        "deepgemm-cublaslt": 87.25921991701244,
+        "deepgemm-bf16": 90.43257272727273
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3206,13 +3206,13 @@
       "label": "bf16_8192x8192x8192",
       "status": "ok",
       "impls": {
-        "tir": 670.5452557754303,
-        "torch-cublas": 693.2591746462772,
-        "deepgemm-cublaslt": 709.335271896738,
-        "deepgemm-bf16": 698.795582636858
+        "tir": 683.4882411347518,
+        "torch-cublas": 712.0332941176471,
+        "deepgemm-cublaslt": 695.3538225806451,
+        "deepgemm-bf16": 716.4311092436975
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3222,12 +3222,12 @@
       "label": "fp16_1024x1024x1024",
       "status": "ok",
       "impls": {
-        "tir": 6.831306125030711,
-        "torch-cublas": 6.009478962871572,
-        "deepgemm-cublaslt": 6.010144441157816
+        "tir": 6.986462112514352,
+        "torch-cublas": 6.078108631826189,
+        "deepgemm-cublaslt": 6.093093178778422
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3237,12 +3237,12 @@
       "label": "fp16_16384x16384x16384",
       "status": "ok",
       "impls": {
-        "tir": 5699.551077777778,
-        "torch-cublas": 5488.146996825397,
-        "deepgemm-cublaslt": 5767.703957460318
+        "tir": 5600.692,
+        "torch-cublas": 5745.231666666667,
+        "deepgemm-cublaslt": 5994.315388888889
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3252,12 +3252,12 @@
       "label": "fp16_2048x2048x2048",
       "status": "ok",
       "impls": {
-        "tir": 16.501879106734545,
-        "torch-cublas": 16.011669347625592,
-        "deepgemm-cublaslt": 16.009612644873346
+        "tir": 16.563158152554234,
+        "torch-cublas": 16.024454545454546,
+        "deepgemm-cublaslt": 16.02945347394541
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3267,12 +3267,12 @@
       "label": "fp16_4096x4096x4096",
       "status": "ok",
       "impls": {
-        "tir": 95.2903243629124,
-        "torch-cublas": 92.2563926522689,
-        "deepgemm-cublaslt": 91.81521940241714
+        "tir": 95.6247197640118,
+        "torch-cublas": 91.4865953079179,
+        "deepgemm-cublaslt": 91.17817170111287
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3282,12 +3282,12 @@
       "label": "fp16_8192x8192x8192",
       "status": "ok",
       "impls": {
-        "tir": 717.8418537891799,
-        "torch-cublas": 741.2137815104461,
-        "deepgemm-cublaslt": 733.976826699902
+        "tir": 732.3879705882354,
+        "torch-cublas": 763.0512424242423,
+        "deepgemm-cublaslt": 739.0783070175438
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3297,11 +3297,11 @@
       "label": "deepgemm_m4096_n2112_k7168",
       "status": "ok",
       "impls": {
-        "tir": 50.39247646663577,
-        "deepgemm": 50.70634726054671
+        "tir": 50.3018640776699,
+        "deepgemm": 50.725433771486344
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3311,11 +3311,11 @@
       "label": "deepgemm_m4096_n24576_k1536",
       "status": "ok",
       "impls": {
-        "tir": 116.30321463476993,
-        "deepgemm": 115.50687839091036
+        "tir": 116.05823472668811,
+        "deepgemm": 116.53365130568356
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3325,11 +3325,11 @@
       "label": "deepgemm_m4096_n32768_k512",
       "status": "ok",
       "impls": {
-        "tir": 68.65285026836449,
-        "deepgemm": 71.57193299373766
+        "tir": 67.20346068796069,
+        "deepgemm": 72.33608095238095
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3339,11 +3339,11 @@
       "label": "deepgemm_m4096_n4096_k7168",
       "status": "ok",
       "impls": {
-        "tir": 81.95278148372844,
-        "deepgemm": 80.64454588865466
+        "tir": 82.88986764705884,
+        "deepgemm": 82.55668365817091
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3353,11 +3353,11 @@
       "label": "deepgemm_m4096_n576_k7168",
       "status": "ok",
       "impls": {
-        "tir": 19.984001980304342,
-        "deepgemm": 20.459498988942983
+        "tir": 20.02956770456191,
+        "deepgemm": 20.492062586926288
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3367,11 +3367,11 @@
       "label": "deepgemm_m4096_n7168_k16384",
       "status": "ok",
       "impls": {
-        "tir": 336.1155914054544,
-        "deepgemm": 335.67118735466545
+        "tir": 336.48479272727275,
+        "deepgemm": 336.05821343873515
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3381,11 +3381,11 @@
       "label": "deepgemm_m4096_n7168_k2048",
       "status": "ok",
       "impls": {
-        "tir": 43.088723753452214,
-        "deepgemm": 43.343452598505785
+        "tir": 42.890615528531335,
+        "deepgemm": 43.29085935984481
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3395,12 +3395,12 @@
       "label": "1024x1024x1024",
       "status": "ok",
       "impls": {
-        "tir": 5.220879504241419,
-        "flashinfer": 4.488448097960446,
-        "cublaslt_nvfp4": 4.523086738398494
+        "tir": 5.2125901639344265,
+        "flashinfer": 4.480360655737704,
+        "cublaslt_nvfp4": 4.5215140969163
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3410,12 +3410,12 @@
       "label": "16384x16384x16384",
       "status": "ok",
       "impls": {
-        "tir": 1482.7563488474398,
-        "flashinfer": 1438.6076958225779,
-        "cublaslt_nvfp4": 1457.0014623918992
+        "tir": 1452.6372727272728,
+        "flashinfer": 1398.3717,
+        "cublaslt_nvfp4": 1405.9607
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3425,12 +3425,12 @@
       "label": "2048x2048x2048",
       "status": "ok",
       "impls": {
-        "tir": 8.417200003293287,
-        "flashinfer": 7.687995519532833,
-        "cublaslt_nvfp4": 7.5396675363566485
+        "tir": 8.573875,
+        "flashinfer": 7.58795652173913,
+        "cublaslt_nvfp4": 7.4705743801652895
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3440,12 +3440,12 @@
       "label": "4096x4096x4096",
       "status": "ok",
       "impls": {
-        "tir": 29.5334337914061,
-        "flashinfer": 29.7713554656489,
-        "cublaslt_nvfp4": 28.631889473442474
+        "tir": 29.659278260869566,
+        "flashinfer": 30.026121951219512,
+        "cublaslt_nvfp4": 28.781683659217876
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3455,12 +3455,12 @@
       "label": "8192x8192x8192",
       "status": "ok",
       "impls": {
-        "tir": 184.59399090262332,
-        "flashinfer": 181.79360597215063,
-        "cublaslt_nvfp4": 186.0979010953348
+        "tir": 175.49524509803922,
+        "flashinfer": 184.8774149484536,
+        "cublaslt_nvfp4": 188.23532634032634
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3470,11 +3470,11 @@
       "label": "bench_regular_dqk512_hq128_s4096_kv32768_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 1721.5590773170732,
-        "flashmla": 1735.527848979021
+        "tirx": 1624.1453,
+        "flashmla": 1774.6466666666668
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3484,11 +3484,11 @@
       "label": "bench_regular_dqk512_hq128_s4096_kv65536_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 1878.8945904895106,
-        "flashmla": 1905.3873226168128
+        "tirx": 1795.7931250000001,
+        "flashmla": 1899.9647962962963
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3498,11 +3498,11 @@
       "label": "bench_regular_dqk512_hq128_s4096_kv8192_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 1693.1184739393939,
-        "flashmla": 1734.047358656924
+        "tirx": 1704.9223513513514,
+        "flashmla": 1758.6548301886794
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3512,11 +3512,11 @@
       "label": "bench_regular_dqk576_hq128_s4096_kv32768_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 1800.4858403080873,
-        "flashmla": 1855.741605989418
+        "tirx": 1803.4952051282053,
+        "flashmla": 1831.07175
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3526,11 +3526,11 @@
       "label": "bench_regular_dqk576_hq128_s4096_kv65536_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 1996.3684401444789,
-        "flashmla": 2003.04144629156
+        "tirx": 1971.9645263157895,
+        "flashmla": 2018.3973478260868
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3540,11 +3540,11 @@
       "label": "bench_regular_dqk576_hq128_s4096_kv8192_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 1774.217461360719,
-        "flashmla": 1816.5807797774967
+        "tirx": 1690.7523333333334,
+        "flashmla": 1803.91144
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3554,11 +3554,11 @@
       "label": "bench_smalltopk_dqk512_hq128_s4096_kv32768_topk1280",
       "status": "ok",
       "impls": {
-        "tirx": 1171.024307103594,
-        "flashmla": 1165.8678852538267
+        "tirx": 1105.8868181818182,
+        "flashmla": 1164.5152643678161
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3568,11 +3568,11 @@
       "label": "bench_smalltopk_dqk512_hq128_s4096_kv65536_topk1280",
       "status": "ok",
       "impls": {
-        "tirx": 1208.4711033077765,
-        "flashmla": 1210.3268394110748
+        "tirx": 1126.665,
+        "flashmla": 1180.8836000000001
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3582,11 +3582,11 @@
       "label": "bench_smalltopk_dqk512_hq128_s4096_kv8192_topk1280",
       "status": "ok",
       "impls": {
-        "tirx": 1161.7948522158842,
-        "flashmla": 1153.1357552903887
+        "tirx": 1079.1054411764708,
+        "flashmla": 1152.0631411764705
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3596,11 +3596,11 @@
       "label": "bench_dqk512_hq64_s4096_kv32768_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 381.56650413492997,
-        "flashmla": 379.24803163126654
+        "tirx": 380.45355555555557,
+        "flashmla": 380.26755895196504
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3610,11 +3610,11 @@
       "label": "bench_dqk512_hq64_s4096_kv49152_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 384.29814064762775,
-        "flashmla": 383.1284248361886
+        "tirx": 367.8164186046511,
+        "flashmla": 385.23722033898304
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3624,11 +3624,11 @@
       "label": "bench_dqk512_hq64_s4096_kv65536_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 389.78404121588557,
-        "flashmla": 389.8650674031448
+        "tirx": 370.0584494382023,
+        "flashmla": 389.47886206896555
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3638,11 +3638,11 @@
       "label": "bench_dqk512_hq64_s4096_kv8192_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 372.76603725382427,
-        "flashmla": 373.15691522990545
+        "tirx": 364.4970625,
+        "flashmla": 373.788243697479
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3652,11 +3652,11 @@
       "label": "bench_dqk576_hq64_s4096_kv32768_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 401.81879018297064,
-        "flashmla": 398.24056213196656
+        "tirx": 377.2034848484849,
+        "flashmla": 395.27800892857147
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3666,11 +3666,11 @@
       "label": "bench_dqk576_hq64_s4096_kv49152_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 405.53762073327346,
-        "flashmla": 404.6971683664135
+        "tirx": 381.1477777777778,
+        "flashmla": 409.95456950672644
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3680,11 +3680,11 @@
       "label": "bench_dqk576_hq64_s4096_kv65536_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 414.66201634913074,
-        "flashmla": 419.3141670354429
+        "tirx": 387.7999438202247,
+        "flashmla": 422.32702403846156
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     },
@@ -3694,11 +3694,11 @@
       "label": "bench_dqk576_hq64_s4096_kv8192_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 383.81364772939213,
-        "flashmla": 382.3221131337005
+        "tirx": 368.34220930232556,
+        "flashmla": 385.67515811965814
       },
       "aggregated": {
-        "rounds": 5,
+        "rounds": 1,
         "method": "mean"
       }
     }
