@@ -15,18 +15,9 @@ import tvm
 from tvm.backend.cuda.operator.tile_primitive.tma_utils import SwizzleMode
 from tvm.script import tirx as T
 from tvm.script.tirx import tile as Tx
-from tvm.tirx.bench import tensor_bytes
+from tvm.tirx.bench import bench
 from tvm.tirx.lang.pipeline import MBarrier, Pipeline, PipelineState
 from tvm.tirx.lang.tile_scheduler import ClusterPersistentScheduler2D
-
-try:
-    from tvm.tirx.bench import bench_tk as _bench_groups
-
-    _BENCH_GROUPS_SUPPORTS_ROUNDS = True
-except ImportError:
-    from tvm.tirx.bench import bench as _bench_groups
-
-    _BENCH_GROUPS_SUPPORTS_ROUNDS = False
 
 KERNEL_META = {"name": "grouped_fp8_gemm_contiguous", "category": "gemm", "compute_capability": 10}
 CONFIGS = [
@@ -838,9 +829,9 @@ def run_bench(
     K: int = 2048,
     seed: int = 1,
     *,
-    warmup: int = 10,
-    repeat: int = 30,
-    timer: str = "event",
+    warmup: int | None = None,
+    repeat: int | None = None,
+    timer: str | None = None,
     rounds: int = 1,
     round_cooldown_s: float = 1.0,
     **kwargs,
@@ -860,50 +851,26 @@ def run_bench(
         deepgemm_sample = _prepare_deepgemm_case(deep_gemm, sample)
         deepgemm_sample["run"]()
         _check("deepgemm", deepgemm_sample["D"], sample["ref"])
-        deepgemm_module = deep_gemm
     except Exception as exc:
         deepgemm_error = exc
 
-    funcs = {"tir": lambda case: case["tir"]()}
+    funcs = {"tir": tir_sample}
 
     def build_deepgemm():
         if deepgemm_error is not None:
             raise RuntimeError(
                 f"DeepGEMM baseline setup failed: {deepgemm_error}"
             ) from deepgemm_error
-        return lambda case: case["deepgemm"]["run"]()
+        return deepgemm_sample["run"]
 
-    def make_input():
-        data = prepare_data(
-            num_groups, expected_m_per_group, N, K, seed=seed, compute_reference=False
-        )
-        case = {"data": data, "tir": _make_kernel_callable(ex, data)}
-        input_tensors = [
-            data["A_fp8"],
-            data["B_fp8"],
-            data["SFA"],
-            data["SFB"],
-            data["grouped_layout"],
-            data["D_tir"],
-        ]
-        if deepgemm_module is not None:
-            deepgemm_case = _prepare_deepgemm_case(deepgemm_module, data)
-            case["deepgemm"] = deepgemm_case
-            input_tensors.extend([deepgemm_case["SFA"], deepgemm_case["SFB"], deepgemm_case["D"]])
-        input_bytes = tensor_bytes(*input_tensors)
-        return case, input_bytes
-
-    bench_kwargs = {
-        "warmup": warmup,
-        "repeat": repeat,
-        "timer": timer,
-        "proton_name": "grouped_fp8_gemm_contiguous",
-        "cooldown_s": 0.0,
-    }
-    if _BENCH_GROUPS_SUPPORTS_ROUNDS:
-        bench_kwargs.update(rounds=rounds, round_cooldown_s=round_cooldown_s)
-    result = _bench_groups(
-        funcs, make_input, references={"deepgemm": build_deepgemm}, **bench_kwargs
+    result = bench(
+        funcs,
+        warmup=warmup,
+        repeat=repeat,
+        timer=timer,
+        references={"deepgemm": build_deepgemm},
+        rounds=rounds,
+        round_cooldown_s=round_cooldown_s,
     )
     result.update(
         {
