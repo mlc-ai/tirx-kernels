@@ -178,6 +178,9 @@ def _kernel(
     WG_NUMBER: T.constexpr = 2,
     SM_NUMBER: T.constexpr = 148,
     TILE_GROUPS_ROW_SIZE: T.constexpr = 16,
+    SCHED_CLUSTER_SIZE: T.constexpr = 1,
+    SCHED_SERPENTINE: T.constexpr = False,
+    TMA_L2_PROMOTION: T.constexpr = 256,
 ):
     CTA_GROUP = T.meta_var(LOGICAL_M_CLUSTER * LOGICAL_N_CLUSTER)
     CTA_MASK = T.meta_var((1 << CTA_GROUP) - 1)
@@ -267,12 +270,13 @@ def _kernel(
     stage: T.int32
     tile_scheduler = ClusterPersistentScheduler2D(
         "tile_scheduler",
-        num_m_tiles=SCHED_M_NUM,
+        num_m_tiles=SCHED_M_NUM // SCHED_CLUSTER_SIZE,
         num_n_tiles=SCHED_N_NUM,
         l2_group_size=TILE_GROUPS_ROW_SIZE,
-        num_clusters=SM_NUMBER,
+        num_clusters=SM_NUMBER // SCHED_CLUSTER_SIZE,
+        serpentine=SCHED_SERPENTINE,
     )
-    tile_scheduler.init(bx)
+    tile_scheduler.init(bx // SCHED_CLUSTER_SIZE)
     tmem_pool.commit()
     if CTA_GROUP > 1:
         T.cuda.cluster_sync()
@@ -282,7 +286,11 @@ def _kernel(
     T.cuda.trap_when_assert_failed(tmem_pool.addr == 0)
 
     m_idx = T.meta_var(tile_scheduler.n_idx if SWAP_AB else tile_scheduler.m_idx)
-    n_idx = T.meta_var(tile_scheduler.m_idx if SWAP_AB else tile_scheduler.n_idx)
+    n_idx = T.meta_var(
+        tile_scheduler.m_idx * SCHED_CLUSTER_SIZE + cluster_rank * (SCHED_CLUSTER_SIZE - 1)
+        if SWAP_AB
+        else tile_scheduler.n_idx
+    )
 
     if wg_id == 0:
         if warp_id == 0:
@@ -308,11 +316,36 @@ def _kernel(
                         "mbar": smem_pipe.full.ptr_to([stage]),
                         "cta_group": 1,
                         "cache_hint": "evict_normal",
+                        "l2_promotion": TMA_L2_PROMOTION,
                         "prefetch_tensormap": True,
                     }
                 )
-                Tx.copy_async(A_smem[stage], A[a_m : a_m + BLK_M, k : k + BLK_K], **tma_copy)
-                Tx.copy_async(B_smem[stage], B[group, b_n : b_n + BLK_N, k : k + BLK_K], **tma_copy)
+                tma_copy_evict_last = T.meta_var(
+                    {
+                        "dispatch": "tma",
+                        "mbar": smem_pipe.full.ptr_to([stage]),
+                        "cta_group": 1,
+                        "cache_hint": "evict_last",
+                        "l2_promotion": TMA_L2_PROMOTION,
+                        "prefetch_tensormap": True,
+                    }
+                )
+                if NUM_GROUPS == 8 and K >= 4096:
+                    Tx.copy_async(
+                        A_smem[stage], A[a_m : a_m + BLK_M, k : k + BLK_K], **tma_copy_evict_last
+                    )
+                else:
+                    Tx.copy_async(A_smem[stage], A[a_m : a_m + BLK_M, k : k + BLK_K], **tma_copy)
+                if (NUM_GROUPS == 4 and K == 4096) or (NUM_GROUPS == 8 and K == 2048):
+                    Tx.copy_async(
+                        B_smem[stage],
+                        B[group, b_n : b_n + BLK_N, k : k + BLK_K],
+                        **tma_copy_evict_last,
+                    )
+                else:
+                    Tx.copy_async(
+                        B_smem[stage], B[group, b_n : b_n + BLK_N, k : k + BLK_K], **tma_copy
+                    )
                 if k_tile % 4 == 0:
                     Tx.copy_async(
                         SFA_smem[stage, 0:DG_BLOCK_M],
@@ -374,55 +407,53 @@ def _kernel(
             tmem_phase: T.int32
             mma_state = PipelineState(SMEM_DEPTH, 0)
             accum: T.int32
+            mma_issue: T.uint32
 
             # Keep waits and pipeline state warp-uniform so ptxas can use URs;
             # elect a single lane only for tcgen05 issue and commit instructions.
             @T.inline
-            def mma(ks, k_tile):
+            def mma(ks, sf_off: T.constexpr, copy_sf: T.constexpr):
+                ks_desc: T.int32
                 trans_done.wait(ks, mma_state.phase)
                 T.ptx.tcgen05.fence.after_thread_sync()
+                ks_desc = T.cuda.__shfl_sync(T.uint32(0xFFFFFFFF), ks, 0, 32)
 
                 @T.inline
                 def gemm_with_sf(sf_off: T.constexpr):
                     if SWAP_AB:
                         Tx.gemm_async(
                             acc[tmem_idx],
-                            B_smem[ks],
-                            A_smem[ks],
+                            B_smem[ks_desc],
+                            A_smem[ks_desc],
                             SFA=SFB_tmem[tmem_idx, :, sf_off : sf_off + K_ITERS],
                             SFB=SFA_tmem[tmem_idx, :, sf_off : sf_off + K_ITERS],
                             accum=accum,
                             dispatch="tcgen05",
                             cta_group=CTA_GROUP,
+                            pred=mma_issue,
                         )
                     else:
                         Tx.gemm_async(
                             acc[tmem_idx],
-                            A_smem[ks],
-                            B_smem[ks],
+                            A_smem[ks_desc],
+                            B_smem[ks_desc],
                             SFA=SFA_tmem[tmem_idx, :, sf_off : sf_off + K_ITERS],
                             SFB=SFB_tmem[tmem_idx, :, sf_off : sf_off + K_ITERS],
                             accum=accum,
                             dispatch="tcgen05",
                             cta_group=CTA_GROUP,
+                            pred=mma_issue,
                         )
 
-                if T.ptx.elect_sync():
-                    if k_tile % 4 == 0:
+                mma_issue = T.ptx.elect_sync()
+                if copy_sf:
+                    if mma_issue:
                         Tx.copy_async(SFA_tmem[tmem_idx], SFA_smem_fp8[ks], cta_group=CTA_GROUP)
                         Tx.copy_async(SFB_tmem[tmem_idx], SFB_smem_fp8[ks], cta_group=CTA_GROUP)
-                    if k_tile % 4 == 0:
-                        gemm_with_sf(0)
-                    elif k_tile % 4 == 1:
-                        gemm_with_sf(K_ITERS)
-                    elif k_tile % 4 == 2:
-                        gemm_with_sf(2 * K_ITERS)
-                    else:
-                        gemm_with_sf(3 * K_ITERS)
+                gemm_with_sf(sf_off)
                 accum = 1
                 T.cuda.warp_sync()
-                if T.ptx.elect_sync():
-                    smem_pipe.empty.arrive(ks, cta_group=CTA_GROUP, cta_mask=CTA_MASK)
+                smem_pipe.empty.arrive(ks, cta_group=CTA_GROUP, cta_mask=CTA_MASK, pred=mma_issue)
                 T.cuda.warp_sync()
 
             @T.inline
@@ -432,11 +463,18 @@ def _kernel(
                 tmem_pipe.empty.wait(tmem_idx, tmem_phase)
                 T.ptx.tcgen05.fence.after_thread_sync()
                 accum = 0
-                for k_tile in T.serial(K_TILES):
-                    mma(mma_state.stage, k_tile)
+                for _ in T.serial(K_TILES // 4):
+                    mma(mma_state.stage, 0, True)
                     mma_state.advance()
-                if T.ptx.elect_sync():
-                    tmem_pipe.full.arrive(tmem_idx, cta_group=CTA_GROUP, cta_mask=CTA_MASK)
+                    mma(mma_state.stage, K_ITERS, False)
+                    mma_state.advance()
+                    mma(mma_state.stage, 2 * K_ITERS, False)
+                    mma_state.advance()
+                    mma(mma_state.stage, 3 * K_ITERS, False)
+                    mma_state.advance()
+                tmem_pipe.full.arrive(
+                    tmem_idx, cta_group=CTA_GROUP, cta_mask=CTA_MASK, pred=mma_issue
+                )
                 T.cuda.warp_sync()
 
             while tile_scheduler.valid():
@@ -499,6 +537,7 @@ def _kernel(
                             D[d_m : d_m + D_TILE_M, d_n : d_n + D_TILE_N],
                             D_smem[stage],
                             dispatch="tma",
+                            l2_promotion=TMA_L2_PROMOTION,
                             prefetch_tensormap=True,
                         )
                         T.ptx.cp_async.bulk.commit_group()
@@ -528,6 +567,10 @@ def grouped_fp8_gemm_contiguous(num_groups: int, M: int, N: int, K: int):
     block_n = 128
     log_m = 1
     log_n = 2 if (N // block_n) % 2 == 0 else 1
+    cluster_schedule = num_groups == 8 and K == 4096
+    tile_groups_row_size = (
+        16 if cluster_schedule else 32 if num_groups == 4 and K == 7168 else 24 if K == 7168 else 64
+    )
     smem_pipe_depth = _num_smem_stages(
         swap_ab=swap_ab,
         block_m=block_m,
@@ -546,6 +589,10 @@ def grouped_fp8_gemm_contiguous(num_groups: int, M: int, N: int, K: int):
         SMEM_DEPTH=smem_pipe_depth,
         LOGICAL_M_CLUSTER=log_m,
         LOGICAL_N_CLUSTER=log_n,
+        TILE_GROUPS_ROW_SIZE=tile_groups_row_size,
+        SCHED_CLUSTER_SIZE=2 if cluster_schedule else 1,
+        SCHED_SERPENTINE=cluster_schedule,
+        TMA_L2_PROMOTION=(128 if K in (2048, 7168) or (num_groups == 8 and K == 4096) else 256),
     )
 
 
