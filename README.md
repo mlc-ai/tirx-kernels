@@ -33,7 +33,7 @@ them — they are only needed to actually compile/run a kernel:
 | ---------------- | ---------------------------------- | ------------------------------------------------------ |
 | `tvm.tirx`       | all kernels (compile + run)        | The TIRx compiler. Put it on `PYTHONPATH`, e.g. `/path/to/tir/python`. |
 | `torch`          | all kernels                        | CUDA build matching your GPU.                          |
-| `deep_gemm`      | `fp8_blockwise_gemm` and `deepgemm_*` data/baselines | Used for quantization helpers and references. |
+| `deep_gemm`      | FP8 GEMM and `deepgemm_*` baselines | Used for optimized reference kernels. |
 | `flashinfer`     | `nvfp4_gemm` data/baseline         | Used for nvfp4 quantization and the baseline.          |
 
 ## Usage

@@ -116,6 +116,8 @@ BENCH_CONFIGS = [
 
 DIFF_THRESHOLD = 0.002
 CONTIGUOUS_M_ALIGNMENT = 240
+_DEEPGEMM_SF_RECIPE = (1, 128)
+_DEEPGEMM_GEMM_RECIPE = (1, 1, 128)
 
 
 def _align(value: int, alignment: int) -> int:
@@ -661,6 +663,39 @@ def _pack_b_scales_for_tir(scale: torch.Tensor, N: int) -> torch.Tensor:
     return scale_rows.view(torch.uint32).T.contiguous()
 
 
+def _configure_deepgemm(deep_gemm) -> None:
+    alignment = int(deep_gemm.get_theoretical_mk_alignment_for_contiguous_layout())
+    if alignment != CONTIGUOUS_M_ALIGNMENT:
+        raise RuntimeError(
+            f"expected DeepGEMM contiguous alignment {CONTIGUOUS_M_ALIGNMENT}, got {alignment}"
+        )
+    deep_gemm.set_mk_alignment_for_contiguous_layout(alignment)
+
+
+def _prepare_deepgemm_case(deep_gemm, data: dict) -> dict:
+    M = data["M"]
+    N = data["N"]
+    K = data["K"]
+    num_groups = data["num_groups"]
+    b_scale_rows = data["B_scale"].repeat_interleave(128, dim=1)[:, :N, :].contiguous()
+    sfa = deep_gemm.transform_sf_into_required_layout(data["A_scale"], M, K, _DEEPGEMM_SF_RECIPE)
+    sfb = deep_gemm.transform_sf_into_required_layout(
+        b_scale_rows, N, K, _DEEPGEMM_SF_RECIPE, num_groups
+    )
+    output = torch.empty((M, N), device=data["A_fp8"].device, dtype=torch.bfloat16)
+
+    def run():
+        deep_gemm.m_grouped_fp8_gemm_nt_contiguous(
+            (data["A_fp8"], sfa),
+            (data["B_fp8"], sfb),
+            output,
+            data["grouped_layout"],
+            recipe=_DEEPGEMM_GEMM_RECIPE,
+        )
+
+    return {"SFA": sfa, "SFB": sfb, "D": output, "run": run}
+
+
 def _make_actual_ms(
     num_groups: int, expected_m_per_group: int, seed: int
 ) -> tuple[list[int], list[int]]:
@@ -718,6 +753,7 @@ def prepare_data(
     *,
     seed: int = 0,
     device: str = "cuda",
+    compute_reference: bool = True,
 ) -> dict:
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
@@ -767,20 +803,12 @@ def prepare_data(
             [_pack_b_scales_for_tir(B_scale[group], N) for group in range(num_groups)]
         ),
         "D_tir": torch.empty((M, N), device=device, dtype=torch.bfloat16),
-        "D_torch": torch.empty((M, N), device=device, dtype=torch.bfloat16),
         "grouped_layout": grouped_layout,
         "alignment": CONTIGUOUS_M_ALIGNMENT,
     }
-    data["ref"] = _compute_reference(data)
+    if compute_reference:
+        data["ref"] = _compute_reference(data)
     return data
-
-
-def setup_torch_reference(data: dict):
-    def ref_fn():
-        _compute_reference(data, data["D_torch"])
-
-    ref_fn()
-    return ref_fn
 
 
 def _check(tag: str, out: torch.Tensor, ref: torch.Tensor) -> float:
@@ -823,29 +851,46 @@ def run_bench(
     tir_sample()
     _check("tir", sample["D_tir"], sample["ref"])
 
-    funcs = {
-        "tir": lambda case: case["tir"](),
-        "torch-reference": lambda case: case["torch-reference"](),
-    }
+    deepgemm_module = None
+    deepgemm_error = None
+    try:
+        import deep_gemm
+
+        _configure_deepgemm(deep_gemm)
+        deepgemm_sample = _prepare_deepgemm_case(deep_gemm, sample)
+        deepgemm_sample["run"]()
+        _check("deepgemm", deepgemm_sample["D"], sample["ref"])
+        deepgemm_module = deep_gemm
+    except Exception as exc:
+        deepgemm_error = exc
+
+    funcs = {"tir": lambda case: case["tir"]()}
+
+    def build_deepgemm():
+        if deepgemm_error is not None:
+            raise RuntimeError(
+                f"DeepGEMM baseline setup failed: {deepgemm_error}"
+            ) from deepgemm_error
+        return lambda case: case["deepgemm"]["run"]()
 
     def make_input():
-        data = prepare_data(num_groups, expected_m_per_group, N, K, seed=seed)
-        case = {
-            "data": data,
-            "tir": _make_kernel_callable(ex, data),
-            "torch-reference": setup_torch_reference(data),
-        }
-        input_bytes = tensor_bytes(
+        data = prepare_data(
+            num_groups, expected_m_per_group, N, K, seed=seed, compute_reference=False
+        )
+        case = {"data": data, "tir": _make_kernel_callable(ex, data)}
+        input_tensors = [
             data["A_fp8"],
             data["B_fp8"],
-            data["A_scale"],
-            data["B_scale"],
             data["SFA"],
             data["SFB"],
             data["grouped_layout"],
             data["D_tir"],
-            data["D_torch"],
-        )
+        ]
+        if deepgemm_module is not None:
+            deepgemm_case = _prepare_deepgemm_case(deepgemm_module, data)
+            case["deepgemm"] = deepgemm_case
+            input_tensors.extend([deepgemm_case["SFA"], deepgemm_case["SFB"], deepgemm_case["D"]])
+        input_bytes = tensor_bytes(*input_tensors)
         return case, input_bytes
 
     bench_kwargs = {
@@ -857,7 +902,9 @@ def run_bench(
     }
     if _BENCH_GROUPS_SUPPORTS_ROUNDS:
         bench_kwargs.update(rounds=rounds, round_cooldown_s=round_cooldown_s)
-    result = _bench_groups(funcs, make_input, **bench_kwargs)
+    result = _bench_groups(
+        funcs, make_input, references={"deepgemm": build_deepgemm}, **bench_kwargs
+    )
     result.update(
         {
             "M": sample["M"],
@@ -866,15 +913,18 @@ def run_bench(
             "num_groups": num_groups,
             "actual_ms": sample["actual_ms"],
             "aligned_ms": sample["aligned_ms"],
-            "reference": "local torch dequantized fp8 matmul",
+            "correctness_reference": "local torch dequantized fp8 matmul",
+            "baseline": "deep_gemm.m_grouped_fp8_gemm_nt_contiguous",
+            "deepgemm_scale_mode": "prepacked-ue8m0",
             "timing_scope": {
                 "tir": "kernel-only single launch",
-                "torch-reference": "end-to-end dequantization and per-group matmul",
+                "deepgemm": "kernel-only single launch",
             },
             "tir_launches": 1,
         }
     )
     impls = result.get("impls", {})
-    if impls.get("torch-reference", 0) > 0 and "tir" in impls:
-        result["ratio"] = impls["tir"] / impls["torch-reference"]
+    if impls.get("deepgemm", 0) > 0 and "tir" in impls:
+        result["deepgemm_launches"] = 1
+        result["ratio"] = impls["tir"] / impls["deepgemm"]
     return result
