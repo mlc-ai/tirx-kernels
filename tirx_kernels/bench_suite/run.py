@@ -29,6 +29,7 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
+from importlib.util import find_spec
 from pathlib import Path
 from typing import ClassVar
 
@@ -817,7 +818,7 @@ def collect_kernel_fingerprint() -> dict[str, str | None]:
 
 # Packages used as baselines in workloads.yaml — anything our regression
 # numbers compare against, so the recorded version pins the comparison.
-BASELINE_PACKAGES = ["torch", "deep_gemm", "flashinfer", "flash_attn"]
+BASELINE_PACKAGES = ["torch", "deep_gemm", "flashinfer", "flash_attn", "sglang", "cutlass"]
 
 
 def package_provenance(import_name: str) -> dict | None:
@@ -880,6 +881,22 @@ def package_provenance(import_name: str) -> dict | None:
     except Exception:
         pass
     info: dict = {"importable": mod is not None}
+    # Heavy optional baselines can fail during their top-level import even when
+    # their source checkout is discoverable on PYTHONPATH. Resolve the module
+    # spec without executing it so provenance still records that checkout.
+    try:
+        spec = find_spec(import_name)
+    except Exception:
+        spec = None
+    if spec is not None:
+        source_dir = None
+        if spec.origin and spec.origin not in ("built-in", "frozen"):
+            source_dir = Path(spec.origin).resolve().parent
+        elif spec.submodule_search_locations:
+            source_dir = Path(next(iter(spec.submodule_search_locations))).resolve()
+        if source_dir is not None:
+            info.setdefault("source_dir", str(source_dir))
+            _record_git(source_dir, info)
     # Version: prefer __version__, else importlib.metadata. Top-level import
     # name and the distribution name often disagree (e.g. flash_attn ↔
     # flash-attn-4) — use packages_distributions() to bridge.

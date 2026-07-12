@@ -22,11 +22,34 @@ Import gate (kernels referenced in `workloads.yaml` only):
 python -m tirx_kernels.bench_suite --check-imports
 ```
 
+### SGLang FP8 paged MQA exploration
+
+The optional SGLang CuTeDSL reference is imported lazily; the normal TIRx and
+DeepGEMM paths do not require SGLang. To run the 80-shape SM100 comparison against
+SGLang's current production picker, expose a matching SGLang checkout and install
+the CUTLASS DSL version required by that checkout:
+
+```bash
+export SGLANG_PATH=/path/to/sglang
+export PYTHONPATH="${SGLANG_PATH}/python:${PYTHONPATH}"
+
+python -m tirx_kernels.bench_suite \
+  --workloads tirx_kernels/bench_suite/workloads_sglang_fp8_paged_mqa.yaml \
+  --rounds 5 \
+  --bench-aggregate trimmed_mean
+```
+
+This is a kernel-only Proton comparison: Q/context reshaping, schedule metadata,
+and CuTe JIT compilation happen outside the timed region. Runs are written under
+`.bench-suite/`; inspect that run's `errors` and require every row to contain
+`tirx`, `deepgemm`, and `sglang_cutedsl`. Do not promote this exploratory sweep to
+the pinned baseline until its shape set and winning regions have been reviewed.
+
 ## Directory layout
 
 | Kind | Files |
 |------|--------|
-| **Run** | `run.py`, `workloads.yaml` |
+| **Run** | `run.py`, `workloads.yaml`, `workloads_sglang_fp8_paged_mqa.yaml` |
 | **Pinned baseline (git)** | `baseline.json`, `baseline.md` |
 | **Promote / report** | `promote_baseline.py`, `ratio_diff.py`, `baseline_view.py` |
 

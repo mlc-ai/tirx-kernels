@@ -18,6 +18,7 @@
 import ctypes
 from dataclasses import asdict, dataclass
 from functools import cache
+from importlib.util import find_spec
 from typing import Any
 from unittest import SkipTest
 
@@ -28,6 +29,7 @@ from tvm.ir.type import PointerType, PrimType
 _DEEP_GEMM_MODULE_NAME = "deep_gemm"
 _SM100_SMEM_CAPACITY = 232448
 _TEST_DIFF_THRESHOLD = 5e-6
+_CONTEXT_PATTERNS = ("random_2d", "sglang_fixed", "sglang_ragged")
 
 
 @dataclass(frozen=True)
@@ -45,6 +47,7 @@ class PagedMQALogitsFP8Config:
     context_lens_2d: bool = True
     varlen: bool = False
     indices_pair_stride: int = 1
+    context_pattern: str = "random_2d"
 
     @property
     def max_context_len(self) -> int:
@@ -83,6 +86,10 @@ class PagedMQALogitsFP8Config:
             raise ValueError("DeepGEMM varlen paged mode requires next_n == 1")
         if self.indices_pair_stride <= 0:
             raise ValueError("indices_pair_stride must be positive")
+        if self.context_pattern not in _CONTEXT_PATTERNS:
+            raise ValueError(
+                f"context_pattern must be one of {_CONTEXT_PATTERNS}, got {self.context_pattern!r}"
+            )
 
 
 def _make_config(**kwargs: Any) -> PagedMQALogitsFP8Config:
@@ -107,9 +114,13 @@ def _torch_logits_dtype(dtype: str) -> torch.dtype:
 def _config_label(config: dict[str, Any]) -> str:
     dtype = "f32" if config["logits_dtype"] == "float32" else "bf16"
     mode = "varlen" if config.get("varlen", False) else "fixed"
+    context_suffix = {"random_2d": "", "sglang_fixed": "_sgfixed", "sglang_ragged": "_sgragged"}[
+        config.get("context_pattern", "random_2d")
+    ]
     return (
         f"b{config['batch_size']}_n{config['next_n']}_mp{config['max_num_pages']}_"
         f"ps{config['page_size']}_h{config['num_heads']}_d{config['head_dim']}_{dtype}_{mode}"
+        f"{context_suffix}"
     )
 
 
@@ -122,19 +133,23 @@ def _make_case(
     page_size: int,
     logits_dtype: str,
     seed: int,
+    num_heads: int = 64,
+    head_dim: int = 128,
     varlen: bool = False,
+    context_pattern: str = "random_2d",
 ) -> dict[str, Any]:
     config = {
         "batch_size": batch_size,
         "next_n": next_n,
         "max_num_pages": max_num_pages,
         "num_pages": num_pages,
-        "num_heads": 64,
-        "head_dim": 128,
+        "num_heads": num_heads,
+        "head_dim": head_dim,
         "page_size": page_size,
         "logits_dtype": logits_dtype,
         "seed": seed,
         "varlen": varlen,
+        "context_pattern": context_pattern,
     }
     config["label"] = _config_label(config)
     return config
@@ -164,6 +179,66 @@ DSA_INDEXER_LIKE_COVERAGE = [
     )
 ]
 
+# Complete upstream defaults from
+# benchmark/kernels/deepseek/benchmark_cute_dsl_fp8_paged_mqa_logits.py:
+#   batch_size = (1, 2, 4, 6, 8, 10, 12, 14, 16)
+#   next_n = (1, 2, 4, 6)
+#   context_len = (4096, 10240, 32768, 81920, 131072)
+#   num_heads = 32, head_dim = 128, block_kv = 64, output_dtype = float32
+#   varlen = False, use_cuda_graph = True
+# The Cartesian product contains 9 * 4 * 5 = 180 configs. Extending the same
+# grid to num_heads = (32, 64) contains 360 configs.
+#
+# SGLANG_BENCH_CONFIGS is currently a curated 80-config kernel-only subset:
+#   decode: H=(32,64) x B=(1,2,4,8,16) x every context_len = 50
+#   target verify: H=(32,64) x next_n=(2,4,6) x the five paired (B, pages)
+#                  points below = 30
+# max_num_pages is context_len / page_size, with page_size fixed at 64.
+_SGLANG_CONTEXT_PAGES = (64, 160, 512, 1280, 2048)
+_SGLANG_TARGET_VERIFY_POINTS = ((1, 64), (2, 2048), (6, 160), (10, 512), (16, 1280))
+
+_SGLANG_DECODE_BENCH_CONFIGS = [
+    _make_case(
+        batch_size=batch_size,
+        next_n=1,
+        max_num_pages=max_num_pages,
+        num_pages=max(11923, batch_size * max_num_pages),
+        num_heads=num_heads,
+        page_size=64,
+        logits_dtype="float32",
+        seed=3000 + seed,
+        context_pattern="sglang_fixed",
+    )
+    for seed, (num_heads, batch_size, max_num_pages) in enumerate(
+        (num_heads, batch_size, max_num_pages)
+        for num_heads in (32, 64)
+        for batch_size in (1, 2, 4, 8, 16)
+        for max_num_pages in _SGLANG_CONTEXT_PAGES
+    )
+]
+
+_SGLANG_TARGET_VERIFY_BENCH_CONFIGS = [
+    _make_case(
+        batch_size=batch_size,
+        next_n=next_n,
+        max_num_pages=max_num_pages,
+        num_pages=max(11923, batch_size * max_num_pages),
+        num_heads=num_heads,
+        page_size=64,
+        logits_dtype="float32",
+        seed=4000 + seed,
+        context_pattern="sglang_fixed",
+    )
+    for seed, (num_heads, next_n, batch_size, max_num_pages) in enumerate(
+        (num_heads, next_n, batch_size, max_num_pages)
+        for num_heads in (32, 64)
+        for next_n in (2, 4, 6)
+        for batch_size, max_num_pages in _SGLANG_TARGET_VERIFY_POINTS
+    )
+]
+
+SGLANG_BENCH_CONFIGS = _SGLANG_DECODE_BENCH_CONFIGS + _SGLANG_TARGET_VERIFY_BENCH_CONFIGS
+
 CONFIGS = [
     _make_case(
         batch_size=1,
@@ -192,9 +267,75 @@ CONFIGS = [
         logits_dtype="float32",
         seed=2,
     ),
+    _make_case(
+        batch_size=1,
+        next_n=1,
+        max_num_pages=2,
+        num_pages=128,
+        num_heads=32,
+        page_size=64,
+        logits_dtype="float32",
+        seed=10,
+        context_pattern="sglang_fixed",
+    ),
+    _make_case(
+        batch_size=2,
+        next_n=2,
+        max_num_pages=16,
+        num_pages=128,
+        num_heads=32,
+        page_size=64,
+        logits_dtype="float32",
+        seed=11,
+        context_pattern="sglang_fixed",
+    ),
+    _make_case(
+        batch_size=4,
+        next_n=3,
+        max_num_pages=64,
+        num_pages=256,
+        num_heads=64,
+        page_size=64,
+        logits_dtype="float32",
+        seed=12,
+        context_pattern="sglang_ragged",
+    ),
+    _make_case(
+        batch_size=2,
+        next_n=4,
+        max_num_pages=64,
+        num_pages=128,
+        num_heads=32,
+        page_size=64,
+        logits_dtype="float32",
+        seed=13,
+        context_pattern="sglang_fixed",
+    ),
+    _make_case(
+        batch_size=1,
+        next_n=5,
+        max_num_pages=16,
+        num_pages=128,
+        num_heads=64,
+        page_size=64,
+        logits_dtype="float32",
+        seed=14,
+        context_pattern="sglang_fixed",
+    ),
+    _make_case(
+        batch_size=2,
+        next_n=6,
+        max_num_pages=64,
+        num_pages=128,
+        num_heads=32,
+        page_size=64,
+        logits_dtype="float32",
+        seed=15,
+        context_pattern="sglang_ragged",
+    ),
 ]
 
-BENCH_CONFIGS = DSA_INDEXER_LIKE_COVERAGE
+BENCH_CONFIGS = DSA_INDEXER_LIKE_COVERAGE + SGLANG_BENCH_CONFIGS
 
 
 def load_deep_gemm_paged_mqa() -> tuple[Any, str]:
@@ -214,7 +355,32 @@ def load_deep_gemm_paged_mqa() -> tuple[Any, str]:
 
 def _make_context_lens(config: PagedMQALogitsFP8Config) -> torch.Tensor:
     max_context_len = config.max_context_len
-    if max_context_len == config.page_size:
+    if config.context_pattern == "sglang_fixed":
+        lens = torch.full((config.batch_size, 1), max_context_len, dtype=torch.int32, device="cuda")
+        if config.next_n > 1:
+            lens = (
+                lens
+                - config.next_n
+                + torch.arange(1, config.next_n + 1, dtype=torch.int32, device="cuda")[None, :]
+            )
+    elif config.context_pattern == "sglang_ragged":
+        low = max(config.next_n, config.page_size, int(0.7 * max_context_len))
+        last_token_lens = torch.randint(
+            low=low,
+            high=max_context_len + 1,
+            size=(config.batch_size, 1),
+            dtype=torch.int32,
+            device="cuda",
+        )
+        if config.next_n == 1:
+            lens = last_token_lens
+        else:
+            lens = (
+                last_token_lens
+                - config.next_n
+                + torch.arange(1, config.next_n + 1, dtype=torch.int32, device="cuda")[None, :]
+            )
+    elif max_context_len == config.page_size:
         lens = torch.full(
             (config.batch_size, config.next_n), max_context_len, dtype=torch.int32, device="cuda"
         )
@@ -255,13 +421,15 @@ def _make_indices(config: PagedMQALogitsFP8Config) -> torch.Tensor | None:
     return indices.contiguous()
 
 
-def _make_fused_kv_cache(config: PagedMQALogitsFP8Config) -> tuple[torch.Tensor, torch.Tensor]:
+def _make_fused_kv_cache(
+    config: PagedMQALogitsFP8Config, *, keep_dequant: bool
+) -> tuple[torch.Tensor, torch.Tensor | None]:
     kv_bf16 = torch.randn(
         config.num_pages, config.page_size, config.head_dim, device="cuda", dtype=torch.bfloat16
     ).clamp_(-2.0, 2.0)
     scales = kv_bf16.abs().float().amax(dim=2, keepdim=True).clamp(1e-4) / 448.0
     kv_fp8 = (kv_bf16 * (1.0 / scales)).to(torch.float8_e4m3fn).contiguous()
-    kv_dequant = (kv_fp8.float() * scales).to(torch.bfloat16)
+    kv_dequant = (kv_fp8.float() * scales).to(torch.bfloat16) if keep_dequant else None
     scales = scales.squeeze(-1).contiguous()
 
     fused = torch.empty(
@@ -311,9 +479,8 @@ def _ref_paged_mqa_logits(
     return output
 
 
-def prepare_data(**kwargs: Any) -> dict[str, Any]:
+def _prepare_data(config: PagedMQALogitsFP8Config, *, compute_reference: bool) -> dict[str, Any]:
     deep_gemm, source = load_deep_gemm_paged_mqa()
-    config = _make_config(**kwargs)
     if not torch.cuda.is_available():
         raise SkipTest("CUDA is required for SM100 FP8 paged MQA logits")
     if torch.cuda.get_device_capability()[0] < 10:
@@ -335,7 +502,7 @@ def prepare_data(**kwargs: Any) -> dict[str, Any]:
         dtype=torch.bfloat16,
     ).clamp_(-2.0, 2.0)
     q_fp8 = q_bf16.to(torch.float8_e4m3fn).contiguous()
-    fused_kv_cache, kv_dequant = _make_fused_kv_cache(config)
+    fused_kv_cache, kv_dequant = _make_fused_kv_cache(config, keep_dequant=compute_reference)
     weights = torch.randn(
         config.batch_size * config.next_n, config.num_heads, device="cuda", dtype=torch.float32
     ).contiguous()
@@ -345,10 +512,7 @@ def prepare_data(**kwargs: Any) -> dict[str, Any]:
     schedule_meta = deep_gemm.get_paged_mqa_logits_metadata(
         context_lens, config.page_size, runtime_config.num_sms, indices
     )
-    reference = _ref_paged_mqa_logits(
-        q_fp8.to(torch.bfloat16), kv_dequant, weights, context_lens, block_table, config
-    )
-    return {
+    data = {
         "config": runtime_config,
         "reference_source": source,
         "q": q_fp8,
@@ -358,9 +522,18 @@ def prepare_data(**kwargs: Any) -> dict[str, Any]:
         "block_table": block_table,
         "indices": indices,
         "schedule_meta": schedule_meta,
-        "reference": reference,
         "deep_gemm": deep_gemm,
     }
+    if compute_reference:
+        assert kv_dequant is not None
+        data["reference"] = _ref_paged_mqa_logits(
+            q_fp8.to(torch.bfloat16), kv_dequant, weights, context_lens, block_table, config
+        )
+    return data
+
+
+def prepare_data(**kwargs: Any) -> dict[str, Any]:
+    return _prepare_data(_make_config(**kwargs), compute_reference=True)
 
 
 def get_kernel(**kwargs: Any):
@@ -1548,6 +1721,60 @@ def _run_deepgemm_paged_mqa(data: dict[str, Any], *, clean_logits: bool = False)
     )
 
 
+def _sglang_cutedsl_available() -> bool:
+    return find_spec("sglang") is not None and find_spec("cutlass") is not None
+
+
+def _make_sglang_cutedsl_runner(data: dict[str, Any]) -> Any:
+    config: PagedMQALogitsFP8Config = data["config"]
+    if config.context_pattern == "random_2d" and config.next_n > 1:
+        raise ValueError(
+            "SGLang CuTeDSL requires causal context lengths when next_n > 1; "
+            "use context_pattern='sglang_fixed' or 'sglang_ragged'"
+        )
+
+    from sglang.jit_kernel.dsa.cutedsl_paged_mqa_logits import (
+        CuteDSLPagedMQALogitsRunner,
+        pick_dsl_expand,
+    )
+
+    expand_factor, atom = pick_dsl_expand(
+        config.next_n,
+        batch_size=config.batch_size,
+        max_ctx=config.max_context_len,
+        num_sms=config.num_sms,
+        num_heads=config.num_heads,
+    )
+    expanded_batch = config.batch_size * expand_factor
+    q = data["q"].reshape(expanded_batch, atom, config.num_heads, config.head_dim)
+    context_lens = data["context_lens"][:, -1].contiguous()
+    block_table = data["block_table"]
+    if expand_factor > 1:
+        context_lens = context_lens.repeat_interleave(expand_factor)
+        block_table = block_table.repeat_interleave(expand_factor, dim=0)
+    block_table = block_table.contiguous()
+    schedule_meta = data["deep_gemm"].get_paged_mqa_logits_metadata(
+        context_lens.unsqueeze(-1), config.page_size, config.num_sms
+    )
+    output_dtype = _torch_logits_dtype(config.logits_dtype)
+
+    def _run():
+        return CuteDSLPagedMQALogitsRunner.forward(
+            q,
+            data["fused_kv_cache"],
+            data["weights"],
+            context_lens,
+            block_table,
+            schedule_meta,
+            config.max_context_len,
+            epi_dtype=torch.float32,
+            acc_dtype=torch.float32,
+            output_dtype=output_dtype,
+        )
+
+    return _run
+
+
 def _allocate_logits(config: PagedMQALogitsFP8Config) -> torch.Tensor:
     return torch.full(
         (config.batch_size * config.next_n, config.logits_stride),
@@ -1732,6 +1959,35 @@ def _calc_diff(x: torch.Tensor, y: torch.Tensor) -> float:
     mask = y == float("-inf")
     x = x.masked_fill(mask, 0)
     y = y.masked_fill(mask, 0)
+    if not torch.isfinite(x).all() or not torch.isfinite(y).all():
+        return float("inf")
+    denominator = (x * x + y * y).sum()
+    if denominator == 0:
+        return 0.0
+    sim = 2 * (x * y).sum() / denominator
+    return float((1 - sim).item())
+
+
+def _calc_valid_diff(x: torch.Tensor, y: torch.Tensor, context_lens: torch.Tensor) -> float:
+    expected_rows = context_lens.numel()
+    if x.ndim != 2 or y.ndim != 2:
+        raise AssertionError(f"expected rank-2 logits, got {x.shape=} and {y.shape=}")
+    if x.shape[0] != expected_rows or y.shape[0] != expected_rows:
+        raise AssertionError(
+            f"logits row mismatch: expected {expected_rows}, got {x.shape[0]} and {y.shape[0]}"
+        )
+    required_width = int(context_lens.max().item())
+    if x.shape[1] < required_width or y.shape[1] < required_width:
+        raise AssertionError(
+            f"logits width must cover {required_width}, got {x.shape[1]} and {y.shape[1]}"
+        )
+
+    width = min(x.shape[1], y.shape[1])
+    valid = torch.arange(width, device=context_lens.device)[None, :] < context_lens.reshape(-1, 1)
+    x = x[:, :width].double().masked_fill(~valid, 0)
+    y = y[:, :width].double().masked_fill(~valid, 0)
+    if not torch.isfinite(x).all() or not torch.isfinite(y).all():
+        return float("inf")
     denominator = (x * x + y * y).sum()
     if denominator == 0:
         return 0.0
@@ -1747,8 +2003,18 @@ def _assert_correct(data: dict[str, Any], logits: torch.Tensor, *, name: str) ->
     return diff
 
 
+def _assert_valid_correct(
+    data: dict[str, Any], logits: torch.Tensor, reference: torch.Tensor, *, name: str
+) -> float:
+    diff = _calc_valid_diff(logits, reference, data["context_lens"])
+    if diff >= _TEST_DIFF_THRESHOLD:
+        raise AssertionError(f"{name} valid-logits diff {diff:.6g} >= {_TEST_DIFF_THRESHOLD}")
+    return diff
+
+
 def run_test(**kwargs: Any) -> None:
     data = prepare_data(**kwargs)
+    config: PagedMQALogitsFP8Config = data["config"]
     deepgemm_logits = _run_deepgemm_paged_mqa(data, clean_logits=False)
     deepgemm_diff = _assert_correct(data, deepgemm_logits, name="DeepGEMM")
     tirx_logits = _launch_tirx_paged_mqa(data)
@@ -1758,6 +2024,11 @@ def run_test(**kwargs: Any) -> None:
         raise AssertionError(
             f"TIRx diff {tirx_diff:.6g} is worse than DeepGEMM diff {deepgemm_diff:.6g}"
         )
+    if config.context_pattern.startswith("sglang_") and _sglang_cutedsl_available():
+        cutedsl_runner = _make_sglang_cutedsl_runner(data)
+        cutedsl_logits = cutedsl_runner()
+        torch.cuda.synchronize()
+        _assert_correct(data, cutedsl_logits, name="SGLang CuTeDSL")
 
 
 def run_bench(**kwargs: Any) -> dict[str, Any]:
@@ -1775,18 +2046,31 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
     _rounds = kwargs.pop("rounds", 1)
     _round_cooldown_s = kwargs.pop("round_cooldown_s", 1.0)
     config_kwargs = dict(kwargs)
-    tirx_executable = _compile_tirx_paged_mqa(_make_config(**config_kwargs))
+    config = _make_config(**config_kwargs)
+    tirx_executable = _compile_tirx_paged_mqa(config)
 
     # Allocate inputs once, outside the timed region (Triton-standard pure launch).
-    data = prepare_data(**config_kwargs)
+    # The independent Python reference is intentionally omitted here: it iterates
+    # page-by-page and is prohibitively slow for SGLang's 131K-context sweep.
+    data = _prepare_data(config, compute_reference=False)
     invocation = _prepare_tirx_invocation(data, executable=tirx_executable)
+    deepgemm_logits = _run_deepgemm_paged_mqa(data, clean_logits=False)
     tirx_logits = _run_tirx_invocation(data, invocation)
     torch.cuda.synchronize()
-    max_diff = _assert_correct(data, tirx_logits, name="TIRx")
+    max_diff = _assert_valid_correct(data, tirx_logits, deepgemm_logits, name="TIRx vs DeepGEMM")
     torch.cuda.empty_cache()
 
     def _deepgemm():
         return lambda: _run_deepgemm_paged_mqa(data, clean_logits=False)
+
+    def _sglang_cutedsl():
+        cutedsl_runner = _make_sglang_cutedsl_runner(data)
+        cutedsl_logits = cutedsl_runner()
+        torch.cuda.synchronize()
+        _assert_valid_correct(
+            data, cutedsl_logits, deepgemm_logits, name="SGLang CuTeDSL vs DeepGEMM"
+        )
+        return cutedsl_runner
 
     result = bench(
         {"tirx": lambda: _run_tirx_invocation(data, invocation)},
@@ -1795,7 +2079,7 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
         timer=timer,
         rounds=_rounds,
         round_cooldown_s=_round_cooldown_s,
-        references={"deepgemm": _deepgemm},
+        references={"deepgemm": _deepgemm, "sglang_cutedsl": _sglang_cutedsl},
     )
     result["max_diff"] = max_diff
     return result
@@ -1806,6 +2090,7 @@ __all__ = [
     "CONFIGS",
     "DSA_INDEXER_LIKE_COVERAGE",
     "KERNEL_META",
+    "SGLANG_BENCH_CONFIGS",
     "PagedMQALogitsFP8Config",
     "get_kernel",
     "prepare_data",

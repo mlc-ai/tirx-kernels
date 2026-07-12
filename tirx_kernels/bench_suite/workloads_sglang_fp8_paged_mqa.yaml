@@ -1,0 +1,108 @@
+# SGLang upstream default benchmark configuration:
+#   batch_size: 1, 2, 4, 6, 8, 10, 12, 14, 16
+#   next_n: 1, 2, 4, 6
+#   context_len: 4096, 10240, 32768, 81920, 131072
+#   num_heads: 32; head_dim: 128; block_kv: 64; output_dtype: float32
+#   varlen: false; use_cuda_graph: true
+# Its Cartesian product contains 180 configs; extending num_heads to 32 and 64
+# contains 360 configs.
+#
+# This file is a curated 80-config, kernel-only Proton subset:
+#   decode: H=(32,64) x B=(1,2,4,8,16) x all five context lengths = 50
+#   target verify: H=(32,64) x N=(2,4,6) x these paired (B, context) points = 30
+#     (1,4096), (2,131072), (6,10240), (10,32768), (16,81920)
+# It runs TIRx, DeepGEMM, and the optional SGLang CuTeDSL reference. Keep this
+# exploratory subset separate from the pinned default workload set.
+
+defaults:
+  timer: proton
+
+workloads:
+  # decode: h32, next_n=1
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b1_n1_mp64_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b1_n1_mp160_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b1_n1_mp512_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b1_n1_mp1280_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b1_n1_mp2048_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b2_n1_mp64_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b2_n1_mp160_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b2_n1_mp512_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b2_n1_mp1280_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b2_n1_mp2048_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b4_n1_mp64_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b4_n1_mp160_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b4_n1_mp512_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b4_n1_mp1280_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b4_n1_mp2048_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b8_n1_mp64_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b8_n1_mp160_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b8_n1_mp512_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b8_n1_mp1280_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b8_n1_mp2048_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b16_n1_mp64_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b16_n1_mp160_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b16_n1_mp512_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b16_n1_mp1280_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b16_n1_mp2048_ps64_h32_d128_f32_fixed_sgfixed}
+  # decode: h64, next_n=1
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b1_n1_mp64_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b1_n1_mp160_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b1_n1_mp512_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b1_n1_mp1280_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b1_n1_mp2048_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b2_n1_mp64_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b2_n1_mp160_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b2_n1_mp512_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b2_n1_mp1280_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b2_n1_mp2048_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b4_n1_mp64_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b4_n1_mp160_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b4_n1_mp512_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b4_n1_mp1280_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b4_n1_mp2048_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b8_n1_mp64_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b8_n1_mp160_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b8_n1_mp512_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b8_n1_mp1280_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b8_n1_mp2048_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b16_n1_mp64_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b16_n1_mp160_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b16_n1_mp512_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b16_n1_mp1280_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b16_n1_mp2048_ps64_h64_d128_f32_fixed_sgfixed}
+  # target verify: h32, next_n=2
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b1_n2_mp64_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b2_n2_mp2048_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b6_n2_mp160_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b10_n2_mp512_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b16_n2_mp1280_ps64_h32_d128_f32_fixed_sgfixed}
+  # target verify: h32, next_n=4
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b1_n4_mp64_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b2_n4_mp2048_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b6_n4_mp160_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b10_n4_mp512_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b16_n4_mp1280_ps64_h32_d128_f32_fixed_sgfixed}
+  # target verify: h32, next_n=6
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b1_n6_mp64_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b2_n6_mp2048_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b6_n6_mp160_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b10_n6_mp512_ps64_h32_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b16_n6_mp1280_ps64_h32_d128_f32_fixed_sgfixed}
+  # target verify: h64, next_n=2
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b1_n2_mp64_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b2_n2_mp2048_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b6_n2_mp160_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b10_n2_mp512_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b16_n2_mp1280_ps64_h64_d128_f32_fixed_sgfixed}
+  # target verify: h64, next_n=4
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b1_n4_mp64_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b2_n4_mp2048_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b6_n4_mp160_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b10_n4_mp512_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b16_n4_mp1280_ps64_h64_d128_f32_fixed_sgfixed}
+  # target verify: h64, next_n=6
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b1_n6_mp64_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b2_n6_mp2048_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b6_n6_mp160_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b10_n6_mp512_ps64_h64_d128_f32_fixed_sgfixed}
+  - {kernel: deepgemm_sm100_fp8_paged_mqa_logits, config: b16_n6_mp1280_ps64_h64_d128_f32_fixed_sgfixed}
