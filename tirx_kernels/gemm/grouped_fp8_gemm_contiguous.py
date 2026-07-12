@@ -375,12 +375,12 @@ def _kernel(
             mma_state = PipelineState(SMEM_DEPTH, 0)
             accum: T.int32
 
+            # Keep waits and pipeline state warp-uniform so ptxas can use URs;
+            # elect a single lane only for tcgen05 issue and commit instructions.
             @T.inline
             def mma(ks, k_tile):
                 trans_done.wait(ks, mma_state.phase)
-                if k_tile % 4 == 0:
-                    Tx.copy_async(SFA_tmem[tmem_idx], SFA_smem_fp8[ks], cta_group=CTA_GROUP)
-                    Tx.copy_async(SFB_tmem[tmem_idx], SFB_smem_fp8[ks], cta_group=CTA_GROUP)
+                T.ptx.tcgen05.fence.after_thread_sync()
 
                 @T.inline
                 def gemm_with_sf(sf_off: T.constexpr):
@@ -407,28 +407,37 @@ def _kernel(
                             cta_group=CTA_GROUP,
                         )
 
-                if k_tile % 4 == 0:
-                    gemm_with_sf(0)
-                elif k_tile % 4 == 1:
-                    gemm_with_sf(K_ITERS)
-                elif k_tile % 4 == 2:
-                    gemm_with_sf(2 * K_ITERS)
-                else:
-                    gemm_with_sf(3 * K_ITERS)
+                if T.ptx.elect_sync():
+                    if k_tile % 4 == 0:
+                        Tx.copy_async(SFA_tmem[tmem_idx], SFA_smem_fp8[ks], cta_group=CTA_GROUP)
+                        Tx.copy_async(SFB_tmem[tmem_idx], SFB_smem_fp8[ks], cta_group=CTA_GROUP)
+                    if k_tile % 4 == 0:
+                        gemm_with_sf(0)
+                    elif k_tile % 4 == 1:
+                        gemm_with_sf(K_ITERS)
+                    elif k_tile % 4 == 2:
+                        gemm_with_sf(2 * K_ITERS)
+                    else:
+                        gemm_with_sf(3 * K_ITERS)
                 accum = 1
-                smem_pipe.empty.arrive(ks, cta_group=CTA_GROUP, cta_mask=CTA_MASK)
+                T.cuda.warp_sync()
+                if T.ptx.elect_sync():
+                    smem_pipe.empty.arrive(ks, cta_group=CTA_GROUP, cta_mask=CTA_MASK)
+                T.cuda.warp_sync()
 
             @T.inline
             def mma_iter():
+                tmem_idx = tile_scheduler.tile_idx % TMEM_DEPTH
+                tmem_phase = tile_scheduler.tile_idx // TMEM_DEPTH & 1
+                tmem_pipe.empty.wait(tmem_idx, tmem_phase)
+                T.ptx.tcgen05.fence.after_thread_sync()
+                accum = 0
+                for k_tile in T.serial(K_TILES):
+                    mma(mma_state.stage, k_tile)
+                    mma_state.advance()
                 if T.ptx.elect_sync():
-                    tmem_idx = tile_scheduler.tile_idx % TMEM_DEPTH
-                    tmem_phase = tile_scheduler.tile_idx // TMEM_DEPTH & 1
-                    tmem_pipe.empty.wait(tmem_idx, tmem_phase)
-                    accum = 0
-                    for k_tile in T.serial(K_TILES):
-                        mma(mma_state.stage, k_tile)
-                        mma_state.advance()
                     tmem_pipe.full.arrive(tmem_idx, cta_group=CTA_GROUP, cta_mask=CTA_MASK)
+                T.cuda.warp_sync()
 
             while tile_scheduler.valid():
                 mma_iter()
