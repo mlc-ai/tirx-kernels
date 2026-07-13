@@ -35,6 +35,11 @@ from typing import ClassVar
 
 import yaml
 
+try:
+    from tirx_kernels.bench_suite.impls import our_impls
+except ModuleNotFoundError:  # Support `python tirx_kernels/bench_suite/run.py`.
+    from impls import our_impls
+
 SCRIPT_DIR = Path(__file__).resolve().parent
 
 
@@ -1089,11 +1094,8 @@ BASELINE_IMPL_BY_KERNEL = {
 
 
 def _our_impl(row_impls: dict) -> str | None:
-    """Pick our impl ('tir' or 'tirx') from a row's impls dict."""
-    for name in ("tir", "tirx"):
-        if name in row_impls:
-            return name
-    return None
+    """Pick the first TIR/TIRx implementation from a row's impls dict."""
+    return next(iter(our_impls(row_impls)), None)
 
 
 def write_summary(out_dir: Path, current: dict) -> Path:

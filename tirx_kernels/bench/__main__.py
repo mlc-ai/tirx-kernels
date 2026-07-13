@@ -27,6 +27,10 @@ from tirx_kernels.registry import discover_kernels, load_kernel
 from tirx_kernels.runner import run_kernel_bench
 
 
+def _get_bench_configs(mod):
+    return getattr(mod, "BENCH_CONFIGS", getattr(mod, "CONFIGS", []))
+
+
 def main():
     parser = argparse.ArgumentParser(description="Run kernel benchmarks")
     parser.add_argument("--kernel", type=str, default=None, help="Run only this kernel")
@@ -107,7 +111,7 @@ def main():
     results = []
 
     for name, mod in sorted(all_kernels.items()):
-        configs = getattr(mod, "CONFIGS", [])
+        configs = _get_bench_configs(mod)
         for cfg in configs:
             label = cfg.get("label", "default")
             if args.config and label != args.config:

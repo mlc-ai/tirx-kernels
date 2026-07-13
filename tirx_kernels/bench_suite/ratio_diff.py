@@ -35,7 +35,11 @@ import json
 import sys
 from pathlib import Path
 
-OUR_IMPLS = {"tir", "tirx"}
+try:
+    from tirx_kernels.bench_suite.impls import is_our_impl, our_impls
+except ModuleNotFoundError:  # Support `python tirx_kernels/bench_suite/ratio_diff.py`.
+    from impls import is_our_impl, our_impls
+
 DEFAULT_RATIO_THRESHOLD = 1.0
 HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parent.parent
@@ -44,7 +48,7 @@ DEFAULT_BASELINE = HERE / "baseline.json"
 
 
 def _refs_only(impls: dict[str, float]) -> dict[str, float]:
-    return {k: v for k, v in impls.items() if k not in OUR_IMPLS and v > 0}
+    return {k: v for k, v in impls.items() if not is_our_impl(k) and v > 0}
 
 
 def index(payload: dict) -> dict[tuple[str, str], dict[str, float]]:
@@ -105,7 +109,7 @@ def build_report(
     for r in cur_payload.get("results") or []:
         cur_status[(r["kernel"], r.get("label") or r.get("config"))] = r
 
-    rows: list[tuple[str, str, str, float, float, float, float, float, float, float]] = []
+    rows: list[tuple[str, str, str, str, float, float, float, float, float, float, float]] = []
     skipped_no_ref: list[tuple[str, str]] = []
     # Baseline workloads attempted this run but yielding no comparable ratio
     # (failed, interfered, or ok-but-missing an impl). Workloads simply not in
@@ -114,8 +118,8 @@ def build_report(
     not_comparable: list[tuple[str, str, str]] = []
     for key, base_impls in base.items():
         ref = pick_ref(base_impls)
-        ours_b = next((i for i in OUR_IMPLS if i in base_impls), None)
-        if ref is None or ours_b is None:
+        baseline_ours = our_impls(base_impls)
+        if ref is None or not baseline_ours:
             skipped_no_ref.append(key)
             continue
         if key not in cur:
@@ -123,49 +127,55 @@ def build_report(
             if rec is not None:  # attempted this run but not ok → surface it
                 st = rec.get("status") or "?"
                 err = (rec.get("error") or "").strip().splitlines()
-                not_comparable.append((key[0], key[1], f"{st}: {err[0]}" if err else st))
+                reason = f"{st}: {err[0]}" if err else st
+                for ours_b in baseline_ours:
+                    not_comparable.append((key[0], key[1], f"{ours_b}: {reason}"))
             continue
         cur_impls = cur[key]
-        if ours_b not in cur_impls or ref not in cur_impls:
-            missing = ", ".join(i for i in (ours_b, ref) if i not in cur_impls)
-            not_comparable.append((key[0], key[1], f"ok but missing impl(s): {missing}"))
-            continue
-        our_b_us, ref_b_us = base_impls[ours_b], base_impls[ref]
-        our_c_us, ref_c_us = cur_impls[ours_b], cur_impls[ref]
-        if min(our_b_us, ref_b_us, our_c_us, ref_c_us) <= 0:
-            continue
-        # ref/ours: higher = ours is faster than ref = better.
-        base_ratio = ref_b_us / our_b_us
-        cur_ratio = ref_c_us / our_c_us
-        saved_ratio = base_ratio
-        delta_pct = (cur_ratio - saved_ratio) / saved_ratio * 100.0
-        ref_drift_pct = (ref_c_us - ref_b_us) / ref_b_us * 100.0
-        our_drift_pct = (our_c_us - our_b_us) / our_b_us * 100.0
-        rows.append(
-            (
-                key[0],
-                key[1],
-                ref,
-                our_c_us,
-                ref_c_us,
-                cur_ratio,
-                saved_ratio,
-                delta_pct,
-                our_drift_pct,
-                ref_drift_pct,
+        for ours_b in baseline_ours:
+            if ours_b not in cur_impls or ref not in cur_impls:
+                missing = ", ".join(i for i in (ours_b, ref) if i not in cur_impls)
+                not_comparable.append(
+                    (key[0], key[1], f"{ours_b}: ok but missing impl(s): {missing}")
+                )
+                continue
+            our_b_us, ref_b_us = base_impls[ours_b], base_impls[ref]
+            our_c_us, ref_c_us = cur_impls[ours_b], cur_impls[ref]
+            if min(our_b_us, ref_b_us, our_c_us, ref_c_us) <= 0:
+                continue
+            # ref/ours: higher = ours is faster than ref = better.
+            base_ratio = ref_b_us / our_b_us
+            cur_ratio = ref_c_us / our_c_us
+            saved_ratio = base_ratio
+            delta_pct = (cur_ratio - saved_ratio) / saved_ratio * 100.0
+            ref_drift_pct = (ref_c_us - ref_b_us) / ref_b_us * 100.0
+            our_drift_pct = (our_c_us - our_b_us) / our_b_us * 100.0
+            rows.append(
+                (
+                    key[0],
+                    key[1],
+                    ours_b,
+                    ref,
+                    our_c_us,
+                    ref_c_us,
+                    cur_ratio,
+                    saved_ratio,
+                    delta_pct,
+                    our_drift_pct,
+                    ref_drift_pct,
+                )
             )
-        )
 
     # Positive ratio Δ first (improvements), negative last (regressions).
-    rows.sort(key=lambda r: -r[7])
+    rows.sort(key=lambda r: -r[8])
 
     out = io.StringIO()
 
     def w(line: str = "") -> None:
         out.write(line + "\n")
 
-    n_regressions = sum(1 for r in rows if r[7] <= -threshold_pct)
-    n_improvements = sum(1 for r in rows if r[7] >= threshold_pct)
+    n_regressions = sum(1 for r in rows if r[8] <= -threshold_pct)
+    n_improvements = sum(1 for r in rows if r[8] >= threshold_pct)
 
     w("# bench-suite bench report")
     w()
@@ -176,7 +186,7 @@ def build_report(
         "ours/ref Δ vs pinned baseline abs µs. Sorted by ratio Δ."
     )
     w(
-        f"- Summary: {len(rows)} comparable workloads; "
+        f"- Summary: {len(rows)} comparable implementation/reference measurements; "
         f"{n_improvements} > +{threshold_pct:g}%, {n_regressions} < -{threshold_pct:g}%"
         + (
             f"; {len(not_comparable)} not comparable in current run (see below)"
@@ -189,14 +199,14 @@ def build_report(
 
     if rows:
         w(
-            "| kernel | config | ref | ours (µs) | ref (µs) | ratio | saved | "
+            "| kernel | config | ours impl | ref | ours (µs) | ref (µs) | ratio | saved | "
             "ratio Δ | ours Δ | ref Δ |"
         )
-        w("|---|---|---|---:|---:|---:|---:|---:|---:|---:|")
-        for k, c, ref, our_us, ref_us, cr, sr, d, our_d, ref_d in rows:
+        w("|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|")
+        for k, c, ours, ref, our_us, ref_us, cr, sr, d, our_d, ref_d in rows:
             flag = " ⚠" if abs(ref_d) > 20 else ""
             w(
-                f"| {k} | {c} | {ref} | {our_us:.2f} | {ref_us:.2f} | {cr:.3f} | "
+                f"| {k} | {c} | {ours} | {ref} | {our_us:.2f} | {ref_us:.2f} | {cr:.3f} | "
                 f"{sr:.3f} | {d:+.1f}% | {our_d:+.1f}% | {ref_d:+.1f}%{flag} |"
             )
         w()

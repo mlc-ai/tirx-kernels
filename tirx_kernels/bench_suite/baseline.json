@@ -2,17 +2,18 @@
   "timestamp": "163",
   "label": "5ec3e10a",
   "git": {
-    "tir": "f2214f20",
-    "tirx-kernels": "5ec3e10a",
+    "tir": "62fc55f9",
+    "tirx-kernels": "fdcc24d8-dirty",
     "tirx-bench-ci": null
   },
   "kernel_tree": {
-    "tir:python/tvm/tirx": "38e8068c4c99a2e376ae5c3b6cd47052a4b9da78",
-    "tirx-kernels:tirx_kernels": "744a74f46a9e8dacf82a01a81db629c0ffdbf7c2"
+    "tir:python/tvm/tirx": "20017a734118d1d2e42b599b534f3cf1754d1b2a",
+    "tirx-kernels:tirx_kernels": "22e0d215e71e03f90c1973ad45fe160c5d4ca29b"
   },
   "baselines": {
     "torch": {
       "importable": true,
+      "source_dir": "/home/bohanhou/my/lib/python3.11/site-packages/torch",
       "version": "2.11.0+cu130",
       "cuda": "13.0",
       "torch_git_version": "70d99e998b4955e0049d13a98d77ae1b14db1f45",
@@ -20,26 +21,38 @@
     },
     "deep_gemm": {
       "importable": true,
+      "source_dir": "/home/bohanhou/DeepGEMM",
       "version": "0.1.3",
       "dist": "deep_gemm",
-      "source_dir": "/home/bohanhou/DeepGEMM",
       "editable": true,
       "git_dir": "/home/bohanhou/DeepGEMM",
       "git_sha": "1f6f3f37-dirty"
     },
     "flashinfer": {
       "importable": true,
+      "source_dir": "/home/bohanhou/flashinfer",
+      "git_dir": "/home/bohanhou/flashinfer",
+      "git_sha": "bff85f34-dirty",
       "version": "0.6.12",
       "dist": "flashinfer-python",
-      "source_dir": "/home/bohanhou/flashinfer",
-      "editable": true,
-      "git_dir": "/home/bohanhou/flashinfer",
-      "git_sha": "bff85f34-dirty"
+      "editable": true
     },
     "flash_attn": {
       "importable": true,
+      "source_dir": "/home/bohanhou/my/lib/python3.11/site-packages/flash_attn",
       "dist": "flash-attn-4",
       "version": "4.0.0b15"
+    },
+    "sglang": {
+      "importable": false,
+      "source_dir": "/home/bohanhou/kernel-libs/sglang/python/sglang",
+      "git_dir": "/home/bohanhou/kernel-libs/sglang",
+      "git_sha": "96a04cb1"
+    },
+    "cutlass": {
+      "importable": true,
+      "source_dir": "/home/bohanhou/my/lib/python3.11/site-packages/nvidia_cutlass_dsl/python_packages/cutlass",
+      "version": "4.5.2"
     }
   },
   "probe": {
@@ -3387,6 +3400,142 @@
       "aggregated": {
         "rounds": 1,
         "method": "mean"
+      }
+    },
+    {
+      "kernel": "megakernel_moe",
+      "config": "moe_a3b_bs1024_all",
+      "label": "moe_a3b_bs1024_all",
+      "status": "ok",
+      "impls": {
+        "tir_static": 252.48498468541086,
+        "tir_dynamic": 252.3479483970136,
+        "tir_unfused": 271.774188244176,
+        "sglang_full": 377.99169927029226,
+        "flashinfer_full": 338.8047727142307
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "trimmed_mean"
+      }
+    },
+    {
+      "kernel": "megakernel_moe",
+      "config": "moe_a3b_bs128_all",
+      "label": "moe_a3b_bs128_all",
+      "status": "ok",
+      "impls": {
+        "tir_static": 224.30212029843463,
+        "tir_dynamic": 220.43710552460993,
+        "tir_unfused": 231.1819994526294,
+        "sglang_full": 258.79403074812103,
+        "flashinfer_full": 258.6642814642047
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "trimmed_mean"
+      }
+    },
+    {
+      "kernel": "megakernel_moe",
+      "config": "moe_a3b_bs1_all",
+      "label": "moe_a3b_bs1_all",
+      "status": "ok",
+      "impls": {
+        "tir_static": 34.02481201125048,
+        "tir_dynamic": 38.39744390467718,
+        "tir_unfused": 35.71144635574038,
+        "sglang_full": 55.93734248789606,
+        "flashinfer_full": 63.87254295793396
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "trimmed_mean"
+      }
+    },
+    {
+      "kernel": "megakernel_moe",
+      "config": "moe_a3b_bs2048_all",
+      "label": "moe_a3b_bs2048_all",
+      "status": "ok",
+      "impls": {
+        "tir_static": 338.99249203124054,
+        "tir_dynamic": 335.49304626973003,
+        "tir_unfused": 351.3748045694296,
+        "sglang_full": 456.81716756996747,
+        "flashinfer_full": 416.01922475484525
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "trimmed_mean"
+      }
+    },
+    {
+      "kernel": "megakernel_moe",
+      "config": "moe_a3b_bs32_all",
+      "label": "moe_a3b_bs32_all",
+      "status": "ok",
+      "impls": {
+        "tir_static": 205.2653477830817,
+        "tir_dynamic": 203.8598986843439,
+        "tir_unfused": 206.49439867250763,
+        "sglang_full": 238.01467149381108,
+        "flashinfer_full": 240.31130813953487
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "trimmed_mean"
+      }
+    },
+    {
+      "kernel": "megakernel_moe",
+      "config": "moe_a3b_bs4096_all",
+      "label": "moe_a3b_bs4096_all",
+      "status": "ok",
+      "impls": {
+        "tir_static": 525.5962374871308,
+        "tir_dynamic": 534.2915132225498,
+        "tir_unfused": 534.8385567212334,
+        "sglang_full": 664.1468973507218,
+        "flashinfer_full": 599.7899293761794
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "trimmed_mean"
+      }
+    },
+    {
+      "kernel": "megakernel_moe",
+      "config": "moe_a3b_bs512_all",
+      "label": "moe_a3b_bs512_all",
+      "status": "ok",
+      "impls": {
+        "tir_static": 238.84557861106444,
+        "tir_dynamic": 231.17127885017337,
+        "tir_unfused": 244.9784478793467,
+        "sglang_full": 309.8942094404008,
+        "flashinfer_full": 297.42274928229665
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "trimmed_mean"
+      }
+    },
+    {
+      "kernel": "megakernel_moe",
+      "config": "moe_a3b_bs8_all",
+      "label": "moe_a3b_bs8_all",
+      "status": "ok",
+      "impls": {
+        "tir_static": 102.54223976810225,
+        "tir_dynamic": 103.36675074506869,
+        "tir_unfused": 110.6494041442019,
+        "sglang_full": 144.901873840842,
+        "flashinfer_full": 151.26819980864784
+      },
+      "aggregated": {
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     },
     {

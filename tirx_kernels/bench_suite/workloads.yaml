@@ -11,6 +11,18 @@ defaults:
   # Override warmup/repeat/timer per-workload only for a specific exception.
 
 workloads:
+  # ── megakernel_moe
+  # Qwen3-30B-A3B full MoE: router + expert dispatch and compute. One process
+  # compiles and times static, dynamic, and unfused on the same logical input.
+  - {kernel: megakernel_moe, config: moe_a3b_bs1_all}
+  - {kernel: megakernel_moe, config: moe_a3b_bs8_all}
+  - {kernel: megakernel_moe, config: moe_a3b_bs32_all}
+  - {kernel: megakernel_moe, config: moe_a3b_bs128_all}
+  - {kernel: megakernel_moe, config: moe_a3b_bs512_all}
+  - {kernel: megakernel_moe, config: moe_a3b_bs1024_all}
+  - {kernel: megakernel_moe, config: moe_a3b_bs2048_all}
+  - {kernel: megakernel_moe, config: moe_a3b_bs4096_all}
+
   # ── deepgemm_fp8_fp4_mega_moe
   # Dedicated DeepGEMM-aligned Kineto protocol. `num_gpus` is acquired
   # atomically and exported as the ordered CUDA_VISIBLE_DEVICES rank set.
