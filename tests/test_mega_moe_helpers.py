@@ -241,7 +241,6 @@ def test_megamoe_timer_wraps_deepgemm_bench_kineto() -> None:
         fake_barrier,
         fake_between_impls,
         rounds=2,
-        round_cooldown_s=0,
     )
 
     assert calls == ["tirx", "deepgemm", "deepgemm", "tirx"]

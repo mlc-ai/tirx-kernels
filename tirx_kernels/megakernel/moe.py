@@ -1509,7 +1509,7 @@ def run_bench(
     repeat: int | None = None,
     timer: str | None = None,
     rounds: int = 1,
-    round_cooldown_s: float = 1.0,
+    cooldown_s: float = 1.0,
     **kwargs,
 ):
     _require_cuda_sm100()
@@ -1608,7 +1608,7 @@ def run_bench(
         timer=timer,
         references={"sglang_full": build_sglang_full, "flashinfer_full": build_flashinfer_full},
         rounds=rounds,
-        round_cooldown_s=round_cooldown_s,
+        cooldown_s=cooldown_s,
         **kwargs,
     )
 

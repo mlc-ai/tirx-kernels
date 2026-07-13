@@ -2057,7 +2057,7 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
     warmup = kwargs.pop("warmup", None)
     repeat = kwargs.pop("repeat", None)
     _rounds = kwargs.pop("rounds", 1)
-    _round_cooldown_s = kwargs.pop("round_cooldown_s", 1.0)
+    _cooldown_s = kwargs.pop("cooldown_s", 1.0)
     config_kwargs = dict(kwargs)
     config = _make_config(**config_kwargs)
     tirx_executable = _compile_tirx_paged_mqa(config)
@@ -2091,7 +2091,7 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
         repeat=repeat,
         timer=timer,
         rounds=_rounds,
-        round_cooldown_s=_round_cooldown_s,
+        cooldown_s=_cooldown_s,
         references={"deepgemm": _deepgemm, "sglang_cutedsl": _sglang_cutedsl},
     )
     result["max_diff"] = max_diff

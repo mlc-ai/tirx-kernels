@@ -889,7 +889,7 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
     warmup = kwargs.pop("warmup", None)
     repeat = kwargs.pop("repeat", None)
     _rounds = kwargs.pop("rounds", 1)
-    _round_cooldown_s = kwargs.pop("round_cooldown_s", 1.0)
+    _cooldown_s = kwargs.pop("cooldown_s", 1.0)
     config_kwargs = dict(kwargs)
     config = _make_config(**config_kwargs)
     deep_gemm, _ = load_deep_gemm_hc()
@@ -926,7 +926,7 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
         timer=timer,
         references=references,
         rounds=_rounds,
-        round_cooldown_s=_round_cooldown_s,
+        cooldown_s=_cooldown_s,
     )
     result["tirx_diff"] = tirx_diff
     result["max_diff"] = tirx_diff

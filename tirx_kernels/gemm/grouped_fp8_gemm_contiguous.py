@@ -889,7 +889,7 @@ def run_bench(
     repeat: int | None = None,
     timer: str | None = None,
     rounds: int = 1,
-    round_cooldown_s: float = 1.0,
+    cooldown_s: float = 1.0,
     **kwargs,
 ):
     sample = prepare_data(num_groups, expected_m_per_group, N, K, seed=seed)
@@ -926,7 +926,7 @@ def run_bench(
         timer=timer,
         references={"deepgemm": build_deepgemm},
         rounds=rounds,
-        round_cooldown_s=round_cooldown_s,
+        cooldown_s=cooldown_s,
     )
     result.update(
         {

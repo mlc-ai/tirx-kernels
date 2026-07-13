@@ -985,7 +985,7 @@ def run_bench(
     *, warmup: int | None = None, repeat: int | None = None, timer: str | None = None, **kwargs: Any
 ) -> dict[str, Any]:
     _rounds = kwargs.pop("rounds", 1)
-    _round_cooldown_s = kwargs.pop("round_cooldown_s", 1.0)
+    _cooldown_s = kwargs.pop("cooldown_s", 1.0)
     if not torch.cuda.is_available():
         raise SkipTest("CUDA is required for sparse FlashMLA head128 small-topk phase1 benchmark")
 
@@ -1016,7 +1016,7 @@ def run_bench(
         timer=timer,
         references={"flashmla": _flashmla_ref},
         rounds=_rounds,
-        round_cooldown_s=_round_cooldown_s,
+        cooldown_s=_cooldown_s,
     )
 
 

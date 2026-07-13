@@ -62,7 +62,7 @@ Run artifacts (logs, `runs/*.json`, `reports/*`) live under `.bench-suite/` and 
    workload's requested GPU count, then runs **one**
    bench subprocess that always benches our kernel **and** every reference impl:
    compile/prepare once, then **`--rounds N` in-bench** (each round: warmup + repeat).
-   Optional `--round-cooldown` between rounds.
+   `--cooldown` is applied before every implementation in every round.
 3. **Retry until ok**: INTERFERED / subprocess failure → job goes back on the
    worker queue (another worker may pick it up later). `SKIP` workloads are not
    retried.
@@ -127,7 +127,7 @@ the protocol fixes its own 30-test schedule.
 | Flag | Default | Meaning |
 |------|---------|---------|
 | `--rounds N` | `1` | In-bench rounds (warmup+repeat each) per subprocess |
-| `--round-cooldown` | `1.0` | Seconds between in-bench rounds |
+| `--cooldown` | `1.0` | Seconds before every implementation in every round |
 | `--bench-aggregate` | `mean` | `mean`, `median`, or `trimmed_mean` over round samples |
 | `--cpu-workers` | `0` (= GPU count) | Concurrent workload workers (capped at GPU count) |
 | `--util-threshold` | `0` | Skip GPUs with SM utilization above this percent |

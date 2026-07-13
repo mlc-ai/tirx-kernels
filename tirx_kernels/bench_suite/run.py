@@ -58,7 +58,7 @@ POLL_INTERVAL = 5.0  # seconds between GPU re-checks when none is free
 MONITOR_INTERVAL = 0.5  # seconds between nvidia-smi polls during a workload
 # 0 means auto: one worker per probe-OK GPU (see main()).
 DEFAULT_CPU_WORKERS = 0
-DEFAULT_ROUND_COOLDOWN_S = 1.0
+DEFAULT_COOLDOWN_S = 1.0
 DEFAULT_UTIL_THRESHOLD = 0.0  # % GPU util above which a card counts as busy.
 DEFAULT_MEM_THRESHOLD = 0.0  # % compute-app memory above which a card counts as busy.
 
@@ -648,7 +648,7 @@ def run_one(
     *,
     attempt: int = 1,
     rounds: int = 1,
-    round_cooldown: float = DEFAULT_ROUND_COOLDOWN_S,
+    cooldown: float = DEFAULT_COOLDOWN_S,
     bench_aggregate: str = "mean",
 ) -> dict:
     kernel = workload["kernel"]
@@ -676,8 +676,8 @@ def run_one(
         json_tmp.name,
         "--rounds",
         str(rounds),
-        "--round-cooldown",
-        str(round_cooldown),
+        "--cooldown",
+        str(cooldown),
     ]
     if warmup is not None:
         cmd += ["--warmup", str(warmup)]
@@ -1266,7 +1266,6 @@ def _finalize_bench_record(row: dict, *, rounds: int, bench_aggregate: str) -> N
     }
     row["aggregated"] = {"rounds": rounds, "method": bench_aggregate}
     row["status"] = "ok"
-    row.pop("round_samples", None)
 
 
 def run_scheduled_jobs(
@@ -1275,7 +1274,7 @@ def run_scheduled_jobs(
     log_dir: Path,
     *,
     rounds: int,
-    round_cooldown: float,
+    cooldown: float,
     bench_aggregate: str,
     cpu_workers: int,
 ) -> tuple[list[dict], list[tuple[str, str, int, str]]]:
@@ -1317,7 +1316,7 @@ def run_scheduled_jobs(
                 log_dir,
                 attempt=attempt,
                 rounds=rounds,
-                round_cooldown=round_cooldown,
+                cooldown=cooldown,
                 bench_aggregate=bench_aggregate,
             )
             if record.get("status") in ("ok", "SKIP"):
@@ -1431,10 +1430,10 @@ def main() -> None:
         "then warmup+repeat each round; failed jobs are requeued until ok.",
     )
     ap.add_argument(
-        "--round-cooldown",
+        "--cooldown",
         type=float,
-        default=DEFAULT_ROUND_COOLDOWN_S,
-        help=f"Seconds to sleep between in-bench rounds (default {DEFAULT_ROUND_COOLDOWN_S:g}).",
+        default=DEFAULT_COOLDOWN_S,
+        help=f"Seconds to sleep before every implementation (default {DEFAULT_COOLDOWN_S:g}).",
     )
     ap.add_argument(
         "--bench-aggregate",
@@ -1459,8 +1458,8 @@ def main() -> None:
     if args.rounds < 1:
         print("[bench-suite] --rounds must be >= 1", file=sys.stderr)
         sys.exit(2)
-    if args.round_cooldown < 0:
-        print("[bench-suite] --round-cooldown must be >= 0", file=sys.stderr)
+    if args.cooldown < 0:
+        print("[bench-suite] --cooldown must be >= 0", file=sys.stderr)
         sys.exit(2)
     if args.util_threshold < 0 or args.mem_threshold < 0:
         print("[bench-suite] --util-threshold/--mem-threshold must be >= 0", file=sys.stderr)
@@ -1574,8 +1573,8 @@ def main() -> None:
     label = args.label or _repo_git.get("tirx-kernels") or _repo_git.get("tir") or "local"
     agg_note = (
         f", {args.rounds} in-bench round(s), aggregate={args.bench_aggregate}, "
-        f"round_cooldown={args.round_cooldown:g}s"
-        if args.rounds > 1 or args.round_cooldown > 0
+        f"cooldown={args.cooldown:g}s"
+        if args.rounds > 1 or args.cooldown > 0
         else ""
     )
     print(
@@ -1589,7 +1588,7 @@ def main() -> None:
         pool,
         log_dir,
         rounds=args.rounds,
-        round_cooldown=args.round_cooldown,
+        cooldown=args.cooldown,
         bench_aggregate=args.bench_aggregate,
         cpu_workers=cpu_workers,
     )

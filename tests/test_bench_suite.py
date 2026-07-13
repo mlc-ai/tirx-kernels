@@ -298,7 +298,7 @@ def test_run_one_passes_multigpu_assignment_to_megamoe(
         pool,
         tmp_path,
         rounds=2,
-        round_cooldown=0,
+        cooldown=0,
     )
 
     assert record["status"] == "ok"
@@ -306,7 +306,10 @@ def test_run_one_passes_multigpu_assignment_to_megamoe(
     assert record["gpus"] == ["2", "4"]
     assert record["num_gpus"] == 2
     assert record["impls"] == {"deepgemm": 10.5, "tirx": 10.0}
+    assert record["round_samples"] == {"deepgemm": [10.0, 11.0], "tirx": [9.5, 10.5]}
     assert captured["gpu_indices"] == ("2", "4")
     assert captured["env"]["CUDA_VISIBLE_DEVICES"] == "2,4"
     assert captured["cmd"][captured["cmd"].index("--timer") + 1] == "megamoe"
+    assert captured["cmd"][captured["cmd"].index("--cooldown") + 1] == "0"
+    assert "--round-cooldown" not in captured["cmd"]
     assert pool.released == ("2", "4")

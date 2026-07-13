@@ -980,7 +980,7 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
     repeat = kwargs.pop("repeat", None)
     timer = kwargs.pop("timer", None)  # None inherits the global default (proton)
     _rounds = kwargs.pop("rounds", 1)
-    _round_cooldown_s = kwargs.pop("round_cooldown_s", 1.0)
+    _cooldown_s = kwargs.pop("cooldown_s", 1.0)
     config_kwargs = dict(kwargs)
     tirx_executable = _compile_tirx_mqa(_make_config(**config_kwargs), 0)
 
@@ -1008,7 +1008,7 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
         timer=timer,
         references=references,
         rounds=_rounds,
-        round_cooldown_s=_round_cooldown_s,
+        cooldown_s=_cooldown_s,
     )
     result["max_diff"] = max_diff
     return result
