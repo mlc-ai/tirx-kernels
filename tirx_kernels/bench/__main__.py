@@ -80,6 +80,15 @@ def main():
         help="Override the kernel module's benchmark timer",
     )
     parser.add_argument(
+        "--rounds", type=int, default=None, help="Override the kernel module's benchmark rounds"
+    )
+    parser.add_argument(
+        "--round-cooldown",
+        type=float,
+        default=None,
+        help="Override seconds between benchmark rounds",
+    )
+    parser.add_argument(
         "--impls",
         type=str,
         choices=("all", "ours", "baseline"),
@@ -126,6 +135,8 @@ def main():
                         warmup=args.warmup,
                         repeat=args.repeat,
                         timer=args.timer,
+                        rounds=args.rounds,
+                        round_cooldown_s=args.round_cooldown,
                     )
                 results.append(result)
             except SkipTest as exc:
