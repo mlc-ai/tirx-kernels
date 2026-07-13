@@ -91,7 +91,19 @@ def load_workloads(path: Path) -> list[dict]:
     for entry in data.get("workloads") or []:
         if "kernel" not in entry or "config" not in entry:
             raise ValueError(f"workload missing kernel/config: {entry}")
-        out.append({**defaults, **entry})
+        workload = {**defaults, **entry}
+        num_gpus = workload.get("num_gpus", 1)
+        if type(num_gpus) is not int or num_gpus < 1:
+            raise ValueError(f"workload num_gpus must be a positive integer: {workload}")
+        workload["num_gpus"] = num_gpus
+        if workload.get("timer") == "megamoe" and (
+            workload.get("warmup") is not None or workload.get("repeat") is not None
+        ):
+            raise ValueError(
+                "timer='megamoe' uses a fixed DeepGEMM protocol and cannot override "
+                f"warmup/repeat: {workload}"
+            )
+        out.append(workload)
     return out
 
 
@@ -99,11 +111,11 @@ def load_workloads(path: Path) -> list[dict]:
 
 
 class GpuPool:
-    """Exclusive GPU queue for bench worker threads.
+    """Exclusive GPU resource pool for bench worker threads.
 
-    A worker calls acquire() and blocks until a card is free, holds it in
-    `_owned` for the whole subprocess, then release() in a finally block.
-    At most one orchestrator job per card at a time.
+    A worker atomically acquires all GPUs required by its workload, holds them
+    in `_owned` for the whole subprocess, then releases them in a finally block.
+    At most one orchestrator job per card at a time, including multi-GPU jobs.
 
     acquire() also re-queries utilization each loop: a card counts as taken if
     it is in `_owned`, its GPU util is above `util_threshold`, or its memory
@@ -117,6 +129,7 @@ class GpuPool:
         mem_threshold: float = DEFAULT_MEM_THRESHOLD,
     ):
         self._owned: set[str] = set()
+        self._waiters: list[tuple[object, int]] = []
         self._lock = threading.Lock()
         self._allowed = allowed
         self.util_threshold = util_threshold
@@ -212,32 +225,60 @@ class GpuPool:
             gpus = [g for g in gpus if g[0] in self._allowed]
         return len(gpus)
 
-    def acquire(self) -> str:
-        """Block until a free GPU is found; return its index string.
+    def acquire_many(self, count: int) -> tuple[str, ...]:
+        """Block until ``count`` GPUs are free and claim them atomically.
 
-        Picks uniformly at random among cards that are not in `_owned` and not
-        over the configured SM/memory thresholds. Re-queries nvidia-smi on every
-        loop iteration so a card that was busy can become free.
+        Selection re-queries nvidia-smi on every loop iteration so busy cards
+        can become free. No partial claim is retained while waiting, avoiding
+        deadlocks between concurrent multi-GPU workloads. Larger waiting claims
+        are served first so a stream of single-GPU jobs cannot starve them.
         """
-        while True:
+        if type(count) is not int or count < 1:
+            raise ValueError(f"GPU count must be a positive integer, got {count!r}")
+        token = object()
+        with self._lock:
+            self._waiters.append((token, count))
+        try:
+            while True:
+                with self._lock:
+                    largest_count = max(waiting_count for _, waiting_count in self._waiters)
+                    next_token = next(
+                        waiting_token
+                        for waiting_token, waiting_count in self._waiters
+                        if waiting_count == largest_count
+                    )
+                    if count != largest_count or token is not next_token:
+                        pass
+                    else:
+                        occupied = self._occupied_indices()
+                        free: list[str] = []
+                        for idx, _uuid in self._all_gpus():
+                            if self._allowed is not None and idx not in self._allowed:
+                                continue
+                            if idx in self._owned or idx in occupied:
+                                continue
+                            free.append(idx)
+                        if len(free) >= count:
+                            selected = tuple(sorted(random.sample(free, count), key=int))
+                            self._owned.update(selected)
+                            self._waiters.remove((token, count))
+                            return selected
+                time.sleep(POLL_INTERVAL)
+        finally:
             with self._lock:
-                occupied = self._occupied_indices()
-                free: list[str] = []
-                for idx, _uuid in self._all_gpus():
-                    if self._allowed is not None and idx not in self._allowed:
-                        continue
-                    if idx in self._owned or idx in occupied:
-                        continue
-                    free.append(idx)
-                if free:
-                    idx = random.choice(free)
-                    self._owned.add(idx)
-                    return idx
-            time.sleep(POLL_INTERVAL)
+                if (token, count) in self._waiters:
+                    self._waiters.remove((token, count))
+
+    def acquire(self) -> str:
+        """Backward-compatible single-GPU acquisition."""
+        return self.acquire_many(1)[0]
+
+    def release_many(self, indices: tuple[str, ...] | list[str]) -> None:
+        with self._lock:
+            self._owned.difference_update(indices)
 
     def release(self, idx: str) -> None:
-        with self._lock:
-            self._owned.discard(idx)
+        self.release_many((idx,))
 
 
 # ── Tee stdout → run log ─────────────────────────────────────────────────────
@@ -425,6 +466,17 @@ def _active_strangers(gpu_index: str, our_pids: set[int], sm_threshold: float) -
     }
 
 
+def _active_strangers_on_gpus(
+    gpu_indices: tuple[str, ...], our_pids: set[int], sm_threshold: float
+) -> dict[int, float]:
+    """Merge active intruders observed on any GPU assigned to one workload."""
+    active: dict[int, float] = {}
+    for gpu_index in gpu_indices:
+        for pid, sm in _active_strangers(gpu_index, our_pids, sm_threshold).items():
+            active[pid] = max(active.get(pid, 0.0), sm)
+    return active
+
+
 class _BenchPidRegistry:
     """Bench subprocess PIDs spawned by this orchestrator (register at Popen)."""
 
@@ -515,22 +567,22 @@ def _run_subprocess_monitored(
     env: dict[str, str],
     cwd: str,
     log_path: Path,
-    gpu_index: str,
+    gpu_indices: tuple[str, ...],
     monitor_interval: float,
     sm_threshold: float,
 ) -> tuple[int, bool, list[int]]:
-    """Spawn `cmd` on the assigned GPU and watch for *active* intruders.
+    """Spawn ``cmd`` on assigned GPUs and watch all of them for active intruders.
 
     Returns (returncode, interfered, intruder_pids).
 
-    Interference == another tenant is actually computing on our card, i.e. a
+    Interference == another tenant is actually computing on an assigned card, i.e. a
     PID that is not registered as ours has sm-utilization above `sm_threshold`.
 
     Two-stage protection, both using per-PID sm-util (`nvidia-smi pmon`):
 
     1. **Pre-spawn check**: if any stranger is already actively computing,
-       someone grabbed the card between pool.acquire() and now (or an
-       idle-looking card just woke up). Don't launch — return INTERFERED so
+       someone grabbed an assigned card between pool acquisition and now (or
+       an idle-looking card just woke up). Don't launch — return INTERFERED so
        the dispatcher requeues this workload.
 
     2. **Per-poll check**: at every `monitor_interval`, take the per-PID sm
@@ -543,8 +595,8 @@ def _run_subprocess_monitored(
     proc: subprocess.Popen | None = None
     registered_pid: int | None = None
     intruders: list[int] = []
-    if gpu_index:
-        pre = _active_strangers(gpu_index, _our_pids(), sm_threshold)
+    if gpu_indices:
+        pre = _active_strangers_on_gpus(gpu_indices, _our_pids(), sm_threshold)
         if pre:
             with open(log_path, "w") as lf:
                 lf.write(f"RACE_LOST: pre-spawn check — active strangers {pre}\n")
@@ -560,9 +612,9 @@ def _run_subprocess_monitored(
                 break  # subprocess exited normally
             except subprocess.TimeoutExpired:
                 pass
-            if not gpu_index:
+            if not gpu_indices:
                 continue
-            active = _active_strangers(gpu_index, _our_pids(), sm_threshold)
+            active = _active_strangers_on_gpus(gpu_indices, _our_pids(), sm_threshold)
             if active:
                 intruders = sorted(active)
                 try:
@@ -599,8 +651,10 @@ def run_one(
     warmup = workload.get("warmup")
     repeat = workload.get("repeat")
     timer = workload.get("timer")
+    num_gpus = workload.get("num_gpus", 1)
 
-    gpu = pool.acquire()
+    gpus = pool.acquire_many(num_gpus)
+    gpu_csv = ",".join(gpus)
     json_tmp = tempfile.NamedTemporaryFile(suffix=".json", delete=False)
     json_tmp.close()
     log_path = log_dir / f"{kernel}__{config}__a{attempt}.log"
@@ -628,7 +682,7 @@ def run_one(
         cmd += ["--timer", timer]
 
     env = os.environ.copy()
-    env["CUDA_VISIBLE_DEVICES"] = gpu
+    env["CUDA_VISIBLE_DEVICES"] = gpu_csv
 
     # Each workload gets its own scratch cwd so concurrent runs don't race on
     # proton's <proton_name>.hatchet file.
@@ -637,19 +691,26 @@ def run_one(
     label = f"{kernel}/{config}"
     worker = threading.current_thread().name
     started = now_iso()
-    record: dict = {"kernel": kernel, "config": config, "gpu": gpu, "started_at": started}
+    record: dict = {
+        "kernel": kernel,
+        "config": config,
+        "gpu": gpu_csv,
+        "gpus": list(gpus),
+        "num_gpus": num_gpus,
+        "started_at": started,
+    }
     interfered = False
     intruder_pids: list[int] = []
     try:
-        log(f"[bench-suite] {started} {worker} gpu={gpu} START {label} (attempt {attempt})")
-        # Pass the physical GPU index; the monitor uses per-PID sm-util (pmon).
+        log(f"[bench-suite] {started} {worker} gpus={gpu_csv} START {label} (attempt {attempt})")
+        # Pass every physical GPU index; the monitor uses per-PID sm-util (pmon).
         returncode, interfered, intruder_pids = _run_subprocess_monitored(
-            cmd, env, workdir, log_path, gpu, MONITOR_INTERVAL, pool.util_threshold
+            cmd, env, workdir, log_path, gpus, MONITOR_INTERVAL, pool.util_threshold
         )
         if interfered:
             record["status"] = "INTERFERED"
             record["intruder_pids"] = intruder_pids
-            record["error"] = f"gpu {gpu}: intruder PIDs {intruder_pids}"
+            record["error"] = f"gpus {gpu_csv}: intruder PIDs {intruder_pids}"
         elif returncode != 0:
             tail = "\n".join(log_path.read_text().splitlines()[-30:])
             record["status"] = "FAIL"
@@ -685,7 +746,7 @@ def run_one(
         except FileNotFoundError:
             pass
         shutil.rmtree(workdir, ignore_errors=True)
-        pool.release(gpu)
+        pool.release_many(gpus)
 
     record["finished_at"] = now_iso()
     status = record.get("status", "ok")
@@ -694,13 +755,14 @@ def run_one(
     if interfered:
         # Make INTERFERED stand out — easy to spot when scrolling.
         log("[bench-suite] " + "*" * 70)
-        log(f"[bench-suite] *** INTERFERED *** {worker} gpu={gpu} {label} attempt {attempt}")
-        log(f"[bench-suite] ***   intruder PIDs on gpu {gpu}: {intruder_pids}")
+        log(f"[bench-suite] *** INTERFERED *** {worker} gpus={gpu_csv} {label} attempt {attempt}")
+        log(f"[bench-suite] ***   intruder PIDs on gpus {gpu_csv}: {intruder_pids}")
         log("[bench-suite] ***   subprocess killed, will retry until ok")
         log("[bench-suite] " + "*" * 70)
     else:
         log(
-            f"[bench-suite] {record['finished_at']} {worker} gpu={gpu} {status:4s} {label} {impl_str}"
+            f"[bench-suite] {record['finished_at']} {worker} gpus={gpu_csv} "
+            f"{status:4s} {label} {impl_str}"
         )
     return record
 
@@ -1119,7 +1181,7 @@ def write_summary(out_dir: Path, current: dict) -> Path:
             )
         lines.append("")
         # Table header
-        header = ["config", *impl_names, ratio_label, "attempt", "gpu"]
+        header = ["config", *impl_names, ratio_label, "attempt", "gpus"]
         align = ["---"] + ["---:"] * len(impl_names) + ["---:", "---:", "---:"]
         lines.append("| " + " | ".join(header) + " |")
         lines.append("|" + "|".join(align) + "|")
@@ -1384,7 +1446,7 @@ def main() -> None:
         type=int,
         default=DEFAULT_CPU_WORKERS,
         help="Concurrent bench workers (default 0 = probe-OK GPU count). "
-        "Each worker holds one GPU via pool.acquire() for the whole subprocess.",
+        "Each worker atomically holds all GPUs requested by its workload.",
     )
     ap.add_argument(
         "--check-imports",
@@ -1489,6 +1551,15 @@ def main() -> None:
         for idx, err in probe_failures.items():
             print(f"[bench-suite]   gpu {idx}: {err}", file=sys.stderr)
         sys.exit(1)
+
+    max_required_gpus = max(workload.get("num_gpus", 1) for workload in workloads)
+    if max_required_gpus > len(usable):
+        print(
+            f"[bench-suite] workload requires {max_required_gpus} GPU(s), but only "
+            f"{len(usable)} passed the startup probe.",
+            file=sys.stderr,
+        )
+        sys.exit(2)
 
     pool = GpuPool(
         allowed=usable, util_threshold=args.util_threshold, mem_threshold=args.mem_threshold

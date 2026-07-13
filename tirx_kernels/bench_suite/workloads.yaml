@@ -11,6 +11,18 @@ defaults:
   # Override warmup/repeat/timer per-workload only for a specific exception.
 
 workloads:
+  # ── deepgemm_fp8_fp4_mega_moe
+  # Dedicated DeepGEMM-aligned Kineto protocol. `num_gpus` is acquired
+  # atomically and exported as the ordered CUDA_VISIBLE_DEVICES rank set.
+  - {kernel: deepgemm_fp8_fp4_mega_moe, config: t64_m64_h7168_i3072_e384_k6_g1, timer: megamoe, num_gpus: 1}
+  - {kernel: deepgemm_fp8_fp4_mega_moe, config: t64_m64_h7168_i3072_e384_k6_g2, timer: megamoe, num_gpus: 2}
+  - {kernel: deepgemm_fp8_fp4_mega_moe, config: t64_m64_h7168_i3072_e384_k6_g4, timer: megamoe, num_gpus: 4}
+  - {kernel: deepgemm_fp8_fp4_mega_moe, config: t64_m64_h7168_i3072_e384_k6_g6, timer: megamoe, num_gpus: 6}
+  - {kernel: deepgemm_fp8_fp4_mega_moe, config: t8192_m8192_h7168_i3072_e384_k6_g1, timer: megamoe, num_gpus: 1}
+  - {kernel: deepgemm_fp8_fp4_mega_moe, config: t8192_m8192_h7168_i3072_e384_k6_g2, timer: megamoe, num_gpus: 2}
+  - {kernel: deepgemm_fp8_fp4_mega_moe, config: t8192_m8192_h7168_i3072_e384_k6_g4, timer: megamoe, num_gpus: 4}
+  - {kernel: deepgemm_fp8_fp4_mega_moe, config: t8192_m8192_h7168_i3072_e384_k6_g6, timer: megamoe, num_gpus: 6}
+
   # ── deepgemm_sm100_fp4_mqa_logits
   - {kernel: deepgemm_sm100_fp4_mqa_logits, config: s2048_skv4096_h64_d128_f32_dense_cp}
   - {kernel: deepgemm_sm100_fp4_mqa_logits, config: s2048_skv4096_h64_d128_f32_dense_nocp}

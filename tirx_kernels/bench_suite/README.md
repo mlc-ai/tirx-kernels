@@ -58,7 +58,8 @@ Run artifacts (logs, `runs/*.json`, `reports/*`) live under `.bench-suite/` and 
 ## Strategy (TL;DR)
 
 1. **Pinned baseline lives in git** (`baseline.json`, `baseline.md`).
-2. **One job = one workload** (kernel + config). A worker acquires a GPU, runs **one**
+2. **One job = one workload** (kernel + config). A worker atomically acquires the
+   workload's requested GPU count, then runs **one**
    bench subprocess that always benches our kernel **and** every reference impl:
    compile/prepare once, then **`--rounds N` in-bench** (each round: warmup + repeat).
    Optional `--round-cooldown` between rounds.
@@ -66,9 +67,11 @@ Run artifacts (logs, `runs/*.json`, `reports/*`) live under `.bench-suite/` and 
    worker queue (another worker may pick it up later). `SKIP` workloads are not
    retried.
 4. **Dynamic free GPU queue** (`--cpu-workers 0` = one worker per probe-OK GPU):
-   workers pull jobs from a shared queue; each job `acquire()`s any free card,
-   runs one subprocess, then `release()`s. Whoever finishes first grabs the next
-   job and the next free GPU — no static workload→GPU binding, no overcommit.
+   workers pull jobs from a shared queue; each job atomically claims all required
+   free cards, runs one subprocess, then releases the full set. Whoever finishes
+   first grabs the next satisfiable job — no static workload→GPU binding and no
+   partial multi-GPU claims. Larger waiting claims take priority so single-GPU
+   traffic cannot starve 2/4/6-GPU workloads.
 5. **Ratio regression report** compares current ref/ours ratio vs the pinned
    `baseline.json` ratio (computed from its ours + ref impls). Promote a run over
    the baseline with `promote_baseline.py`.
@@ -108,6 +111,17 @@ fastest and slowest round).
 
 Spot-check one workload: `python -m tirx_kernels.bench --kernel ... --config ... --rounds 5`
 
+## Workload fields
+
+Each `workloads.yaml` entry requires `kernel` and `config`. Optional fields are
+`timer`, `warmup`, `repeat`, and `num_gpus` (default `1`). Multi-GPU jobs receive
+the acquired physical indices as an ordered, comma-separated
+`CUDA_VISIBLE_DEVICES` value and all assigned cards are monitored for interference.
+
+MegaMoE entries use `timer: megamoe`, which invokes the dedicated DeepGEMM
+`bench_kineto` protocol. Do not set `warmup` or `repeat` for this timer because
+the protocol fixes its own 30-test schedule.
+
 ## Flags
 
 | Flag | Default | Meaning |
@@ -134,7 +148,7 @@ Promoted baselines often use **trimmed_mean ×5** (`--rounds 5 --bench-aggregate
 |------|-------------|
 | `.bench-suite/runs/<id>.json` | Aggregated run results (times in microseconds) |
 | `.bench-suite/reports/<id>/bench.md` | Main diff report |
-| `.bench-suite/logs/*__a<N>.log` | Subprocess stdout (N proton trees when `--rounds N`) |
+| `.bench-suite/logs/*__a<N>.log` | Benchmark subprocess stdout for each attempt |
 
 ## Exit codes
 
