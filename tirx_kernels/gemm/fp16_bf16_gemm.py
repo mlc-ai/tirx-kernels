@@ -436,7 +436,6 @@ CONFIGS = [
     for d in ["fp16", "bf16"]
     for s in [1024, 2048, 4096, 8192, 16384]
 ]
-BENCH_CONFIGS = CONFIGS
 
 
 def get_kernel(dtype, M, N, K, **kwargs):

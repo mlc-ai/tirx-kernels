@@ -38,7 +38,6 @@ CONFIGS = [
     *[_config(cfg, h_q=_head128.B_H) for cfg in _head128.CONFIGS],
     *[_config(cfg, h_q=_small_topk.B_H, d_qk=_small_topk.D_QK) for cfg in _small_topk.CONFIGS],
 ]
-BENCH_CONFIGS = CONFIGS
 
 
 def _required_int(kwargs: dict[str, Any], name: str) -> int:
@@ -129,7 +128,6 @@ def run_bench(
 
 
 __all__ = [
-    "BENCH_CONFIGS",
     "CONFIGS",
     "KERNEL_META",
     "dispatch_reason",

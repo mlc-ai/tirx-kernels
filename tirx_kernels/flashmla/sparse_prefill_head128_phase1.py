@@ -92,7 +92,6 @@ CONFIGS = [
     for d_qk in (512, 576)
     for s_kv in (8192, 32768, 65536)
 ]
-BENCH_CONFIGS = CONFIGS
 
 KERNEL_META = {
     "name": "sparse_flashmla_prefill_head128_phase1",
@@ -910,12 +909,4 @@ def run_bench(
     )
 
 
-__all__ = [
-    "BENCH_CONFIGS",
-    "CONFIGS",
-    "KERNEL_META",
-    "get_kernel",
-    "prepare_data",
-    "run_bench",
-    "run_test",
-]
+__all__ = ["CONFIGS", "KERNEL_META", "get_kernel", "prepare_data", "run_bench", "run_test"]

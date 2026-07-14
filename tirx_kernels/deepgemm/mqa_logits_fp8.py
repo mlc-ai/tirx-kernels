@@ -167,7 +167,6 @@ DEEPGEMM_TEST_COVERAGE = [
 ]
 
 CONFIGS = DEEPGEMM_TEST_COVERAGE
-BENCH_CONFIGS = CONFIGS
 
 
 def load_deep_gemm_mqa() -> tuple[Any, str]:
@@ -1015,7 +1014,6 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
 
 
 __all__ = [
-    "BENCH_CONFIGS",
     "CONFIGS",
     "DEEPGEMM_TEST_COVERAGE",
     "KERNEL_META",

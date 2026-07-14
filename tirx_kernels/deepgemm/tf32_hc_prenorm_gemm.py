@@ -216,7 +216,6 @@ CONFIGS = [
     _make_case(m=4096, n=24, k=7168, num_splits=1, seed=2002),
     _make_case(m=4096, n=24, k=28672, num_splits=16, seed=2003),
 ]
-BENCH_CONFIGS = CONFIGS
 
 
 def load_deep_gemm_hc() -> tuple[Any, str]:
@@ -934,7 +933,6 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
 
 
 __all__ = [
-    "BENCH_CONFIGS",
     "CONFIGS",
     "DEEPGEMM_TEST_COVERAGE",
     "KERNEL_META",

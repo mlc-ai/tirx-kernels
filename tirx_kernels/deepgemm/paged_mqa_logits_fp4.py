@@ -250,7 +250,6 @@ DSA_INDEXER_LIKE_COVERAGE = [
 ]
 
 CONFIGS = DSA_INDEXER_LIKE_COVERAGE
-BENCH_CONFIGS = CONFIGS
 
 
 def load_deep_gemm_paged_mqa() -> tuple[Any, str]:
@@ -2215,7 +2214,6 @@ def run_bench(**kwargs: Any) -> dict[str, Any]:
 
 
 __all__ = [
-    "BENCH_CONFIGS",
     "CONFIGS",
     "DSA_INDEXER_LIKE_COVERAGE",
     "KERNEL_META",

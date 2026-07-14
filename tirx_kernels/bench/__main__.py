@@ -106,7 +106,7 @@ def main():
     else:
         all_kernels = discover_kernels(min_compute_capability=args.cc)
 
-    # Each kernel's run_bench() manages its own ProtonContext session.
+    # Each kernel's run_bench() manages its own Proton session via bench(timer=...).
     # No global proton session needed.
     results = []
 

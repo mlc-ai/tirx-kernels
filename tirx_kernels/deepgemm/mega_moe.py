@@ -5576,6 +5576,23 @@ def _run_worker(local_rank: int, cfg_dict: dict[str, Any], mode: str) -> dict[st
         if mode == "bench":
             from tvm.tirx.bench import bench
 
+            # bench()'s proton/event/cudagraph_proton timers are single-process:
+            # each rank derives n_warmup/n_repeat from its own per-call estimate
+            # with no cross-rank sync, so a cross-rank mega_moe kernel (in-kernel
+            # collectives per launch) deadlocks when ranks run different iteration
+            # counts. Multi-process bench must use the purpose-built megamoe
+            # harness (DeepGEMM bench_kineto + barrier reset); default to it and
+            # reject an explicit single-process timer.
+            if config.num_processes > 1:
+                if timer is None:
+                    timer = "megamoe"
+                elif timer != "megamoe":
+                    raise ValueError(
+                        "multi-process mega_moe bench requires timer='megamoe' (or omit "
+                        f"--timer); {timer!r} is a single-process timer and would "
+                        "deadlock the cross-rank kernel collectives"
+                    )
+
             dg_case = create_case(deep_gemm, config, group, rank_idx, num_ranks)
             tirx_case = create_case(deep_gemm, config, group, rank_idx, num_ranks)
             deepgemm_stats = None
@@ -6105,7 +6122,6 @@ CONFIGS = [
         "label": "t8192_m8192_h7168_i3072_e384_k6_g6",
     },
 ]
-BENCH_CONFIGS = CONFIGS
 
 
 def _make_config(

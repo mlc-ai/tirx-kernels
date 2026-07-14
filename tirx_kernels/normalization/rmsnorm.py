@@ -6,7 +6,7 @@ import tvm
 from tvm.ir.type import PointerType, PrimType
 from tvm.script import tirx as T
 from tvm.script.tirx import tile as Tx
-from tvm.tirx.bench import ProtonContext, bench, bench_tk, tensor_bytes
+from tvm.tirx.bench import bench
 from tvm.tirx.lang.pipeline import MBarrier, TMABar
 
 eps = 1e-06
@@ -58,13 +58,7 @@ def torch_impl(input, weights):
         output = (scaled * weights_naive).to(torch.float16)
         return output
 
-    result = bench_tk(
-        {"naive": lambda _: func()},
-        lambda: (None, tensor_bytes(input_naive, weights_naive)),
-        warmup=10,
-        repeat=30,
-        proton_name="naive",
-    )
+    result = bench({"naive": func}, timer="event")
     ms = result["impls"].get("naive", float("nan"))
     print(f"torch time: {ms:.3f} ms")
     return func()
@@ -83,13 +77,7 @@ def flashinfer_impl(input, weights, batch_size, dim):
             flashinfer_input, flashinfer_weights, eps, enable_pdl=False, out=out
         )
 
-    result = bench_tk(
-        {"flashinfer": lambda _: func()},
-        lambda: (None, tensor_bytes(flashinfer_input, flashinfer_weights, out)),
-        warmup=10,
-        repeat=30,
-        proton_name="flashinfer",
-    )
+    result = bench({"flashinfer": func}, timer="event")
     ms = result["impls"].get("flashinfer", float("nan"))
     print(f"FlashInfer time: {ms:.3f} ms")
     return out
@@ -105,13 +93,7 @@ def quack_impl(input, weights, batch_size, dim):
     def func():
         return quack.rmsnorm(quack_input, quack_weights, eps=eps)
 
-    result = bench_tk(
-        {"quack": lambda _: func()},
-        lambda: (None, tensor_bytes(quack_input, quack_weights)),
-        warmup=10,
-        repeat=30,
-        proton_name="quack",
-    )
+    result = bench({"quack": func}, timer="event")
     ms = result["impls"].get("quack", float("nan"))
     print(f"Quack time: {ms:.3f} ms")
     return func()
@@ -612,13 +594,7 @@ def build_tirx_soln(
         def run():
             return mod(input_cat_tir, weights_tir, output_tir)
 
-        result = bench_tk(
-            {f"tirx_soln_{funcstr}": lambda _: run()},
-            lambda: (None, tensor_bytes(input_cat_tir, weights_tir, output_tir)),
-            warmup=10,
-            repeat=30,
-            proton_name=f"tirx_soln_{funcstr}",
-        )
+        result = bench({f"tirx_soln_{funcstr}": run}, timer="event")
         ms = result["impls"].get(f"tirx_soln_{funcstr}", float("nan"))
         print(f"{funcstr} time: {ms:.3f} ms")
 
@@ -630,16 +606,15 @@ def test(batch_size: int, dim: int = 16384):
 
     input, weights = prepare_data(batch_size, dim)
     print(f"----Testing Batch Size {batch_size}, Dim {dim}----")
-    with ProtonContext("rms_norm", debug=True):
-        output_torch = torch_impl(input, weights)
-        output_flashinfer = flashinfer_impl(input, weights, batch_size, dim)
-        output_quack = quack_impl(input, weights, batch_size, dim)
-        output_tirx_original, tirx_primfunc_1 = build_tirx_soln(
-            tirx_original_impl, input, weights, "TIRX_original_impl", dim, batch_size
-        )
-        output_tirx_dispatch_rmsnorm, tirx_primfunc_2 = build_tirx_soln(
-            tirx_dispatch_rmsnorm, input, weights, "TIRX_dispatch_rmsnorm", dim, batch_size
-        )
+    output_torch = torch_impl(input, weights)
+    output_flashinfer = flashinfer_impl(input, weights, batch_size, dim)
+    output_quack = quack_impl(input, weights, batch_size, dim)
+    output_tirx_original, tirx_primfunc_1 = build_tirx_soln(
+        tirx_original_impl, input, weights, "TIRX_original_impl", dim, batch_size
+    )
+    output_tirx_dispatch_rmsnorm, tirx_primfunc_2 = build_tirx_soln(
+        tirx_dispatch_rmsnorm, input, weights, "TIRX_dispatch_rmsnorm", dim, batch_size
+    )
     torch.testing.assert_close(output_flashinfer, output_torch, rtol=0.005, atol=0.005)
     torch.testing.assert_close(output_quack, output_torch, rtol=0.005, atol=0.005)
     torch.testing.assert_close(output_tirx_original, output_torch, rtol=0.005, atol=0.005)

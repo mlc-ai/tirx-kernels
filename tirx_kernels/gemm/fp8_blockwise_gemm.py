@@ -533,7 +533,6 @@ CONFIGS = [
     {"M": 4096, "N": 4096, "K": 7168, "label": "deepgemm_m4096_n4096_k7168"},
     {"M": 4096, "N": 7168, "K": 2048, "label": "deepgemm_m4096_n7168_k2048"},
 ]
-BENCH_CONFIGS = CONFIGS
 
 
 def get_kernel(M, N, K):

@@ -32,10 +32,6 @@ CONFIGS : list[dict]
     parameters.  The same config matrix is used by correctness tests and
     benchmark runs.
 
-BENCH_CONFIGS : list[dict]   (optional)
-    Backward-compatible alias for ``CONFIGS``.  New code should not give it
-    a different value.
-
 Functions
 ---------
 get_kernel(**cfg) -> tvm.tirx.PrimFunc | list[tvm.tirx.PrimFunc]
