@@ -63,9 +63,10 @@ Run artifacts (logs, `runs/*.json`, `reports/*`) live under `.bench-suite/` and 
    bench subprocess that always benches our kernel **and** every reference impl:
    compile/prepare once, then **`--rounds N` in-bench** (each round: warmup + repeat).
    `--cooldown` is applied before every implementation in every round.
-3. **Retry until ok**: INTERFERED / subprocess failure → job goes back on the
-   worker queue (another worker may pick it up later). `SKIP` workloads are not
-   retried.
+3. **Fail fast**: the first workload/subprocess `FAIL` stops new scheduling,
+   terminates the suite's in-flight subprocesses, writes the partial run for
+   diagnosis, and exits with code 1. `INTERFERED` is not a workload failure and
+   is requeued; `SKIP` workloads are accepted without retry.
 4. **Dynamic free GPU queue** (`--cpu-workers 0` = one worker per probe-OK GPU):
    workers pull jobs from a shared queue; each job atomically claims all required
    free cards, runs one subprocess, then releases the full set. Whoever finishes
@@ -155,5 +156,6 @@ Promoted baselines often use **trimmed_mean ×5** (`--rounds 5 --bench-aggregate
 | Code | Meaning |
 |------|---------|
 | `0` | No regressions over threshold (or no baseline yet) |
+| `1` | A workload failed; the suite stopped immediately |
 | `2` | Config error |
 | `3` | One or more regressions exceeded `--threshold` |

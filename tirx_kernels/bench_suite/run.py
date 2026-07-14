@@ -10,6 +10,7 @@ Quick start:
 
 Exit codes:
     0  no regressions (or no baseline yet)
+    1  workload failure (suite stopped immediately)
     2  config error (no workloads / bad YAML)
     3  one or more regressions exceeded the threshold
 """
@@ -22,6 +23,7 @@ import os
 import queue
 import random
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -61,6 +63,11 @@ DEFAULT_CPU_WORKERS = 0
 DEFAULT_COOLDOWN_S = 1.0
 DEFAULT_UTIL_THRESHOLD = 0.0  # % GPU util above which a card counts as busy.
 DEFAULT_MEM_THRESHOLD = 0.0  # % compute-app memory above which a card counts as busy.
+
+
+class _BenchSuiteCancelled(RuntimeError):
+    """Internal signal used to unwind workers after the first workload failure."""
+
 
 # Tiny real workload used to decide whether a GPU is actually usable.
 # Catches: driver hangs, ECC errors when touching memory, cuBLAS init
@@ -230,7 +237,9 @@ class GpuPool:
             gpus = [g for g in gpus if g[0] in self._allowed]
         return len(gpus)
 
-    def acquire_many(self, count: int) -> tuple[str, ...]:
+    def acquire_many(
+        self, count: int, *, cancel_event: threading.Event | None = None
+    ) -> tuple[str, ...]:
         """Block until ``count`` GPUs are free and claim them atomically.
 
         Selection re-queries nvidia-smi on every loop iteration so busy cards
@@ -245,6 +254,8 @@ class GpuPool:
             self._waiters.append((token, count))
         try:
             while True:
+                if cancel_event is not None and cancel_event.is_set():
+                    raise _BenchSuiteCancelled
                 with self._lock:
                     largest_count = max(waiting_count for _, waiting_count in self._waiters)
                     next_token = next(
@@ -268,7 +279,10 @@ class GpuPool:
                             self._owned.update(selected)
                             self._waiters.remove((token, count))
                             return selected
-                time.sleep(POLL_INTERVAL)
+                if cancel_event is None:
+                    time.sleep(POLL_INTERVAL)
+                elif cancel_event.wait(POLL_INTERVAL):
+                    raise _BenchSuiteCancelled
         finally:
             with self._lock:
                 if (token, count) in self._waiters:
@@ -552,17 +566,24 @@ def _our_pids() -> set[int]:
     return pids
 
 
+def _terminate_subprocess(proc: subprocess.Popen) -> None:
+    """Terminate a bench process group, escalating to SIGKILL when needed."""
+    try:
+        os.killpg(proc.pid, signal.SIGTERM)
+        proc.wait(timeout=10)
+    except subprocess.TimeoutExpired:
+        os.killpg(proc.pid, signal.SIGKILL)
+        proc.wait()
+    except ProcessLookupError:
+        proc.wait()
+
+
 def _reap_subprocess(proc: subprocess.Popen) -> None:
     """Ensure the child is reaped so it cannot linger as a zombie holding VRAM."""
     try:
         proc.wait(timeout=0)
     except subprocess.TimeoutExpired:
-        try:
-            proc.terminate()
-            proc.wait(timeout=10)
-        except subprocess.TimeoutExpired:
-            proc.kill()
-            proc.wait()
+        _terminate_subprocess(proc)
     except ChildProcessError:
         pass
 
@@ -575,10 +596,11 @@ def _run_subprocess_monitored(
     gpu_indices: tuple[str, ...],
     monitor_interval: float,
     sm_threshold: float,
-) -> tuple[int, bool, list[int]]:
+    cancel_event: threading.Event | None = None,
+) -> tuple[int, bool, list[int], bool]:
     """Spawn ``cmd`` on assigned GPUs and watch all of them for active intruders.
 
-    Returns (returncode, interfered, intruder_pids).
+    Returns (returncode, interfered, intruder_pids, cancelled).
 
     Interference == another tenant is actually computing on an assigned card, i.e. a
     PID that is not registered as ours has sm-utilization above `sm_threshold`.
@@ -600,18 +622,27 @@ def _run_subprocess_monitored(
     proc: subprocess.Popen | None = None
     registered_pid: int | None = None
     intruders: list[int] = []
+    cancelled = False
+    if cancel_event is not None and cancel_event.is_set():
+        return -1, False, [], True
     if gpu_indices:
         pre = _active_strangers_on_gpus(gpu_indices, _our_pids(), sm_threshold)
         if pre:
             with open(log_path, "w") as lf:
                 lf.write(f"RACE_LOST: pre-spawn check — active strangers {pre}\n")
-            return -1, True, sorted(pre)
+            return -1, True, sorted(pre), False
     with open(log_path, "w") as lf:
-        proc = subprocess.Popen(cmd, env=env, cwd=cwd, stdout=lf, stderr=subprocess.STDOUT)
+        proc = subprocess.Popen(
+            cmd, env=env, cwd=cwd, stdout=lf, stderr=subprocess.STDOUT, start_new_session=True
+        )
     registered_pid = proc.pid
     _BenchPidRegistry.register(registered_pid)
     try:
         while True:
+            if cancel_event is not None and cancel_event.is_set():
+                cancelled = True
+                _terminate_subprocess(proc)
+                break
             try:
                 proc.wait(timeout=monitor_interval)
                 break  # subprocess exited normally
@@ -622,23 +653,17 @@ def _run_subprocess_monitored(
             active = _active_strangers_on_gpus(gpu_indices, _our_pids(), sm_threshold)
             if active:
                 intruders = sorted(active)
-                try:
-                    proc.terminate()
-                    proc.wait(timeout=10)
-                except subprocess.TimeoutExpired:
-                    proc.kill()
-                    proc.wait()
+                _terminate_subprocess(proc)
                 break
     except KeyboardInterrupt:
-        proc.kill()
-        proc.wait()
+        _terminate_subprocess(proc)
         raise
     finally:
         if registered_pid is not None:
             _BenchPidRegistry.unregister(registered_pid)
         if proc is not None:
             _reap_subprocess(proc)
-    return proc.returncode, bool(intruders), intruders
+    return proc.returncode, bool(intruders), intruders, cancelled
 
 
 def run_one(
@@ -650,6 +675,7 @@ def run_one(
     rounds: int = 1,
     cooldown: float = DEFAULT_COOLDOWN_S,
     bench_aggregate: str = "mean",
+    cancel_event: threading.Event | None = None,
 ) -> dict:
     kernel = workload["kernel"]
     config = workload["config"]
@@ -658,7 +684,7 @@ def run_one(
     timer = workload.get("timer")
     num_gpus = workload.get("num_gpus", 1)
 
-    gpus = pool.acquire_many(num_gpus)
+    gpus = pool.acquire_many(num_gpus, cancel_event=cancel_event)
     gpu_csv = ",".join(gpus)
     json_tmp = tempfile.NamedTemporaryFile(suffix=".json", delete=False)
     json_tmp.close()
@@ -709,10 +735,13 @@ def run_one(
     try:
         log(f"[bench-suite] {started} {worker} gpus={gpu_csv} START {label} (attempt {attempt})")
         # Pass every physical GPU index; the monitor uses per-PID sm-util (pmon).
-        returncode, interfered, intruder_pids = _run_subprocess_monitored(
-            cmd, env, workdir, log_path, gpus, MONITOR_INTERVAL, pool.util_threshold
+        returncode, interfered, intruder_pids, cancelled = _run_subprocess_monitored(
+            cmd, env, workdir, log_path, gpus, MONITOR_INTERVAL, pool.util_threshold, cancel_event
         )
-        if interfered:
+        if cancelled:
+            record["status"] = "CANCELLED"
+            record["error"] = "suite stopped after another workload failed"
+        elif interfered:
             record["status"] = "INTERFERED"
             record["intruder_pids"] = intruder_pids
             record["error"] = f"gpus {gpu_csv}: intruder PIDs {intruder_pids}"
@@ -1278,7 +1307,11 @@ def run_scheduled_jobs(
     bench_aggregate: str,
     cpu_workers: int,
 ) -> tuple[list[dict], list[tuple[str, str, int, str]]]:
-    """Run one subprocess job per workload; failed jobs go back on the queue."""
+    """Run one subprocess per workload and stop the suite on the first failure.
+
+    External interference is retried because it is not a workload failure. Any
+    actual FAIL stops new scheduling and cancels subprocesses still in flight.
+    """
     n_jobs = len(workloads)
     if not n_jobs:
         return [], []
@@ -1291,11 +1324,12 @@ def run_scheduled_jobs(
     retry_log: list[tuple[str, str, int, str]] = []
     state_lock = threading.Lock()
     done_cv = threading.Condition(state_lock)
+    cancel_event = threading.Event()
     n_done = 0
 
     def worker() -> None:
         nonlocal n_done
-        while True:
+        while not cancel_event.is_set():
             with state_lock:
                 if n_done >= n_jobs:
                     return
@@ -1306,47 +1340,82 @@ def run_scheduled_jobs(
             if item is None:
                 pending.task_done()
                 return
+            if cancel_event.is_set():
+                pending.task_done()
+                return
 
             workload, attempt = item
             kernel = workload["kernel"]
             config = workload["config"]
-            record = run_one(
-                workload,
-                pool,
-                log_dir,
-                attempt=attempt,
-                rounds=rounds,
-                cooldown=cooldown,
-                bench_aggregate=bench_aggregate,
-            )
-            if record.get("status") in ("ok", "SKIP"):
+            try:
+                record = run_one(
+                    workload,
+                    pool,
+                    log_dir,
+                    attempt=attempt,
+                    rounds=rounds,
+                    cooldown=cooldown,
+                    bench_aggregate=bench_aggregate,
+                    cancel_event=cancel_event,
+                )
+            except _BenchSuiteCancelled:
+                pending.task_done()
+                return
+            except Exception as e:
+                record = {
+                    "kernel": kernel,
+                    "config": config,
+                    "label": config,
+                    "status": "FAIL",
+                    "error": repr(e),
+                    "finished_at": now_iso(),
+                }
+
+            status = record.get("status", "FAIL")
+            if status in ("ok", "SKIP"):
                 record["attempt"] = attempt
                 with state_lock:
                     records.append(record)
                     n_done += 1
                     done_cv.notify_all()
-            else:
-                reason = record.get("status", "FAIL")
+            elif status == "INTERFERED":
                 detail = record.get("error") or ""
                 if record.get("intruder_pids"):
                     detail = f"intruders {record['intruder_pids']}"
+                if not cancel_event.is_set():
+                    with state_lock:
+                        retry_log.append((kernel, config, attempt, detail[:240]))
+                    log(
+                        f"[bench-suite] >>> REQUEUE {kernel}/{config} "
+                        f"attempt {attempt} (INTERFERED): {detail[:160]} <<<"
+                    )
+                    pending.put((workload, attempt + 1))
+            elif status != "CANCELLED":
+                record["status"] = "FAIL"
+                record["attempt"] = attempt
+                detail = record.get("error") or "unknown workload failure"
                 with state_lock:
-                    retry_log.append((kernel, config, attempt, detail[:240]))
-                log(
-                    f"[bench-suite] >>> REQUEUE {kernel}/{config} "
-                    f"attempt {attempt} ({reason}): {detail[:160]} <<<"
-                )
-                pending.put((workload, attempt + 1))
+                    records.append(record)
+                    n_done += 1
+                    first_failure = not cancel_event.is_set()
+                    cancel_event.set()
+                    done_cv.notify_all()
+                if first_failure:
+                    log(
+                        f"[bench-suite] >>> FAIL-FAST {kernel}/{config} "
+                        f"attempt {attempt}: {detail[:160]} <<<"
+                    )
             pending.task_done()
 
     n_workers = min(cpu_workers, n_jobs)
     with ThreadPoolExecutor(max_workers=n_workers, thread_name_prefix="bench") as ex:
         futs = [ex.submit(worker) for _ in range(n_workers)]
         with state_lock:
-            while n_done < n_jobs:
+            while n_done < n_jobs and not cancel_event.is_set():
                 done_cv.wait(timeout=1.0)
-        for _ in range(n_workers):
-            pending.put(None)
+        if not cancel_event.is_set():
+            for _ in range(n_workers):
+                pending.put(None)
         for fut in as_completed(futs):
             fut.result()
     return records, retry_log
@@ -1594,11 +1663,11 @@ def main() -> None:
     )
 
     if retry_log:
-        log(f"[bench-suite] requeue summary: {len(retry_log)} failed attempt(s) before success")
+        log(f"[bench-suite] interference retry summary: {len(retry_log)} attempt(s)")
         for k, c, att, detail in retry_log:
             log(f"[bench-suite]   - {k}/{c}: attempt {att} → {detail}")
     else:
-        log("[bench-suite] requeue summary: none (every job succeeded on first try)")
+        log("[bench-suite] interference retry summary: none")
 
     results.sort(key=lambda r: (r["kernel"], r.get("label") or r.get("config")))
     probe_meta = {"enabled": not args.no_probe, "usable": sorted(usable), "failed": probe_failures}
@@ -1613,6 +1682,16 @@ def main() -> None:
     summary_path = write_summary(out_dir, current)
     print(f"[bench-suite] wrote {run_path}")
     print(f"[bench-suite] wrote {summary_path}")
+
+    failures = [record for record in results if record.get("status") == "FAIL"]
+    if failures:
+        first = failures[0]
+        print(
+            f"[bench-suite] stopped after workload failure: "
+            f"{first['kernel']}/{first.get('config') or first.get('label')}",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
     if args.no_report:
         return

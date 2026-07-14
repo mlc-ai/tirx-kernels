@@ -296,14 +296,14 @@ workloads:
   - {kernel: fp8_blockwise_gemm, config: deepgemm_m4096_n4096_k7168}
   - {kernel: fp8_blockwise_gemm, config: deepgemm_m4096_n7168_k2048}
   # ── grouped_fp8_gemm_contiguous
-  - {kernel: grouped_fp8_gemm_contiguous, config: large_g4_m8192_n6144_k7168, warmup: null, repeat: null}
-  - {kernel: grouped_fp8_gemm_contiguous, config: large_g4_m8192_n7168_k3072, warmup: null, repeat: null}
-  - {kernel: grouped_fp8_gemm_contiguous, config: large_g4_m8192_n4096_k4096, warmup: null, repeat: null}
-  - {kernel: grouped_fp8_gemm_contiguous, config: large_g4_m8192_n4096_k2048, warmup: null, repeat: null}
-  - {kernel: grouped_fp8_gemm_contiguous, config: large_g8_m4096_n6144_k7168, warmup: null, repeat: null}
-  - {kernel: grouped_fp8_gemm_contiguous, config: large_g8_m4096_n7168_k3072, warmup: null, repeat: null}
-  - {kernel: grouped_fp8_gemm_contiguous, config: large_g8_m4096_n4096_k4096, warmup: null, repeat: null}
-  - {kernel: grouped_fp8_gemm_contiguous, config: large_g8_m4096_n4096_k2048, warmup: null, repeat: null}
+  - {kernel: grouped_fp8_gemm_contiguous, config: large_g4_m8192_n6144_k7168}
+  - {kernel: grouped_fp8_gemm_contiguous, config: large_g4_m8192_n7168_k3072}
+  - {kernel: grouped_fp8_gemm_contiguous, config: large_g4_m8192_n4096_k4096}
+  - {kernel: grouped_fp8_gemm_contiguous, config: large_g4_m8192_n4096_k2048}
+  - {kernel: grouped_fp8_gemm_contiguous, config: large_g8_m4096_n6144_k7168}
+  - {kernel: grouped_fp8_gemm_contiguous, config: large_g8_m4096_n7168_k3072}
+  - {kernel: grouped_fp8_gemm_contiguous, config: large_g8_m4096_n4096_k4096}
+  - {kernel: grouped_fp8_gemm_contiguous, config: large_g8_m4096_n4096_k2048}
   # ── nvfp4_gemm
   - {kernel: nvfp4_gemm, config: 1024x1024x1024}
   - {kernel: nvfp4_gemm, config: 2048x2048x2048}

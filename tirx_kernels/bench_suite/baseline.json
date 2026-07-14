@@ -2,13 +2,13 @@
   "timestamp": "163",
   "label": "5ec3e10a",
   "git": {
-    "tir": "62fc55f9",
-    "tirx-kernels": "fdcc24d8-dirty",
+    "tir": "1f384bcb",
+    "tirx-kernels": "5b1937c5",
     "tirx-bench-ci": null
   },
   "kernel_tree": {
-    "tir:python/tvm/tirx": "20017a734118d1d2e42b599b534f3cf1754d1b2a",
-    "tirx-kernels:tirx_kernels": "22e0d215e71e03f90c1973ad45fe160c5d4ca29b"
+    "tir:python/tvm/tirx": "b57a2364fe1572a7ee7265b089c1495bb5d66720",
+    "tirx-kernels:tirx_kernels": "b146fafcc032450989a66b1ebf08f5f9af8b5bc9"
   },
   "baselines": {
     "torch": {
@@ -44,10 +44,7 @@
       "version": "4.0.0b15"
     },
     "sglang": {
-      "importable": false,
-      "source_dir": "/home/bohanhou/kernel-libs/sglang/python/sglang",
-      "git_dir": "/home/bohanhou/kernel-libs/sglang",
-      "git_sha": "96a04cb1"
+      "installed": false
     },
     "cutlass": {
       "importable": true,
@@ -3619,12 +3616,12 @@
       "label": "bench_regular_dqk512_hq128_s4096_kv32768_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 1624.1453,
-        "flashmla": 1774.6466666666668
+        "tirx": 1736.2029943502826,
+        "flashmla": 1750.378581920904
       },
       "aggregated": {
-        "rounds": 1,
-        "method": "mean"
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     },
     {
@@ -3633,12 +3630,12 @@
       "label": "bench_regular_dqk512_hq128_s4096_kv65536_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 1795.7931250000001,
-        "flashmla": 1899.9647962962963
+        "tirx": 1891.7266728395061,
+        "flashmla": 1901.0240966329966
       },
       "aggregated": {
-        "rounds": 1,
-        "method": "mean"
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     },
     {
@@ -3647,12 +3644,12 @@
       "label": "bench_regular_dqk512_hq128_s4096_kv8192_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 1704.9223513513514,
-        "flashmla": 1758.6548301886794
+        "tirx": 1725.1478777777777,
+        "flashmla": 1755.2076333333332
       },
       "aggregated": {
-        "rounds": 1,
-        "method": "mean"
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     },
     {
@@ -3661,12 +3658,13 @@
       "label": "bench_regular_dqk576_hq128_s4096_kv32768_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 1803.4952051282053,
-        "flashmla": 1831.07175
+        "tirx": 1803.9948362573098,
+        "flashmla": 1828.4829824561402,
+        "trtllm_gen": 2064.7638733333333
       },
       "aggregated": {
-        "rounds": 1,
-        "method": "mean"
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     },
     {
@@ -3675,12 +3673,13 @@
       "label": "bench_regular_dqk576_hq128_s4096_kv65536_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 1971.9645263157895,
-        "flashmla": 2018.3973478260868
+        "tirx": 2016.7128954248367,
+        "flashmla": 1990.7169346405228,
+        "trtllm_gen": 2205.1155
       },
       "aggregated": {
-        "rounds": 1,
-        "method": "mean"
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     },
     {
@@ -3689,12 +3688,13 @@
       "label": "bench_regular_dqk576_hq128_s4096_kv8192_topk2048",
       "status": "ok",
       "impls": {
-        "tirx": 1690.7523333333334,
-        "flashmla": 1803.91144
+        "tirx": 1819.8771845238095,
+        "flashmla": 1834.2420297619049,
+        "trtllm_gen": 2068.658095238095
       },
       "aggregated": {
-        "rounds": 1,
-        "method": "mean"
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     },
     {
@@ -3703,12 +3703,12 @@
       "label": "bench_smalltopk_dqk512_hq128_s4096_kv32768_topk1280",
       "status": "ok",
       "impls": {
-        "tirx": 1105.8868181818182,
-        "flashmla": 1164.5152643678161
+        "tirx": 1176.3623448275862,
+        "flashmla": 1173.2257351967955
       },
       "aggregated": {
-        "rounds": 1,
-        "method": "mean"
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     },
     {
@@ -3717,12 +3717,12 @@
       "label": "bench_smalltopk_dqk512_hq128_s4096_kv65536_topk1280",
       "status": "ok",
       "impls": {
-        "tirx": 1126.665,
-        "flashmla": 1180.8836000000001
+        "tirx": 1201.9255476190476,
+        "flashmla": 1202.2732896825398
       },
       "aggregated": {
-        "rounds": 1,
-        "method": "mean"
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     },
     {
@@ -3731,12 +3731,12 @@
       "label": "bench_smalltopk_dqk512_hq128_s4096_kv8192_topk1280",
       "status": "ok",
       "impls": {
-        "tirx": 1079.1054411764708,
-        "flashmla": 1152.0631411764705
+        "tirx": 1154.9155984848485,
+        "flashmla": 1151.5782234848484
       },
       "aggregated": {
-        "rounds": 1,
-        "method": "mean"
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     },
     {
@@ -3745,12 +3745,12 @@
       "label": "bench_dqk512_hq64_s4096_kv32768_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 380.45355555555557,
-        "flashmla": 380.26755895196504
+        "tirx": 368.7253078780544,
+        "flashmla": 379.4711382035064
       },
       "aggregated": {
-        "rounds": 1,
-        "method": "mean"
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     },
     {
@@ -3759,12 +3759,12 @@
       "label": "bench_dqk512_hq64_s4096_kv49152_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 367.8164186046511,
-        "flashmla": 385.23722033898304
+        "tirx": 373.6573211911883,
+        "flashmla": 386.2018864751066
       },
       "aggregated": {
-        "rounds": 1,
-        "method": "mean"
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     },
     {
@@ -3773,12 +3773,12 @@
       "label": "bench_dqk512_hq64_s4096_kv65536_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 370.0584494382023,
-        "flashmla": 389.47886206896555
+        "tirx": 379.4485845605085,
+        "flashmla": 389.2185824788017
       },
       "aggregated": {
-        "rounds": 1,
-        "method": "mean"
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     },
     {
@@ -3787,12 +3787,12 @@
       "label": "bench_dqk512_hq64_s4096_kv8192_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 364.4970625,
-        "flashmla": 373.788243697479
+        "tirx": 363.3467819528528,
+        "flashmla": 371.67175603432867
       },
       "aggregated": {
-        "rounds": 1,
-        "method": "mean"
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     },
     {
@@ -3801,12 +3801,13 @@
       "label": "bench_dqk576_hq64_s4096_kv32768_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 377.2034848484849,
-        "flashmla": 395.27800892857147
+        "tirx": 374.98245961890694,
+        "flashmla": 396.16953318096307,
+        "trtllm_gen": 459.08312271973466
       },
       "aggregated": {
-        "rounds": 1,
-        "method": "mean"
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     },
     {
@@ -3815,12 +3816,13 @@
       "label": "bench_dqk576_hq64_s4096_kv49152_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 381.1477777777778,
-        "flashmla": 409.95456950672644
+        "tirx": 388.958224496197,
+        "flashmla": 405.6115707936508,
+        "trtllm_gen": 473.8965892173435
       },
       "aggregated": {
-        "rounds": 1,
-        "method": "mean"
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     },
     {
@@ -3829,12 +3831,13 @@
       "label": "bench_dqk576_hq64_s4096_kv65536_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 387.7999438202247,
-        "flashmla": 422.32702403846156
+        "tirx": 402.4361503643208,
+        "flashmla": 419.4300047570506,
+        "trtllm_gen": 486.5212233762853
       },
       "aggregated": {
-        "rounds": 1,
-        "method": "mean"
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     },
     {
@@ -3843,12 +3846,13 @@
       "label": "bench_dqk576_hq64_s4096_kv8192_topk512",
       "status": "ok",
       "impls": {
-        "tirx": 368.34220930232556,
-        "flashmla": 385.67515811965814
+        "tirx": 372.2512304299024,
+        "flashmla": 384.28085632183905,
+        "trtllm_gen": 453.05294474792305
       },
       "aggregated": {
-        "rounds": 1,
-        "method": "mean"
+        "rounds": 5,
+        "method": "trimmed_mean"
       }
     }
   ]

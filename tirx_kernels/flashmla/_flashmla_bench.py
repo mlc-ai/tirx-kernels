@@ -15,10 +15,10 @@ def _import_flash_mla():
     return flash_mla
 
 
-def run_flashmla_sparse_prefill(case: dict[str, Any]) -> None:
+def run_flashmla_sparse_prefill(case: dict[str, Any]):
     flash_mla = _import_flash_mla()
     cfg = case["config"]
-    flash_mla.flash_mla_sparse_fwd(
+    out, _, _ = flash_mla.flash_mla_sparse_fwd(
         case["q"],
         case["kv"],
         case["indices"],
@@ -27,8 +27,9 @@ def run_flashmla_sparse_prefill(case: dict[str, Any]) -> None:
         attn_sink=case["attn_sink"] if cfg.have_attn_sink else None,
         topk_length=case["topk_length"] if cfg.have_topk_length else None,
     )
+    return out
 
 
-def flashmla_reference_builder() -> Callable[[dict[str, Any]], None]:
+def flashmla_reference_builder(case: dict[str, Any]) -> Callable[[], Any]:
     _import_flash_mla()
-    return run_flashmla_sparse_prefill
+    return lambda: run_flashmla_sparse_prefill(case)

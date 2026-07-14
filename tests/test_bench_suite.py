@@ -1,4 +1,6 @@
 import json
+import os
+import sys
 import threading
 import time
 from pathlib import Path
@@ -253,8 +255,11 @@ def test_run_one_passes_multigpu_assignment_to_megamoe(
         def __init__(self) -> None:
             self.released = None
 
-        def acquire_many(self, count: int) -> tuple[str, ...]:
+        def acquire_many(
+            self, count: int, *, cancel_event: threading.Event | None = None
+        ) -> tuple[str, ...]:
             assert count == 2
+            assert cancel_event is None
             return ("2", "4")
 
         def release_many(self, indices: tuple[str, ...]) -> None:
@@ -264,8 +269,9 @@ def test_run_one_passes_multigpu_assignment_to_megamoe(
     captured = {}
 
     def fake_run_subprocess_monitored(
-        cmd, env, cwd, log_path, gpu_indices, monitor_interval, sm_threshold
+        cmd, env, cwd, log_path, gpu_indices, monitor_interval, sm_threshold, cancel_event
     ):
+        assert cancel_event is None
         captured.update(cmd=cmd, env=env, gpu_indices=gpu_indices)
         json_path = Path(cmd[cmd.index("--json-file") + 1])
         json_path.write_text(
@@ -284,7 +290,7 @@ def test_run_one_passes_multigpu_assignment_to_megamoe(
                 }
             )
         )
-        return 0, False, []
+        return 0, False, [], False
 
     monkeypatch.setattr(run, "_run_subprocess_monitored", fake_run_subprocess_monitored)
 
@@ -313,3 +319,155 @@ def test_run_one_passes_multigpu_assignment_to_megamoe(
     assert captured["cmd"][captured["cmd"].index("--cooldown") + 1] == "0"
     assert "--round-cooldown" not in captured["cmd"]
     assert pool.released == ("2", "4")
+
+
+def test_gpu_pool_wait_is_cancelled_promptly(monkeypatch: pytest.MonkeyPatch) -> None:
+    pool = run.GpuPool(allowed={"0"})
+    monkeypatch.setattr(pool, "_occupied_indices", lambda: set())
+    monkeypatch.setattr(pool, "_all_gpus", lambda: [("0", "GPU-0")])
+    with pool._lock:
+        pool._owned.add("0")
+
+    cancel_event = threading.Event()
+    timer = threading.Timer(0.05, cancel_event.set)
+    timer.start()
+    try:
+        with pytest.raises(run._BenchSuiteCancelled):
+            pool.acquire_many(1, cancel_event=cancel_event)
+    finally:
+        timer.cancel()
+
+
+def test_monitored_subprocess_is_terminated_on_cancel(tmp_path: Path) -> None:
+    cancel_event = threading.Event()
+    timer = threading.Timer(0.05, cancel_event.set)
+    timer.start()
+    started = time.monotonic()
+    try:
+        returncode, interfered, intruders, cancelled = run._run_subprocess_monitored(
+            [sys.executable, "-c", "import time; time.sleep(30)"],
+            os.environ.copy(),
+            str(tmp_path),
+            tmp_path / "subprocess.log",
+            (),
+            0.01,
+            0.0,
+            cancel_event,
+        )
+    finally:
+        timer.cancel()
+
+    assert cancelled
+    assert returncode != 0
+    assert not interfered
+    assert intruders == []
+    assert time.monotonic() - started < 2
+
+
+def test_run_scheduled_jobs_stops_after_first_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls = []
+
+    def fake_run_one(workload, pool, log_dir, **kwargs):
+        calls.append(workload["config"])
+        return {
+            "kernel": workload["kernel"],
+            "config": workload["config"],
+            "status": "FAIL",
+            "error": "deterministic failure",
+        }
+
+    monkeypatch.setattr(run, "run_one", fake_run_one)
+    records, retry_log = run.run_scheduled_jobs(
+        [{"kernel": "kernel", "config": "fails"}, {"kernel": "kernel", "config": "must_not_start"}],
+        object(),
+        tmp_path,
+        rounds=1,
+        cooldown=0,
+        bench_aggregate="mean",
+        cpu_workers=1,
+    )
+
+    assert calls == ["fails"]
+    assert retry_log == []
+    assert [(record["config"], record["status"], record["attempt"]) for record in records] == [
+        ("fails", "FAIL", 1)
+    ]
+
+
+def test_run_scheduled_jobs_retries_interference(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    attempts = []
+
+    def fake_run_one(workload, pool, log_dir, *, attempt, **kwargs):
+        attempts.append(attempt)
+        if attempt == 1:
+            return {
+                "kernel": workload["kernel"],
+                "config": workload["config"],
+                "status": "INTERFERED",
+                "error": "active neighbor",
+                "intruder_pids": [123],
+            }
+        return {"kernel": workload["kernel"], "config": workload["config"], "status": "ok"}
+
+    monkeypatch.setattr(run, "run_one", fake_run_one)
+    records, retry_log = run.run_scheduled_jobs(
+        [{"kernel": "kernel", "config": "config"}],
+        object(),
+        tmp_path,
+        rounds=1,
+        cooldown=0,
+        bench_aggregate="mean",
+        cpu_workers=1,
+    )
+
+    assert attempts == [1, 2]
+    assert records[0]["status"] == "ok"
+    assert records[0]["attempt"] == 2
+    assert retry_log == [("kernel", "config", 1, "intruders [123]")]
+
+
+def test_run_scheduled_jobs_cancels_inflight_work(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    active_started = threading.Event()
+    calls = []
+
+    def fake_run_one(workload, pool, log_dir, *, cancel_event, **kwargs):
+        config = workload["config"]
+        calls.append(config)
+        if config == "fails":
+            assert active_started.wait(1)
+            return {
+                "kernel": workload["kernel"],
+                "config": config,
+                "status": "FAIL",
+                "error": "deterministic failure",
+            }
+        if config == "active":
+            active_started.set()
+            assert cancel_event.wait(1)
+            return {"kernel": workload["kernel"], "config": config, "status": "CANCELLED"}
+        raise AssertionError(f"unexpectedly started {config}")
+
+    monkeypatch.setattr(run, "run_one", fake_run_one)
+    records, retry_log = run.run_scheduled_jobs(
+        [
+            {"kernel": "kernel", "config": "fails"},
+            {"kernel": "kernel", "config": "active"},
+            {"kernel": "kernel", "config": "must_not_start"},
+        ],
+        object(),
+        tmp_path,
+        rounds=1,
+        cooldown=0,
+        bench_aggregate="mean",
+        cpu_workers=2,
+    )
+
+    assert set(calls) == {"fails", "active"}
+    assert retry_log == []
+    assert [(record["config"], record["status"]) for record in records] == [("fails", "FAIL")]

@@ -2,7 +2,7 @@
 
 - Timestamp: `163`
 - Label:     `5ec3e10a`
-- Git:       `{'tir': '62fc55f9', 'tirx-kernels': 'fdcc24d8-dirty', 'tirx-bench-ci': None}`
+- Git:       `{'tir': '1f384bcb', 'tirx-kernels': '5b1937c5', 'tirx-bench-ci': None}`
 - Workloads: 267 ok, 0 failed
 
 Grouped workloads show one row per config and one timing column per implementation. Single-TIR workloads show ref/ours against the fastest reference implementation.
@@ -311,30 +311,30 @@ Grouped workloads show one row per config and one timing column per implementati
 
 | config | ours impl | ours (µs) | ref impl | ref (µs) | ref/ours | other impls |
 |---|---|---:|---|---:|---:|---|
-| `bench_regular_dqk512_hq128_s4096_kv32768_topk2048` | tirx | 1624.1453 | flashmla | 1774.6467 | 1.093 | — |
-| `bench_regular_dqk512_hq128_s4096_kv65536_topk2048` | tirx | 1795.7931 | flashmla | 1899.9648 | 1.058 | — |
-| `bench_regular_dqk512_hq128_s4096_kv8192_topk2048` | tirx | 1704.9224 | flashmla | 1758.6548 | 1.032 | — |
-| `bench_regular_dqk576_hq128_s4096_kv32768_topk2048` | tirx | 1803.4952 | flashmla | 1831.0718 | 1.015 | — |
-| `bench_regular_dqk576_hq128_s4096_kv65536_topk2048` | tirx | 1971.9645 | flashmla | 2018.3973 | 1.024 | — |
-| `bench_regular_dqk576_hq128_s4096_kv8192_topk2048` | tirx | 1690.7523 | flashmla | 1803.9114 | 1.067 | — |
+| `bench_regular_dqk512_hq128_s4096_kv32768_topk2048` | tirx | 1736.2030 | flashmla | 1750.3786 | 1.008 | — |
+| `bench_regular_dqk512_hq128_s4096_kv65536_topk2048` | tirx | 1891.7267 | flashmla | 1901.0241 | 1.005 | — |
+| `bench_regular_dqk512_hq128_s4096_kv8192_topk2048` | tirx | 1725.1479 | flashmla | 1755.2076 | 1.017 | — |
+| `bench_regular_dqk576_hq128_s4096_kv32768_topk2048` | tirx | 1803.9948 | flashmla | 1828.4830 | 1.014 | trtllm_gen=2064.7639 |
+| `bench_regular_dqk576_hq128_s4096_kv65536_topk2048` | tirx | 2016.7129 | flashmla | 1990.7169 | 0.987 | trtllm_gen=2205.1155 |
+| `bench_regular_dqk576_hq128_s4096_kv8192_topk2048` | tirx | 1819.8772 | flashmla | 1834.2420 | 1.008 | trtllm_gen=2068.6581 |
 
 ## sparse_flashmla_prefill_head128_small_topk_phase1
 
 | config | ours impl | ours (µs) | ref impl | ref (µs) | ref/ours | other impls |
 |---|---|---:|---|---:|---:|---|
-| `bench_smalltopk_dqk512_hq128_s4096_kv32768_topk1280` | tirx | 1105.8868 | flashmla | 1164.5153 | 1.053 | — |
-| `bench_smalltopk_dqk512_hq128_s4096_kv65536_topk1280` | tirx | 1126.6650 | flashmla | 1180.8836 | 1.048 | — |
-| `bench_smalltopk_dqk512_hq128_s4096_kv8192_topk1280` | tirx | 1079.1054 | flashmla | 1152.0631 | 1.068 | — |
+| `bench_smalltopk_dqk512_hq128_s4096_kv32768_topk1280` | tirx | 1176.3623 | flashmla | 1173.2257 | 0.997 | — |
+| `bench_smalltopk_dqk512_hq128_s4096_kv65536_topk1280` | tirx | 1201.9255 | flashmla | 1202.2733 | 1.000 | — |
+| `bench_smalltopk_dqk512_hq128_s4096_kv8192_topk1280` | tirx | 1154.9156 | flashmla | 1151.5782 | 0.997 | — |
 
 ## sparse_flashmla_prefill_head64_phase1
 
 | config | ours impl | ours (µs) | ref impl | ref (µs) | ref/ours | other impls |
 |---|---|---:|---|---:|---:|---|
-| `bench_dqk512_hq64_s4096_kv32768_topk512` | tirx | 380.4536 | flashmla | 380.2676 | 1.000 | — |
-| `bench_dqk512_hq64_s4096_kv49152_topk512` | tirx | 367.8164 | flashmla | 385.2372 | 1.047 | — |
-| `bench_dqk512_hq64_s4096_kv65536_topk512` | tirx | 370.0584 | flashmla | 389.4789 | 1.052 | — |
-| `bench_dqk512_hq64_s4096_kv8192_topk512` | tirx | 364.4971 | flashmla | 373.7882 | 1.025 | — |
-| `bench_dqk576_hq64_s4096_kv32768_topk512` | tirx | 377.2035 | flashmla | 395.2780 | 1.048 | — |
-| `bench_dqk576_hq64_s4096_kv49152_topk512` | tirx | 381.1478 | flashmla | 409.9546 | 1.076 | — |
-| `bench_dqk576_hq64_s4096_kv65536_topk512` | tirx | 387.7999 | flashmla | 422.3270 | 1.089 | — |
-| `bench_dqk576_hq64_s4096_kv8192_topk512` | tirx | 368.3422 | flashmla | 385.6752 | 1.047 | — |
+| `bench_dqk512_hq64_s4096_kv32768_topk512` | tirx | 368.7253 | flashmla | 379.4711 | 1.029 | — |
+| `bench_dqk512_hq64_s4096_kv49152_topk512` | tirx | 373.6573 | flashmla | 386.2019 | 1.034 | — |
+| `bench_dqk512_hq64_s4096_kv65536_topk512` | tirx | 379.4486 | flashmla | 389.2186 | 1.026 | — |
+| `bench_dqk512_hq64_s4096_kv8192_topk512` | tirx | 363.3468 | flashmla | 371.6718 | 1.023 | — |
+| `bench_dqk576_hq64_s4096_kv32768_topk512` | tirx | 374.9825 | flashmla | 396.1695 | 1.057 | trtllm_gen=459.0831 |
+| `bench_dqk576_hq64_s4096_kv49152_topk512` | tirx | 388.9582 | flashmla | 405.6116 | 1.043 | trtllm_gen=473.8966 |
+| `bench_dqk576_hq64_s4096_kv65536_topk512` | tirx | 402.4362 | flashmla | 419.4300 | 1.042 | trtllm_gen=486.5212 |
+| `bench_dqk576_hq64_s4096_kv8192_topk512` | tirx | 372.2512 | flashmla | 384.2809 | 1.032 | trtllm_gen=453.0529 |
