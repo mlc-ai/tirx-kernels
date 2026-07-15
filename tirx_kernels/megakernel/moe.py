@@ -18,6 +18,7 @@
 
 from __future__ import annotations
 
+import math
 from unittest import SkipTest
 
 import numpy as np
@@ -58,6 +59,7 @@ _SUPPORTED_SCHEDULERS = ("static", "dynamic", "unfused")
 _STATIC_QUEUE_SCHEDULERS = ("static", "unfused")
 _TEST_BATCH_SIZES = (1, 128)
 _BENCH_BATCH_SIZES = (1, 8, 32, 128, 512, 1024, 2048, 4096)
+_BENCH_LAUNCH_SLOT_HEADROOM = 1.25
 
 CONFIGS = [
     {
@@ -1118,8 +1120,8 @@ def _reset_tir_case_for_cuda_graph(case):
     idx = case["cursor"]
     if idx >= case["launch_slots"]:
         raise RuntimeError(
-            f"MegaKernelMOE benchmark exhausted launch slots "
-            f"({case['launch_slots']}); increase warmup/repeat slot allocation"
+            f"MegaKernelMOE {case['scheduler']} benchmark exhausted launch slots "
+            f"({case['launch_slots']}); increase launch-slot capacity"
         )
 
     reset = case["graph_reset"]
@@ -1138,8 +1140,8 @@ def _run_tir_case(case):
     idx = case["cursor"]
     if idx >= case["launch_slots"]:
         raise RuntimeError(
-            f"MegaKernelMOE benchmark exhausted launch slots "
-            f"({case['launch_slots']}); increase warmup/repeat slot allocation"
+            f"MegaKernelMOE {case['scheduler']} benchmark exhausted launch slots "
+            f"({case['launch_slots']}); increase launch-slot capacity"
         )
     kernel = case["kernel"]
     if case["scheduler"] in _STATIC_QUEUE_SCHEDULERS:
@@ -1495,9 +1497,11 @@ def _estimate_bench_launch_slots(
     n_warmup = max(1, int(warmup_budget_ms / estimate_ms))
     n_repeat = max(1, int(repeat_budget_ms / estimate_ms))
     # bench() calls fn() once, then runs a five-call estimate before the warmup
-    # and timed loops. Add a small guard for integer rounding and post-bench
-    # validation.
-    return preflight_launches + rounds * (1 + 5 + n_warmup + n_repeat) + 16
+    # and timed loops.  Its independent runtime estimate can be faster than this
+    # allocation probe, so reserve proportional headroom for the budget-derived
+    # loop counts without changing the benchmark protocol itself.
+    budget_launches = math.ceil((n_warmup + n_repeat) * _BENCH_LAUNCH_SLOT_HEADROOM)
+    return preflight_launches + rounds * (1 + 5 + budget_launches) + 16
 
 
 def run_bench(

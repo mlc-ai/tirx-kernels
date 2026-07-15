@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import inspect
 import os
+from types import SimpleNamespace
 
 import pytest
 
@@ -30,6 +31,7 @@ from tirx_kernels.deepgemm.mega_moe import (
     _get_mega_moe_cuda_compile_mode,
     _get_num_bytes_per_pull,
     _get_num_experts_per_wave_for_mega_moe,
+    _make_symm_buffer_offsets,
     _run_worker,
     get_deepgemm_launch_config,
     get_deepgemm_workspace_layout,
@@ -45,6 +47,21 @@ def _rank_result(tirx: list[float], deepgemm: list[float]) -> dict:
         "errors": {},
         "deepgemm_max_abs_diff": 0.0,
     }
+
+
+def test_symm_buffer_offsets_match_deepgemm_pointer_mapping() -> None:
+    case = SimpleNamespace(
+        rank_idx=1,
+        symm_buffer=SimpleNamespace(
+            buffer=SimpleNamespace(data_ptr=lambda: 1200),
+            handle=SimpleNamespace(buffer_ptrs=(1000, 1200)),
+        ),
+    )
+
+    offsets = _make_symm_buffer_offsets(case)
+
+    assert len(offsets) == 72
+    assert offsets[:3] == (-200, 0, 0)
 
 
 def test_aggregate_rank_results_takes_slowest_rank_per_round() -> None:
@@ -216,8 +233,11 @@ def test_mega_moe_bench_inherits_shared_defaults() -> None:
     assert "bench_tk" not in inspect.getsource(_run_worker)
 
 
-def test_megamoe_timer_wraps_deepgemm_bench_kineto() -> None:
+def test_megamoe_timer_wraps_deepgemm_bench_kineto(monkeypatch: pytest.MonkeyPatch) -> None:
     calls = []
+    sleeps = []
+
+    monkeypatch.setattr("tirx_kernels.deepgemm.mega_moe.time.sleep", sleeps.append)
 
     def fake_barrier() -> None:
         pass
@@ -241,12 +261,15 @@ def test_megamoe_timer_wraps_deepgemm_bench_kineto() -> None:
         fake_barrier,
         fake_between_impls,
         rounds=2,
+        cooldown_s=0.25,
     )
 
     assert calls == ["tirx", "deepgemm", "deepgemm", "tirx"]
+    assert sleeps == [0.25]
     assert result["timer"] == "megamoe"
     assert result["round_samples"] == {"tirx": [1000.0, 1000.0], "deepgemm": [1000.0, 1000.0]}
     assert result["benchmark_protocol"]["num_tests"] == 30
+    assert result["benchmark_protocol"]["round_cooldown_s"] == 0.25
     assert result["benchmark_protocol"]["round_orders"] == [
         ["tirx", "deepgemm"],
         ["deepgemm", "tirx"],

@@ -11,6 +11,35 @@ from tirx_kernels.bench_suite import run
 from tirx_kernels.bench_suite.baseline_view import render_markdown
 from tirx_kernels.bench_suite.ratio_diff import build_report
 from tirx_kernels.megakernel.moe import BENCH_CONFIGS as MEGAKERNEL_MOE_BENCH_CONFIGS
+from tirx_kernels.megakernel.moe import _estimate_bench_launch_slots
+
+
+def test_bench_suite_standard_sampling_defaults() -> None:
+    assert run.DEFAULT_ROUNDS == 5
+    assert run.DEFAULT_COOLDOWN_S == 1.0
+
+
+def test_finalize_bench_record_uses_all_rounds_arithmetic_mean() -> None:
+    row = {"round_samples": {"tir": [1.0, 2.0, 100.0], "reference": [4.0, 5.0, 6.0]}}
+
+    run._finalize_bench_record(row, rounds=3)
+
+    assert row["status"] == "ok"
+    assert row["impls"] == {"tir": 103.0 / 3.0, "reference": 5.0}
+    assert row["aggregated"] == {"rounds": 3, "method": "mean"}
+
+
+def test_finalize_bench_record_rejects_baseline_errors() -> None:
+    row = {
+        "impls": {"tir": 10.0},
+        "round_samples": {"tir": [10.0] * 5},
+        "errors": {"deepgemm": "setup failed"},
+    }
+
+    run._finalize_bench_record(row, rounds=5)
+
+    assert row["status"] == "FAIL"
+    assert row["error"] == "baseline error(s): deepgemm: setup failed"
 
 
 def test_default_workloads_include_full_megakernel_moe_sweep() -> None:
@@ -22,6 +51,39 @@ def test_default_workloads_include_full_megakernel_moe_sweep() -> None:
     }
     assert all(w["num_gpus"] == 1 for w in megakernel_moe_workloads)
     assert all("timer" not in w for w in megakernel_moe_workloads)
+
+
+def test_bench_suite_defaults_to_five_round_arithmetic_mean() -> None:
+    row = {"round_samples": {"tirx": [1.0, 2.0, 3.0, 4.0, 100.0]}}
+
+    run._finalize_bench_record(row, rounds=run.DEFAULT_ROUNDS)
+
+    assert run.DEFAULT_ROUNDS == 5
+    assert row["impls"] == {"tirx": 22.0}
+    assert row["aggregated"] == {"rounds": 5, "method": "mean"}
+    assert row["status"] == "ok"
+
+
+def test_megakernel_moe_launch_slots_include_runtime_estimate_headroom() -> None:
+    slots = _estimate_bench_launch_slots(
+        runtime_us=1000.0, warmup=None, repeat=None, rounds=5, preflight_launches=1
+    )
+
+    # Defaults produce 25 warmup and 100 repeat launches.  Capacity includes
+    # 25% headroom on those runtime-derived loops, while keeping the one-call
+    # setup, five-call estimate, and final guard unchanged.
+    assert slots == 1 + 5 * (1 + 5 + 157) + 16
+
+
+def test_default_workloads_do_not_override_standard_timer_budgets() -> None:
+    workloads = run.load_workloads(run.DEFAULT_WORKLOADS)
+
+    for workload in workloads:
+        if workload.get("timer") == "megamoe":
+            continue
+        assert "warmup" not in workload
+        assert "repeat" not in workload
+        assert "timer" not in workload
 
 
 def test_ratio_report_keeps_grouped_tir_schedulers_out_of_references() -> None:
@@ -315,6 +377,8 @@ def test_run_one_passes_multigpu_assignment_to_megamoe(
     assert record["round_samples"] == {"deepgemm": [10.0, 11.0], "tirx": [9.5, 10.5]}
     assert captured["gpu_indices"] == ("2", "4")
     assert captured["env"]["CUDA_VISIBLE_DEVICES"] == "2,4"
+    assert Path(captured["env"]["TIRX_BENCH_CACHE_DIR"]).name == "cache"
+    assert Path(captured["env"]["TIRX_BENCH_CACHE_DIR"]).is_absolute()
     assert captured["cmd"][captured["cmd"].index("--timer") + 1] == "megamoe"
     assert captured["cmd"][captured["cmd"].index("--cooldown") + 1] == "0"
     assert "--round-cooldown" not in captured["cmd"]
@@ -385,7 +449,6 @@ def test_run_scheduled_jobs_stops_after_first_failure(
         tmp_path,
         rounds=1,
         cooldown=0,
-        bench_aggregate="mean",
         cpu_workers=1,
     )
 
@@ -420,7 +483,6 @@ def test_run_scheduled_jobs_retries_interference(
         tmp_path,
         rounds=1,
         cooldown=0,
-        bench_aggregate="mean",
         cpu_workers=1,
     )
 
@@ -464,7 +526,6 @@ def test_run_scheduled_jobs_cancels_inflight_work(
         tmp_path,
         rounds=1,
         cooldown=0,
-        bench_aggregate="mean",
         cpu_workers=2,
     )
 

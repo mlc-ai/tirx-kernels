@@ -34,9 +34,7 @@ export SGLANG_PATH=/path/to/sglang
 export PYTHONPATH="${SGLANG_PATH}/python:${PYTHONPATH}"
 
 python -m tirx_kernels.bench_suite \
-  --workloads tirx_kernels/bench_suite/workloads_sglang_fp8_paged_mqa.yaml \
-  --rounds 5 \
-  --bench-aggregate trimmed_mean
+  --workloads tirx_kernels/bench_suite/workloads_sglang_fp8_paged_mqa.yaml
 ```
 
 This is a kernel-only Proton comparison: Q/context reshaping, schedule metadata,
@@ -61,8 +59,10 @@ Run artifacts (logs, `runs/*.json`, `reports/*`) live under `.bench-suite/` and 
 2. **One job = one workload** (kernel + config). A worker atomically acquires the
    workload's requested GPU count, then runs **one**
    bench subprocess that always benches our kernel **and** every reference impl:
-   compile/prepare once, then **`--rounds N` in-bench** (each round: warmup + repeat).
-   `--cooldown` is applied before every implementation in every round.
+   compile/prepare once, then **`--rounds N` in-bench**. Each round is one complete
+   call to the selected Triton-standard timer (including its own estimate, warmup,
+   and measurement), and `--cooldown` is applied before every implementation in
+   every round. The suite retains all round samples and reports their arithmetic mean.
 3. **Fail fast**: the first workload/subprocess `FAIL` stops new scheduling,
    terminates the suite's in-flight subprocesses, writes the partial run for
    diagnosis, and exits with code 1. `INTERFERED` is not a workload failure and
@@ -96,19 +96,19 @@ python tirx_kernels/bench_suite/promote_baseline.py \
   .bench-suite/runs/<id>.json --merge
 ```
 
-Before merge, add `--rounds 5` and promote.
+The default is already five independent rounds. Use `--rounds 1` only for a quick
+diagnostic run that will not be promoted.
 
 ### Refresh the pinned baseline (rare)
 
 ```bash
-python -m tirx_kernels.bench_suite --rounds 5 --bench-aggregate trimmed_mean
+python -m tirx_kernels.bench_suite
 python tirx_kernels/bench_suite/promote_baseline.py .bench-suite/runs/<id>.json --merge
 ```
 
 `promote_baseline.py <run>.json --merge` patches the ok rows from a run JSON into
-`baseline.json` by `(kernel, config)` and regenerates `baseline.md`. Use
-`--rounds 5 --bench-aggregate trimmed_mean` for a promoted baseline (drops the
-fastest and slowest round).
+`baseline.json` by `(kernel, config)` and regenerates `baseline.md`. Promoted runs use
+the arithmetic mean of all five samples; no samples are trimmed or silently dropped.
 
 Spot-check one workload: `python -m tirx_kernels.bench --kernel ... --config ... --rounds 5`
 
@@ -123,18 +123,26 @@ MegaMoE entries use `timer: megamoe`, which invokes the dedicated DeepGEMM
 `bench_kineto` protocol. Do not set `warmup` or `repeat` for this timer because
 the protocol fixes its own 30-test schedule.
 
+The suite exports an absolute `TIRX_BENCH_CACHE_DIR` under `.bench-suite/cache/`.
+Reference adapters may use it for version/GPU-qualified autotune caches, but must
+finish cache loading, tuning, workspace setup, and validation before returning their
+timed launch closure. The NVFP4 FlashInfer adapter uses one cache file per shape and
+records its requested backend and selected runner/tactic in the result metadata. It
+defaults to FlashInfer's `auto` backend; set
+`TIRX_NVFP4_FLASHINFER_BACKEND=cutlass` to force an independently cached CUTLASS run.
+
 ## Flags
 
 | Flag | Default | Meaning |
 |------|---------|---------|
-| `--rounds N` | `1` | In-bench rounds (warmup+repeat each) per subprocess |
+| `--rounds N` | `5` | Complete standard-timer calls per implementation/workload |
 | `--cooldown` | `1.0` | Seconds before every implementation in every round |
-| `--bench-aggregate` | `mean` | `mean`, `median`, or `trimmed_mean` over round samples |
 | `--cpu-workers` | `0` (= GPU count) | Concurrent workload workers (capped at GPU count) |
 | `--util-threshold` | `0` | Skip GPUs with SM utilization above this percent |
 | `--mem-threshold` | `0` | Skip GPUs with compute-app memory-used percent above this percent |
 
-Promoted baselines often use **trimmed_mean ×5** (`--rounds 5 --bench-aggregate trimmed_mean`).
+Round aggregation is always the arithmetic mean. The raw five-element sample arrays
+remain in the run JSON for variance and outlier inspection.
 
 ## Ratio rules
 

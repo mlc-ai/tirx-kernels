@@ -475,14 +475,14 @@ def run_bench(dtype, M, N, K, warmup=None, repeat=None, timer=None, **kwargs):
         C_out = torch.zeros_like(C, device="cuda")
         return lambda: torch.matmul(A, B.T, out=C_out)
 
-    def _deepgemm_cublaslt():
-        import deep_gemm
-
-        C_out = torch.zeros(M, N, dtype=A.dtype, device="cuda")
-        return lambda: deep_gemm.cublaslt_gemm_nt(A, B, C_out, None)
-
-    references = {"torch-cublas": _torch_cublas, "deepgemm-cublaslt": _deepgemm_cublaslt}
+    references = {"torch-cublas": _torch_cublas}
     if dtype == "bf16":
+
+        def _deepgemm_cublaslt():
+            import deep_gemm
+
+            C_out = torch.zeros(M, N, dtype=torch.bfloat16, device="cuda")
+            return lambda: deep_gemm.cublaslt_gemm_nt(A, B, C_out, None)
 
         def _deepgemm_bf16():
             import deep_gemm
@@ -490,6 +490,8 @@ def run_bench(dtype, M, N, K, warmup=None, repeat=None, timer=None, **kwargs):
             C_out = torch.zeros(M, N, dtype=torch.bfloat16, device="cuda")
             return lambda: deep_gemm.bf16_gemm_nt(A, B, C_out)
 
-        references["deepgemm-bf16"] = _deepgemm_bf16
+        references.update(
+            {"deepgemm-cublaslt": _deepgemm_cublaslt, "deepgemm-bf16": _deepgemm_bf16}
+        )
 
     return bench(funcs, warmup=warmup, repeat=repeat, timer=timer, references=references, **kwargs)

@@ -24,7 +24,7 @@ import traceback
 from unittest import SkipTest
 
 from tirx_kernels.registry import discover_kernels, load_kernel
-from tirx_kernels.runner import run_kernel_bench
+from tirx_kernels.runner import DEFAULT_BENCH_COOLDOWN_S, DEFAULT_BENCH_ROUNDS, run_kernel_bench
 
 
 def _get_bench_configs(mod):
@@ -60,22 +60,27 @@ def main():
         type=str,
         choices=("event", "proton", "cudagraph_proton", "megamoe"),
         default=None,
-        help="Override the kernel module's benchmark timer (all cold-cache: "
-        "'event' = do_bench, 'proton' = do_bench_proton (per-kernel GPU time, same "
-        "setup as event), 'cudagraph_proton' = do_bench_cudagraph_proton [NVIDIA], "
-        "'megamoe' = DeepGEMM bench_kineto protocol for MegaMoE)",
+        help="Override the kernel module's benchmark timer: 'event' = do_bench, "
+        "'proton' = do_bench_proton, 'cudagraph_proton' = "
+        "do_bench_cudagraph_proton [NVIDIA], 'megamoe' = DeepGEMM bench_kineto "
+        "protocol for MegaMoE",
     )
     parser.add_argument(
         "--rounds",
         type=int,
-        default=1,
-        help="Independent benchmark rounds inside one process (default 1)",
+        default=DEFAULT_BENCH_ROUNDS,
+        help=(
+            f"Independent standard-timer calls inside one process (default {DEFAULT_BENCH_ROUNDS})"
+        ),
     )
     parser.add_argument(
         "--cooldown",
         type=float,
-        default=1.0,
-        help="Seconds to sleep before every implementation (default 1.0)",
+        default=DEFAULT_BENCH_COOLDOWN_S,
+        help=(
+            "Seconds before every implementation in every round "
+            f"(default {DEFAULT_BENCH_COOLDOWN_S:g})"
+        ),
     )
     args = parser.parse_args()
 

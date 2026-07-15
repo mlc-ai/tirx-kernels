@@ -5,7 +5,6 @@ See README.md in this directory for setup, baseline workflow, and flags.
 
 Quick start:
     python -m tirx_kernels.bench_suite
-    python -m tirx_kernels.bench_suite --rounds 5
     python tirx_kernels/bench_suite/promote_baseline.py .bench-suite/runs/<id>.json --merge
 
 Exit codes:
@@ -24,6 +23,7 @@ import queue
 import random
 import shutil
 import signal
+import statistics
 import subprocess
 import sys
 import tempfile
@@ -36,6 +36,9 @@ from pathlib import Path
 from typing import ClassVar
 
 import yaml
+
+from tirx_kernels.runner import DEFAULT_BENCH_COOLDOWN_S as DEFAULT_COOLDOWN_S
+from tirx_kernels.runner import DEFAULT_BENCH_ROUNDS as DEFAULT_ROUNDS
 
 try:
     from tirx_kernels.bench_suite.impls import our_impls
@@ -60,7 +63,6 @@ POLL_INTERVAL = 5.0  # seconds between GPU re-checks when none is free
 MONITOR_INTERVAL = 0.5  # seconds between nvidia-smi polls during a workload
 # 0 means auto: one worker per probe-OK GPU (see main()).
 DEFAULT_CPU_WORKERS = 0
-DEFAULT_COOLDOWN_S = 1.0
 DEFAULT_UTIL_THRESHOLD = 0.0  # % GPU util above which a card counts as busy.
 DEFAULT_MEM_THRESHOLD = 0.0  # % compute-app memory above which a card counts as busy.
 
@@ -672,9 +674,8 @@ def run_one(
     log_dir: Path,
     *,
     attempt: int = 1,
-    rounds: int = 1,
+    rounds: int = DEFAULT_ROUNDS,
     cooldown: float = DEFAULT_COOLDOWN_S,
-    bench_aggregate: str = "mean",
     cancel_event: threading.Event | None = None,
 ) -> dict:
     kernel = workload["kernel"]
@@ -714,6 +715,13 @@ def run_one(
 
     env = os.environ.copy()
     env["CUDA_VISIBLE_DEVICES"] = gpu_csv
+    # Reference-library autotune caches must survive the per-workload scratch
+    # cwd and must be populated before timing. Individual adapters use
+    # per-op/per-shape files below this absolute directory, so concurrent suite
+    # workers do not overwrite one another's selections.
+    cache_dir = (log_dir.parent / "cache").resolve()
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    env["TIRX_BENCH_CACHE_DIR"] = str(cache_dir)
 
     # Each workload gets its own scratch cwd so concurrent runs don't race on
     # proton's <proton_name>.hatchet file.
@@ -766,7 +774,7 @@ def run_one(
                     record.update(match)
                     record.setdefault("status", "FAIL")
                 else:
-                    _finalize_bench_record(match, rounds=rounds, bench_aggregate=bench_aggregate)
+                    _finalize_bench_record(match, rounds=rounds)
                     record.update(match)
                     record.setdefault("label", config)
                     if record.get("status") != "ok":
@@ -1108,6 +1116,7 @@ def write_run(
 BASELINE_IMPL_BY_KERNEL = {
     "fp16_bf16_gemm": "torch-cublas",
     "fp8_blockwise_gemm": "deepgemm",
+    "grouped_fp8_gemm_contiguous": "deepgemm",
     "nvfp4_gemm": "flashinfer",
     "flash_attention4": "flashattn_sm100",
     "deepgemm_sm100_fp8_mqa_logits": "deepgemm",
@@ -1259,24 +1268,14 @@ def load_baseline(path=None):
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 
-def aggregate_impl_times(values: list[float], method: str) -> float:
-    """Combine per-round impl times for one workload."""
-    import statistics
-
-    if method == "mean":
-        return statistics.mean(values)
-    if method == "median":
-        return statistics.median(values)
-    if method == "trimmed_mean":
-        if len(values) < 3:
-            return statistics.mean(values)
-        ranked = sorted(values)
-        return statistics.mean(ranked[1:-1])
-    raise ValueError(f"aggregate must be mean, median, or trimmed_mean, got {method!r}")
-
-
-def _finalize_bench_record(row: dict, *, rounds: int, bench_aggregate: str) -> None:
+def _finalize_bench_record(row: dict, *, rounds: int) -> None:
     """Validate in-bench round samples and write aggregated impl times (microseconds)."""
+    baseline_errors = row.get("errors") or {}
+    if baseline_errors:
+        details = "; ".join(f"{name}: {error}" for name, error in baseline_errors.items())
+        row["status"] = "FAIL"
+        row["error"] = f"baseline error(s): {details}"
+        return
     samples = row.get("round_samples")
     if not samples:
         impls = row.get("impls") or {}
@@ -1290,10 +1289,8 @@ def _finalize_bench_record(row: dict, *, rounds: int, bench_aggregate: str) -> N
         row["status"] = "FAIL"
         row["error"] = f"expected {rounds} round(s) per impl, got {bad}"
         return
-    row["impls"] = {
-        impl: aggregate_impl_times(vals, bench_aggregate) for impl, vals in samples.items()
-    }
-    row["aggregated"] = {"rounds": rounds, "method": bench_aggregate}
+    row["impls"] = {impl: statistics.mean(vals) for impl, vals in samples.items()}
+    row["aggregated"] = {"rounds": rounds, "method": "mean"}
     row["status"] = "ok"
 
 
@@ -1304,7 +1301,6 @@ def run_scheduled_jobs(
     *,
     rounds: int,
     cooldown: float,
-    bench_aggregate: str,
     cpu_workers: int,
 ) -> tuple[list[dict], list[tuple[str, str, int, str]]]:
     """Run one subprocess per workload and stop the suite on the first failure.
@@ -1355,7 +1351,6 @@ def run_scheduled_jobs(
                     attempt=attempt,
                     rounds=rounds,
                     cooldown=cooldown,
-                    bench_aggregate=bench_aggregate,
                     cancel_event=cancel_event,
                 )
             except _BenchSuiteCancelled:
@@ -1494,22 +1489,15 @@ def main() -> None:
     ap.add_argument(
         "--rounds",
         type=int,
-        default=1,
-        help="In-bench rounds per workload subprocess (default 1). Compile once, "
-        "then warmup+repeat each round; failed jobs are requeued until ok.",
+        default=DEFAULT_ROUNDS,
+        help=f"Independent standard-timer samples per workload (default {DEFAULT_ROUNDS}). "
+        "Compile/prepare once; each round cools down and runs a complete timer call.",
     )
     ap.add_argument(
         "--cooldown",
         type=float,
         default=DEFAULT_COOLDOWN_S,
         help=f"Seconds to sleep before every implementation (default {DEFAULT_COOLDOWN_S:g}).",
-    )
-    ap.add_argument(
-        "--bench-aggregate",
-        choices=("mean", "median", "trimmed_mean"),
-        default="mean",
-        help="How to combine in-bench round samples per impl (default mean). "
-        "trimmed_mean drops the fastest and slowest round.",
     )
     ap.add_argument(
         "--cpu-workers",
@@ -1641,8 +1629,8 @@ def main() -> None:
     _repo_git = collect_repo_git()
     label = args.label or _repo_git.get("tirx-kernels") or _repo_git.get("tir") or "local"
     agg_note = (
-        f", {args.rounds} in-bench round(s), aggregate={args.bench_aggregate}, "
-        f"cooldown={args.cooldown:g}s"
+        f", {args.rounds} standard-timer round(s), aggregate=mean, "
+        f"cooldown={args.cooldown:g}s before every impl/round"
         if args.rounds > 1 or args.cooldown > 0
         else ""
     )
@@ -1658,7 +1646,6 @@ def main() -> None:
         log_dir,
         rounds=args.rounds,
         cooldown=args.cooldown,
-        bench_aggregate=args.bench_aggregate,
         cpu_workers=cpu_workers,
     )
 

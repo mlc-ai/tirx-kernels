@@ -4,10 +4,10 @@
 defaults:
   # Intentionally empty: warmup/repeat/timer all defer to each kernel's run_bench
   # defaults. The global default timer is `proton` (resolved from timer=None in
-  # tvm.tirx.bench.bench) -- pure per-kernel GPU time, cold-cache (per-iter L2 flush),
-  # honest for host-dispatch-heavy references; auto-falls back to `event` (do_bench
-  # CUDA-event wall) when Proton/CUPTI is unavailable. `cudagraph_proton` (graph replay
-  # + Proton) is also selectable but no longer any kernel's default.
+  # tvm.tirx.bench.bench) -- pure per-kernel GPU time with the same cold-cache
+  # preparation as Triton's do_bench_proton. Timer failures are explicit; the runner
+  # never labels an event measurement as Proton. `event` and `cudagraph_proton`
+  # remain explicit alternatives with their native Triton semantics.
   # Override warmup/repeat/timer per-workload only for a specific exception.
 
 workloads:

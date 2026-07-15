@@ -19,13 +19,13 @@ from __future__ import annotations
 
 import ctypes
 import ctypes.util
-import importlib.metadata
 import inspect
 import math
 import os
 import random
 import socket
 import threading
+import time
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from functools import cache
@@ -1441,18 +1441,7 @@ def load_deep_gemm_mega() -> tuple[Any, str]:
         ) from exc
     if not hasattr(module, "fp8_fp4_mega_moe"):
         raise SkipTest("DeepGEMM mega_moe runtime unavailable: missing fp8_fp4_mega_moe")
-    try:
-        version = importlib.metadata.version("deep_gemm")
-    except importlib.metadata.PackageNotFoundError:
-        version = str(getattr(module, "__version__", "unknown"))
-    expected_version = os.environ.get("TIRX_DEEPGEMM_EXPECTED_VERSION")
-    if expected_version and version != expected_version:
-        raise RuntimeError(
-            f"DeepGEMM runtime version mismatch: expected {expected_version}, got {version} "
-            f"from {getattr(module, '__file__', '<unknown>')}"
-        )
-    source = f"installed:{version}:{getattr(module, '__file__', '<unknown>')}"
-    return module, source
+    return module, "installed"
 
 
 def _find_free_port() -> int:
@@ -5421,6 +5410,7 @@ def _bench_megamoe_mode(
     between_impls: Any,
     *,
     rounds: int,
+    cooldown_s: float,
 ) -> dict[str, Any]:
     """Run the exact benchmark protocol used by latest DeepGEMM MegaMoE."""
     if funcs.keys() != kernel_names.keys():
@@ -5430,6 +5420,8 @@ def _bench_megamoe_mode(
     round_orders: list[list[str]] = []
     items = list(funcs.items())
     for round_idx in range(rounds):
+        if round_idx > 0:
+            time.sleep(cooldown_s)
         round_items = items if round_idx % 2 == 0 else list(reversed(items))
         round_orders.append([name for name, _ in round_items])
 
@@ -5465,6 +5457,7 @@ def _bench_megamoe_mode(
             "paired_profile_session": True,
             "cold_setup_per_implementation": True,
             "rounds": rounds,
+            "round_cooldown_s": cooldown_s,
             "round_orders": round_orders,
         },
     }
@@ -5480,7 +5473,6 @@ def _run_worker(local_rank: int, cfg_dict: dict[str, Any], mode: str) -> dict[st
     timer = None if timer is None else str(timer)
     rounds = int(worker_kwargs.pop("rounds", 1))
     cooldown_s = float(worker_kwargs.pop("cooldown_s", 1.0))
-    expected_deepgemm_version = str(worker_kwargs.pop("expected_deepgemm_version", ""))
     config = MegaMoeConfig(**worker_kwargs)
     config.validate()
 
@@ -5491,13 +5483,6 @@ def _run_worker(local_rank: int, cfg_dict: dict[str, Any], mode: str) -> dict[st
         )
 
     deep_gemm, source = load_deep_gemm_mega()
-    if expected_deepgemm_version:
-        actual_deepgemm_version = source.split(":", 2)[1]
-        if actual_deepgemm_version != expected_deepgemm_version:
-            raise RuntimeError(
-                "DeepGEMM benchmark reference version mismatch: "
-                f"expected {expected_deepgemm_version}, got {actual_deepgemm_version}"
-            )
     case = None
     dg_case = None
     tirx_case = None
@@ -5675,6 +5660,7 @@ def _run_worker(local_rank: int, cfg_dict: dict[str, Any], mode: str) -> dict[st
                     torch.distributed.barrier,
                     reset_between_implementations,
                     rounds=rounds,
+                    cooldown_s=cooldown_s,
                 )
             else:
                 bench_result = bench(

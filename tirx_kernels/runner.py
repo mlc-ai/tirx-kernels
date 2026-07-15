@@ -30,6 +30,9 @@ from typing import Any
 
 import tvm
 
+DEFAULT_BENCH_ROUNDS = 5
+DEFAULT_BENCH_COOLDOWN_S = 1.0
+
 
 def compile_kernel(func):
     """Compile a single TIR PrimFunc via the tirx pipeline."""

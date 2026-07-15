@@ -246,12 +246,10 @@ def _kernel(
         empty_phase_offset=1,
         leader=barrier_leader,
     )
-    # ``datapath="D"`` documents that the MMA writes Layout D (M=128 full
-    # datapath, identity row→lane) — the downstream ``.16x256b`` M=128
-    # epilogue readback structurally checks this and would reject e.g. a
-    # Layout F acc here. See PTX ISA §9.7.16.10.5.
-    acc_buf = tmem_pool.alloc((128, TMEM_DEPTH * MMA_N), "float32", datapath="D")
-    acc = T.meta_var(T.TMEMStages(acc_buf, col_start=0, width=MMA_N, stages=TMEM_DEPTH))
+    acc_buf = tmem_pool.alloc_tcgen05_mma_D(
+        (128, TMEM_DEPTH * MMA_N), "float32", M=128 * CTA_GROUP, cta_group=CTA_GROUP
+    )
+    acc = T.meta_var(acc_buf.rearrange("m (s n) -> s m n", s=TMEM_DEPTH))
     SFA_tmem = tmem_pool.alloc_sf(
         (TMEM_DEPTH, BLK_SFA, 4 * K_ITERS), "float8_e8m0fnu", sf_per_mma=1, sf_reuse=K_ITERS
     )
@@ -259,9 +257,11 @@ def _kernel(
         (TMEM_DEPTH, BLK_SFB, 4 * K_ITERS), "float8_e8m0fnu", sf_per_mma=1, sf_reuse=K_ITERS
     )
     pool.move_base_to(1024)
-    A_smem = pool.alloc_mma((SMEM_DEPTH, BLK_M, BLK_K), "float8_e4m3fn")
-    B_smem = pool.alloc_mma((SMEM_DEPTH, BLK_N, BLK_K), "float8_e4m3fn")
-    D_smem = pool.alloc_mma((TMEM_DEPTH, D_SMEM_M, D_SMEM_N), "bfloat16", swizzle_mode=D_SWIZZLE)
+    A_smem = pool.alloc_tcgen05_mma_AB((SMEM_DEPTH, BLK_M, BLK_K), "float8_e4m3fn")
+    B_smem = pool.alloc_tcgen05_mma_AB((SMEM_DEPTH, BLK_N, BLK_K), "float8_e4m3fn")
+    D_smem = pool.alloc_tcgen05_mma_AB(
+        (TMEM_DEPTH, D_SMEM_M, D_SMEM_N), "bfloat16", swizzle_mode=D_SWIZZLE
+    )
     SFA_smem = pool.alloc((SMEM_DEPTH, BLK_SFA), "uint32")
     SFB_smem = pool.alloc((SMEM_DEPTH, BLK_SFB), "uint32")
     pool.commit()
@@ -385,7 +385,7 @@ def _kernel(
                     Tx.warp.permute_layout(SFA_smem_post[ks, :], SFA_smem[ks, :])
                     Tx.warp.permute_layout(SFB_smem_post[ks, :], SFB_smem[ks, :])
                     T.ptx.fence.proxy_async("shared::cta")
-                trans_done.arrive(ks, cta_id=0)
+                trans_done.arrive(ks, remote=0)
 
             @T.inline
             def trans_iter():
@@ -422,7 +422,7 @@ def _kernel(
                 def gemm_with_sf(sf_off: T.constexpr):
                     if SWAP_AB:
                         Tx.gemm_async(
-                            acc[tmem_idx],
+                            acc[tmem_idx, :, :],
                             B_smem[ks_desc],
                             A_smem[ks_desc],
                             SFA=SFB_tmem[tmem_idx, :, sf_off : sf_off + K_ITERS],
@@ -430,11 +430,10 @@ def _kernel(
                             accum=accum,
                             dispatch="tcgen05",
                             cta_group=CTA_GROUP,
-                            pred=mma_issue,
                         )
                     else:
                         Tx.gemm_async(
-                            acc[tmem_idx],
+                            acc[tmem_idx, :, :],
                             A_smem[ks_desc],
                             B_smem[ks_desc],
                             SFA=SFA_tmem[tmem_idx, :, sf_off : sf_off + K_ITERS],
@@ -442,18 +441,18 @@ def _kernel(
                             accum=accum,
                             dispatch="tcgen05",
                             cta_group=CTA_GROUP,
-                            pred=mma_issue,
                         )
 
                 mma_issue = T.ptx.elect_sync()
-                if copy_sf:
-                    if mma_issue:
+                if mma_issue:
+                    if copy_sf:
                         Tx.copy_async(SFA_tmem[tmem_idx], SFA_smem_fp8[ks], cta_group=CTA_GROUP)
                         Tx.copy_async(SFB_tmem[tmem_idx], SFB_smem_fp8[ks], cta_group=CTA_GROUP)
-                gemm_with_sf(sf_off)
+                    gemm_with_sf(sf_off)
                 accum = 1
                 T.cuda.warp_sync()
-                smem_pipe.empty.arrive(ks, cta_group=CTA_GROUP, cta_mask=CTA_MASK, pred=mma_issue)
+                if mma_issue:
+                    smem_pipe.empty.arrive(ks, cta_group=CTA_GROUP, cta_mask=CTA_MASK)
                 T.cuda.warp_sync()
 
             @T.inline
@@ -472,9 +471,8 @@ def _kernel(
                     mma_state.advance()
                     mma(mma_state.stage, 3 * K_ITERS, False)
                     mma_state.advance()
-                tmem_pipe.full.arrive(
-                    tmem_idx, cta_group=CTA_GROUP, cta_mask=CTA_MASK, pred=mma_issue
-                )
+                if mma_issue:
+                    tmem_pipe.full.arrive(tmem_idx, cta_group=CTA_GROUP, cta_mask=CTA_MASK)
                 T.cuda.warp_sync()
 
             while tile_scheduler.valid():
@@ -505,7 +503,7 @@ def _kernel(
                 if SWAP_AB:
                     for atom_m in T.unroll(2):
                         col_st: T.let = ot * 16 + atom_m * 8
-                        Tx.wg.copy_async(swap_frag[:, :], acc[tmem_idx, col_st : col_st + 8])
+                        Tx.wg.copy_async(swap_frag[:, :], acc[tmem_idx, :, col_st : col_st + 8])
                         T.ptx.tcgen05.wait.ld()
                         Tx.wg.cast(swap_bf16, swap_frag)
                         rs = T.meta_var(atom_m * 8)
@@ -518,7 +516,7 @@ def _kernel(
                     for ki in T.unroll(EPI_TILE // TMEM_LD_SIZE):
                         Dreg = T.wg_reg_tile(TMEM_LD_SIZE)
                         acc_n = T.meta_var(ot * EPI_TILE + ki * TMEM_LD_SIZE)
-                        Tx.wg.copy_async(Dreg, acc[tmem_idx, acc_n : acc_n + TMEM_LD_SIZE])
+                        Tx.wg.copy_async(Dreg, acc[tmem_idx, :, acc_n : acc_n + TMEM_LD_SIZE])
                         T.ptx.tcgen05.wait.ld()
                         Dreg_bf16 = T.wg_reg_tile(TMEM_LD_SIZE, dtype="bfloat16")
                         Tx.wg.cast(Dreg_bf16, Dreg)
@@ -526,7 +524,7 @@ def _kernel(
                             D_smem[stage, :, ki * TMEM_LD_SIZE : (ki + 1) * TMEM_LD_SIZE], Dreg_bf16
                         )
                 if ot == STORE_TILES - 1:
-                    tmem_pipe.empty.arrive(tmem_idx, cta_id=0)
+                    tmem_pipe.empty.arrive(tmem_idx, remote=0)
                 T.ptx.fence.proxy_async("shared::cta")
                 T.cuda.warpgroup_sync(10)
                 d_m: T.let = m_idx * DG_BLOCK_M + (ot * 16 if SWAP_AB else 0)
@@ -711,12 +709,16 @@ def _pack_b_scales_for_tir(scale: torch.Tensor, N: int) -> torch.Tensor:
 
 
 def _configure_deepgemm(deep_gemm) -> None:
-    alignment = int(deep_gemm.get_theoretical_mk_alignment_for_contiguous_layout())
+    # This kernel and its grouped-layout input are specialized for 240-row
+    # alignment.  Newer DeepGEMM releases may recommend a different default,
+    # but the runtime still supports the explicit alignment required for this
+    # like-for-like comparison.
+    deep_gemm.set_mk_alignment_for_contiguous_layout(CONTIGUOUS_M_ALIGNMENT)
+    alignment = int(deep_gemm.get_mk_alignment_for_contiguous_layout())
     if alignment != CONTIGUOUS_M_ALIGNMENT:
         raise RuntimeError(
             f"expected DeepGEMM contiguous alignment {CONTIGUOUS_M_ALIGNMENT}, got {alignment}"
         )
-    deep_gemm.set_mk_alignment_for_contiguous_layout(alignment)
 
 
 def _prepare_deepgemm_case(deep_gemm, data: dict) -> dict:
