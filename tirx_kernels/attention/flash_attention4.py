@@ -1,8 +1,16 @@
+"""FlashAttention-4 TIRx kernel and direct NVIDIA IKET profiling entry point.
+
+Run ``python -m tirx_kernels.attention.flash_attention4`` to profile the
+annotated kernel.  Correctness and ordinary benchmarks remain exposed through
+``run_test`` and ``run_bench``.
+"""
+
 from __future__ import annotations
 
+import argparse
 import math
 import os
-from enum import Enum
+from functools import partial
 
 import numpy as np
 import torch
@@ -11,24 +19,35 @@ import tvm
 import tvm.testing
 from tvm.script import tirx as T
 from tvm.script.tirx import tile as Tx
-from tvm.tirx.bench import CudaProfiler, bench
+from tvm.tirx.bench import bench
+from tvm.tirx.cuda import iket
+from tvm.tirx.cuda.iket import IketProfiler
 from tvm.tirx.lang.pipeline import MBarrier, Pipeline, PipelineState, TCGen05Bar
 from tvm.tirx.lang.tile_scheduler import FlashAttentionLinearScheduler, FlashAttentionLPTScheduler
 from tvm.tirx.layout import wg_local_layout
 
 M_CLUSTER = 1
 N_CLUSTER = 1
-SM_NUMBER = 148
-NUM_GROUPS = 6
-PROFILER_BUFFER_SIZE = int(2000000.0)
-PROFILER_WRITE_STRIDE = SM_NUMBER * NUM_GROUPS
-PROFILER_ON = False
-# Lightweight softmax-step timestamps (mirrors instr/flash_fwd_sm100_instr.py
-# t0..t3): leader-lane STG of %globaltimer_lo straight to profiler_buffer,
-# no fences, no local arrays — CudaProfiler's per-event __threadfence_block
-# inflates a single-CTA task ~10x; this stays ~1%. Parse with
-# instr/tirx_phase.py --light.
-LIGHT_TS = False
+IKET_EVENT_NAMES = (
+    "correction",
+    "epi-ld-tmem",
+    "issue-tma-k",
+    "issue-tma-q",
+    "issue-tma-v",
+    "softmax-exp2",
+    "softmax-fma",
+    "softmax-max",
+    "softmax-sum",
+    "softmax-tmem-st",
+    "tma-store",
+    "softmax-baseline",
+    "softmax-phase-0",
+    "softmax-phase-1",
+    "softmax-phase-2",
+    "softmax-phase-3",
+    "softmax-phase-4",
+    "softmax-phase-5",
+)
 # ex2-emulation ratio per regime (grid-searched under the bench protocol;
 # heavier and lighter both measured worse on their respective regimes):
 # emulate elements with (i*2 % 16) >= 16 - 2*PAIRS in fragments
@@ -107,37 +126,6 @@ def ex2_emulation_2(out, idx, x, y):
     out[idx + 1] = combine_int_frac_ex2(xy_rounded[1], xy_frac_ex2[1])
 
 
-class ProfileEventType(Enum):
-    IssueTMA_Q = 0
-    IssueTMA_K = 1
-    IssueTMA_V = 2
-    IssueMMA_QK = 3
-    IssueMMA_PV = 4
-    Softmax_MAX = 5
-    Softmax_FMA = 6
-    Softmax_EXP2 = 7
-    Softmax_TMEM_ST = 8
-    Softmax_SUM = 9
-    Correction = 10
-    EpiLDTMEM = 11
-    TMAStore = 12
-
-
-event_type_names = [
-    "issue-tma-q",
-    "issue-tma-k",
-    "issue-tma-v",
-    "issue-mma-qk",
-    "issue-mma-pv",
-    "softmax-max",
-    "softmax-fma",
-    "softmax-exp2",
-    "softmax-tmem-st",
-    "softmax-sum",
-    "correction",
-    "epi-ld-tmem",
-    "tma-store",
-]
 WG_NUMBER = 4
 WARP_NUMBER = 4
 NUM_THREADS = 32 * WARP_NUMBER * WG_NUMBER
@@ -173,7 +161,6 @@ def _kernel(
     K: T.Buffer((BATCH_SIZE, SEQ_LEN_KV, NUM_KV_HEADS, HEAD_DIM), "float16"),
     V: T.Buffer((BATCH_SIZE, SEQ_LEN_KV, NUM_KV_HEADS, HEAD_DIM), "float16"),
     O: T.Buffer((BATCH_SIZE, SEQ_LEN_Q, NUM_QO_HEADS, HEAD_DIM), "float16"),
-    profiler_buffer: T.Buffer((PROFILER_BUFFER_SIZE,), "uint64"),
     *,
     BATCH_SIZE: T.constexpr,
     SEQ_LEN_Q: T.constexpr,
@@ -247,7 +234,6 @@ def _kernel(
     bx = T.cta_id([cta_count])
     wg_id = T.warpgroup_id([4])
     warp_id = T.warp_id_in_wg([4])
-    lane_id = T.lane_id([32])
     tid_in_wg = T.thread_id_in_wg([128])
     pool = T.SMEMPool()
     Q_smem = pool.alloc_tcgen05_mma_AB((SMEM_PIPE_DEPTH_Q, BLK_M, HEAD_DIM), "float16")
@@ -293,12 +279,7 @@ def _kernel(
     # excess vs cutedsl, which uses one prologue init barrier).
     bar_s0_s1_sequence.init(32)
     pool.commit()
-    profiler = CudaProfiler(
-        profiler_buffer,
-        write_stride=PROFILER_WRITE_STRIDE,
-        num_groups=NUM_GROUPS,
-        profiler_enabled=PROFILER_ON,
-    )
+    iket = IketProfiler()
     # TMEM is allocated by the MMA warp (cta-scope warp 12 = wg3/warp0) and
     # the alloc deliberately sits AFTER the prologue cta_syncs (commit is
     # emitted further down): every other warp's first TMEM access is
@@ -349,16 +330,6 @@ def _kernel(
         )
     )
     scheduler.init(bx)
-    if (wg_id == 3) & (warp_id == 1):
-        profiler.init(0)
-    elif (wg_id == 3) & (warp_id == 2):
-        profiler.init(1)
-    elif (wg_id == 3) & (warp_id == 0):
-        profiler.init(2)
-    elif wg_id <= 1:
-        profiler.init(3 + wg_id)
-    elif wg_id == 2:
-        profiler.init(5)
     kv_pipe.init(0)
     phase_q = 0
     phase_oepi = 0
@@ -393,7 +364,7 @@ def _kernel(
                             "cta_group": CTA_GROUP,
                         }
                     )
-                    profiler.start(ProfileEventType.IssueTMA_Q, lane_id == 0)
+                    tma_q_token = iket.range_start("issue-tma-q")
                     Q_smem_3d = Q_smem.view(SMEM_PIPE_DEPTH_Q, SEQ_Q_PER_TILE, GQA_RATIO, HEAD_DIM)
                     if T.ptx.elect_sync():
                         Tx.copy_async(
@@ -408,7 +379,7 @@ def _kernel(
                             **tma_copy_q,
                         )
                         q_load.full.arrive(i_q, CTA_GROUP * BLK_M * HEAD_DIM * F16_BYTES)
-                    profiler.end(ProfileEventType.IssueTMA_Q, lane_id == 0)
+                    iket.range_end(tma_q_token)
 
                 @T.inline
                 def load_k(i_kv):
@@ -420,7 +391,7 @@ def _kernel(
                             "cta_group": CTA_GROUP,
                         }
                     )
-                    profiler.start(ProfileEventType.IssueTMA_K, lane_id == 0)
+                    tma_k_token = iket.range_start("issue-tma-k")
                     if T.ptx.elect_sync():
                         Tx.copy_async(
                             K_smem[kv_pipe.stage, :, :],
@@ -428,7 +399,7 @@ def _kernel(
                             **tma_copy_k,
                         )
                         kv_load.full.arrive(kv_pipe.stage, CTA_GROUP * BLK_N * HEAD_DIM * F16_BYTES)
-                    profiler.end(ProfileEventType.IssueTMA_K, lane_id == 0)
+                    iket.range_end(tma_k_token)
                     kv_pipe.advance()
 
                 @T.inline
@@ -441,7 +412,7 @@ def _kernel(
                             "cta_group": CTA_GROUP,
                         }
                     )
-                    profiler.start(ProfileEventType.IssueTMA_V, lane_id == 0)
+                    tma_v_token = iket.range_start("issue-tma-v")
                     if T.ptx.elect_sync():
                         Tx.copy_async(
                             V_smem[kv_pipe.stage, :, :],
@@ -449,7 +420,7 @@ def _kernel(
                             **tma_copy_v,
                         )
                         kv_load.full.arrive(kv_pipe.stage, CTA_GROUP * BLK_N * HEAD_DIM * F16_BYTES)
-                    profiler.end(ProfileEventType.IssueTMA_V, lane_id == 0)
+                    iket.range_end(tma_v_token)
                     kv_pipe.advance()
 
                 load_trip_count: T.int32
@@ -468,10 +439,11 @@ def _kernel(
                     load_k(i_kv)
                     load_v(i_kv)
             if warp_id == 2:
+                corr_epi.full.wait(0, phase_tmem)
+                tma_store_token = iket.range_start("tma-store")
                 for i_q in T.unroll(SMEM_PIPE_DEPTH_Q):
-                    corr_epi.full.wait(i_q, phase_tmem)
-                    if i_q == 0:
-                        profiler.start(ProfileEventType.TMAStore, lane_id == 0)
+                    if i_q != 0:
+                        corr_epi.full.wait(i_q, phase_tmem)
                     m_start_global = T.meta_var(m_start + i_q * SEQ_Q_PER_TILE)
                     O_smem_3d = O_smem.view(TMEM_PIPE_DEPTH, SEQ_Q_PER_TILE, GQA_RATIO, HEAD_DIM)
                     if T.ptx.elect_sync():
@@ -489,7 +461,7 @@ def _kernel(
                 for i_q in T.unroll(SMEM_PIPE_DEPTH_Q):
                     T.ptx.cp_async.bulk.wait_group(1 - i_q)
                     corr_epi.empty.arrive(i_q)
-                profiler.end(ProfileEventType.TMAStore, lane_id == 0)
+                iket.range_end(tma_store_token)
                 phase_tmem ^= 1
             if warp_id == 0:
                 acc: T.int32
@@ -621,22 +593,8 @@ def _kernel(
             rescale_threshold = T.meta_var(8.0)
             row_max: T.f32[1]
             row_sum: T.f32[1]
-            ts_step: T.int32
-            ts_step = 0
-
-            @T.inline
-            def light_ts(j):
-                if LIGHT_TS:
-                    if tid_in_wg == 0:
-                        profiler_buffer[1 + wg_id * 4096 + ts_step * 8 + j] = T.cast(
-                            T.ptx.fetch_register(64, "clock64"), "uint64"
-                        )
-
-            if LIGHT_TS:
-                if tid_in_wg == 0:
-                    profiler_buffer[1 + wg_id * 4096 + 4000] = T.cast(
-                        T.ptx.fetch_register(64, "clock64"), "uint64"
-                    )
+            if warp_id == 0:
+                iket.mark("softmax-baseline")
 
             @T.inline
             def mask_r2p(s_chunk_buf, col_limit, ncol: T.int32):
@@ -708,8 +666,11 @@ def _kernel(
                 p_chunk_buf = T.decl_buffer((BLK_N,), dtype="float16", data=p_chunk_buf_f32.data)
                 p_chunk = p_chunk_buf.view(128, BLK_N, layout=wg_local_layout(BLK_N))
                 s_ready.wait(wg_id, phase_s_full)
-                light_ts(0)
-                profiler.start(ProfileEventType.Softmax_MAX, tid_in_wg == 0)
+                if warp_id == 0:
+                    iket.mark("softmax-phase-0")
+                softmax_max_token = iket.sentinel_token("softmax-max")
+                if warp_id == 0:
+                    softmax_max_token = iket.range_start("softmax-max")
                 tile_max: T.f32[1]
                 for chunk_idx in T.unroll(BLK_N // SOFTMAX_LD_CHUNK):
                     Tx.wg.copy_async(
@@ -749,8 +710,9 @@ def _kernel(
                         acc_scale = T.ptx.exp2(acc_scale_)
                 row_max[0] = row_max_new
                 row_max_scaled: T.let = row_max_safe * scale_log2
-                light_ts(1)
-                profiler.end(ProfileEventType.Softmax_MAX, tid_in_wg == 0)
+                if warp_id == 0:
+                    iket.mark("softmax-phase-1")
+                iket.range_end(softmax_max_token)
                 if tid_in_wg < BLK_M and (not is_first):
                     sScale_idx: T.let = ACC_SCALE_BASE + tid_in_wg + wg_id * BLK_M
                     sScale[sScale_idx] = acc_scale
@@ -766,12 +728,16 @@ def _kernel(
                     tvm.backend.cuda.op.ptx_bar_arrive(1 + wg_id * 4 + warp_id, 64)
                 else:
                     tvm.backend.cuda.op.ptx_bar_arrive(1 + wg_id, 256)
-                profiler.start(ProfileEventType.Softmax_FMA, tid_in_wg == 0)
+                softmax_fma_token = iket.sentinel_token("softmax-fma")
+                if warp_id == 0:
+                    softmax_fma_token = iket.range_start("softmax-fma")
                 Tx.wg.fma(s_chunk, s_chunk, scale_log2, -row_max_scaled)
-                profiler.end(ProfileEventType.Softmax_FMA, tid_in_wg == 0)
+                iket.range_end(softmax_fma_token)
                 if USE_S0_S1_BARRIER:
                     bar_s0_s1_sequence.wait(wg_id * 4 + warp_id, phase_s0_s1)
-                profiler.start(ProfileEventType.Softmax_EXP2, tid_in_wg == 0)
+                softmax_exp2_token = iket.sentinel_token("softmax-exp2")
+                if warp_id == 0:
+                    softmax_exp2_token = iket.range_start("softmax-exp2")
                 for frag_idx in T.unroll(4):
                     s_chunk_local = s_chunk_buf.local(BLK_N)
                     for i in T.unroll(BLK_N // 4 // 2):
@@ -799,8 +765,10 @@ def _kernel(
                     )
                 if USE_S0_S1_BARRIER:
                     bar_s0_s1_sequence.arrive((1 - wg_id) * 4 + warp_id)
-                profiler.end(ProfileEventType.Softmax_EXP2, tid_in_wg == 0)
-                profiler.start(ProfileEventType.Softmax_TMEM_ST, tid_in_wg == 0)
+                iket.range_end(softmax_exp2_token)
+                softmax_tmem_st_token = iket.sentinel_token("softmax-tmem-st")
+                if warp_id == 0:
+                    softmax_tmem_st_token = iket.range_start("softmax-tmem-st")
                 P_SPLIT_Q = T.meta_var(2 if is_causal else 3)
                 for i in T.unroll(P_SPLIT_Q):
                     Tx.wg.copy_async(
@@ -819,14 +787,19 @@ def _kernel(
                         ],
                         p_chunk[:, (P_SPLIT_Q + i) * BLK_N // 4 : (P_SPLIT_Q + 1 + i) * BLK_N // 4],
                     )
-                light_ts(2)
+                if warp_id == 0:
+                    iket.mark("softmax-phase-2")
                 T.ptx.tcgen05.wait.st()
                 p_ready_2.arrive(wg_id)
-                light_ts(3)
-                profiler.end(ProfileEventType.Softmax_TMEM_ST, tid_in_wg == 0)
+                if warp_id == 0:
+                    iket.mark("softmax-phase-3")
+                iket.range_end(softmax_tmem_st_token)
                 softmax_corr.empty.wait(wg_id, phase_q)
-                light_ts(4)
-                profiler.start(ProfileEventType.Softmax_SUM, tid_in_wg == 0)
+                if warp_id == 0:
+                    iket.mark("softmax-phase-4")
+                softmax_sum_token = iket.sentinel_token("softmax-sum")
+                if warp_id == 0:
+                    softmax_sum_token = iket.range_start("softmax-sum")
                 phase_s_full ^= 1
                 phase_q ^= 1
                 if is_first:
@@ -834,9 +807,9 @@ def _kernel(
                 else:
                     row_sum[0] = row_sum[0] * acc_scale
                     Tx.sum(row_sum, s_chunk_buf, accum=True)
-                light_ts(5)
-                ts_step = ts_step + 1
-                profiler.end(ProfileEventType.Softmax_SUM, tid_in_wg == 0)
+                if warp_id == 0:
+                    iket.mark("softmax-phase-5")
+                iket.range_end(softmax_sum_token)
                 if USE_S0_S1_BARRIER:
                     phase_s0_s1 ^= 1
 
@@ -883,7 +856,9 @@ def _kernel(
                 EPI_LD_SM = T.meta_var(32)
                 o_ready.wait(wg_id, phase_oepi)
                 corr_epi.empty.wait(wg_id, phase_oepi)
-                profiler.start(ProfileEventType.EpiLDTMEM, tid_in_wg == 0)
+                epi_ld_tmem_token = iket.sentinel_token("epi-ld-tmem")
+                if warp_id == 0:
+                    epi_ld_tmem_token = iket.range_start("epi-ld-tmem")
                 acc_O_row_is_zero_or_nan: T.let = tvm.tirx.any(
                     row_sum[0] == T.float32(0.0), row_sum[0] != row_sum[0]
                 )
@@ -912,7 +887,7 @@ def _kernel(
                                 o_row_f16_sm,
                                 vec_len=8,
                             )
-                profiler.end(ProfileEventType.EpiLDTMEM, tid_in_wg == 0)
+                iket.range_end(epi_ld_tmem_token)
                 T.ptx.fence.proxy_async("shared::cta")
                 corr_epi.full.arrive(wg_id)
                 p_o_rescale.arrive(wg_id)
@@ -947,7 +922,9 @@ def _kernel(
                         tvm.backend.cuda.op.ptx_bar_sync(1 + i_q * 4 + warp_id, 64)
                     else:
                         tvm.backend.cuda.op.ptx_bar_sync(1 + i_q, 256)
-                    profiler.start(ProfileEventType.Correction, tid_in_wg == 0)
+                    correction_token = iket.sentinel_token("correction")
+                    if warp_id == 0:
+                        correction_token = iket.range_start("correction")
                     acc_scale: T.f32
                     should_rescale: T.i32
                     if tid_in_wg < BLK_M:
@@ -983,7 +960,7 @@ def _kernel(
                             T.ptx.tcgen05.wait.st()
                     p_o_rescale.arrive(i_q)
                     softmax_corr.empty.arrive(1 - i_q)
-                    profiler.end(ProfileEventType.Correction, tid_in_wg == 0)
+                    iket.range_end(correction_token)
                 phase_q ^= 1
             softmax_corr.empty.arrive(1)
             if not EPI_ON_SOFTMAX:
@@ -996,7 +973,9 @@ def _kernel(
                     softmax_corr.empty.arrive(i_q)
                     o_ready.wait(i_q, phase_tmem)
                     corr_epi.empty.wait(i_q, phase_tmem)
-                    profiler.start(ProfileEventType.EpiLDTMEM, tid_in_wg == 0)
+                    epi_ld_tmem_token = iket.sentinel_token("epi-ld-tmem")
+                    if warp_id == 0:
+                        epi_ld_tmem_token = iket.range_start("epi-ld-tmem")
                     acc_O_mn_row_is_zero_or_nan: T.let = tvm.tirx.any(
                         row_sum == T.float32(0.0), row_sum != row_sum
                     )
@@ -1026,7 +1005,7 @@ def _kernel(
                                 o_row_f16,
                                 vec_len=8,
                             )
-                        profiler.end(ProfileEventType.EpiLDTMEM, tid_in_wg == 0)
+                    iket.range_end(epi_ld_tmem_token)
                     T.ptx.fence.proxy_async("shared::cta")
                     corr_epi.full.arrive(i_q)
                     p_o_rescale.arrive(i_q)
@@ -1137,8 +1116,7 @@ def run_test(batch_size, seq_len, num_qo_heads, num_kv_heads, head_dim, is_causa
     O_tir = torch.empty(
         (batch_size, seq_len, num_qo_heads, head_dim), dtype=torch.float16, device="cuda"
     )
-    profiler_buf = torch.zeros(PROFILER_BUFFER_SIZE, dtype=torch.uint64, device="cuda")
-    ex(Q_tir, K_tir, V_tir, O_tir, profiler_buf)
+    ex(Q_tir, K_tir, V_tir, O_tir)
     torch.cuda.synchronize()
     Q_t = Q.float().transpose(1, 2)
     K_t = K.float().transpose(1, 2)
@@ -1187,9 +1165,7 @@ def run_bench(
     O_tir = torch.empty(
         (batch_size, seq_len, num_qo_heads, head_dim), dtype=torch.float16, device="cuda"
     )
-    profiler_buf = torch.zeros(PROFILER_BUFFER_SIZE, dtype=torch.uint64, device="cuda")
-
-    funcs = {"tir": lambda: ex(Q_cuda, K_cuda, V_cuda, O_tir, profiler_buf)}
+    funcs = {"tir": lambda: ex(Q_cuda, K_cuda, V_cuda, O_tir)}
 
     def _flashattn_sm100():
         # Flash-Attention SM100 (CuTeDSL FA4) baseline.
@@ -1295,3 +1271,94 @@ def run_bench(
         references={"flashattn_sm100": _flashattn_sm100},
         **kwargs,
     )
+
+
+def _parse_iket_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Profile the annotated FA4 kernel with NVIDIA IKET"
+    )
+    parser.add_argument("--batch-size", type=int, default=1)
+    parser.add_argument("--seq-len", type=int, default=1024)
+    parser.add_argument("--num-qo-heads", type=int, default=32)
+    parser.add_argument("--num-kv-heads", type=int, default=32)
+    parser.add_argument("--head-dim", type=int, default=128)
+    parser.add_argument("--causal", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument(
+        "--repeat",
+        type=int,
+        default=1,
+        help="Number of traced FA4 launches; setup and compilation remain outside the loop",
+    )
+    parser.add_argument("--output-dir", default="/tmp/fa4-iket")
+    parser.add_argument(
+        "--postprocess", choices=("perfetto", "json", "html", "none", "all"), default="all"
+    )
+    parser.add_argument("--clobber", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--timeout", type=float, default=600.0)
+    parser.add_argument("--keep", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--max-ts-cnt-per-warp", type=int, default=None)
+    return parser.parse_args()
+
+
+def _profile_iket_workload(args: argparse.Namespace) -> None:
+    if args.repeat <= 0:
+        raise ValueError("--repeat must be positive")
+
+    func = get_flash_attention4_kernel(
+        args.batch_size,
+        args.seq_len,
+        args.seq_len,
+        args.num_qo_heads,
+        args.num_kv_heads,
+        args.head_dim,
+        is_causal=args.causal,
+    )
+    executable = IketProfiler().compile(
+        tvm.IRModule({"main": func}),
+        target=tvm.target.Target({"kind": "cuda", "arch": "sm_100a"}),
+        tir_pipeline="tirx",
+    )
+
+    q, k, v, _ = prepare_data(
+        args.batch_size,
+        args.seq_len,
+        args.seq_len,
+        args.num_qo_heads,
+        args.num_kv_heads,
+        args.head_dim,
+    )
+    q, k, v = q.cuda(), k.cuda(), v.cuda()
+    out = torch.empty(
+        (args.batch_size, args.seq_len, args.num_qo_heads, args.head_dim),
+        dtype=torch.float16,
+        device="cuda",
+    )
+
+    for _ in range(args.repeat):
+        executable(q, k, v, out)
+    torch.cuda.synchronize()
+
+
+def _print_iket_result(result: iket.IketProfileResult) -> None:
+    print(f"IKET output directory: {result.output_dir}")
+    for path in (*result.json_traces, *result.perfetto_traces, *result.html_reports):
+        print(f"IKET artifact: {path}")
+
+
+def main() -> None:
+    """Profile FA4 when this kernel module is executed directly."""
+    args = _parse_iket_args()
+    result = iket.run(
+        partial(_profile_iket_workload, args),
+        output_dir=args.output_dir,
+        postprocess=args.postprocess,
+        clobber=args.clobber,
+        timeout=args.timeout,
+        keep=args.keep,
+        max_ts_cnt_per_warp=args.max_ts_cnt_per_warp,
+    )
+    _print_iket_result(result)
+
+
+if __name__ == "__main__":
+    main()

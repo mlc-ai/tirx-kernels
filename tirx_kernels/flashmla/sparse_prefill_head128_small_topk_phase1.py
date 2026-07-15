@@ -14,6 +14,7 @@ from tirx_kernels.flashmla._tma import leader_mbar, tma_config
 from tvm.backend.cuda.operator.tile_primitive.tma_utils import SwizzleMode
 from tvm.script import tirx as T
 from tvm.script.tirx import tile as Tx
+from tvm.tirx.cuda.iket import IketProfiler
 from tvm.tirx.lang.pipeline import MBarrier, TCGen05Bar, TMABar
 from tvm.tirx.layout import S, TileLayout, laneid, wid_in_wg
 
@@ -28,6 +29,15 @@ NUM_WORKER_THREADS = (128 + 4 + (B_TOPK // 8) + 1 + 128) * 2 + 1
 MAX_INIT_VAL = -1.0e30
 LOG_2_E = math.log2(math.e)
 LN_2 = math.log(2.0)
+
+IKET_EVENT_NAMES = (
+    "h128-small-q-o",
+    "h128-small-kv-gather",
+    "h128-small-mma",
+    "h128-small-valid-mask",
+    "h128-small-clc",
+    "h128-small-softmax",
+)
 
 LAUNCH_TAGS = (
     "blockIdx.x",
@@ -270,6 +280,7 @@ def _kernel(
 ):
     T.device_entry()
     T.attr({"tirx.launch_bounds_min_blocks_per_sm": 1})
+    iket = IketProfiler()
     # CUDA_TRANSCRIBE_START: phase1.cuh:24, scoped to KernelTemplate<Prefill, 512>.
     block_idx = T.cta_id([2 * s_q])
     T.cta_id_in_cluster([2])
@@ -367,6 +378,7 @@ def _kernel(
 
     if warpgroup_idx == 0:
         # CUDA phase1.cuh:192-396. Q fetching and O write-back warpgroup.
+        q_o_token = iket.range_start("h128-small-q-o")
         T.ptx.setmaxnreg(True, 160)
 
         @T.inline
@@ -490,9 +502,11 @@ def _kernel(
 
         if warp_idx == 0:
             T.ptx.tcgen05.dealloc(T.uint32(0), n_cols=512, cta_group=2)
+        iket.range_end(q_o_token)
 
     elif warpgroup_idx == 1:
         # CUDA phase1.cuh:397-451. Prefill KV gather producer.
+        kv_gather_token = iket.range_start("h128-small-kv-gather")
         T.ptx.setmaxnreg(False, 80)
         # Source uses canonical_warp_idx() here, not canonical_warp_idx_sync().
         wg1_warp_idx: T.let = thread_idx // 32 - 4
@@ -558,12 +572,14 @@ def _kernel(
                 else:
                     wg1_job_block_idx = T.cast(wg1_next_job, "int32")
                 wg1_outer_loop_phase = wg1_outer_loop_phase ^ 1
+        iket.range_end(kv_gather_token)
 
     elif warpgroup_idx == 2:
         # CUDA phase1.cuh:533-787. UMMA, valid-mask loading, and CLC producer.
         T.ptx.setmaxnreg(False, 80)
 
         if (warp_idx == 8) & (cta_idx == 0):
+            mma_token = iket.range_start("h128-small-mma")
             if T.ptx.elect_sync():
                 umma_job_valid: T.int32 = 1
                 umma_job_block_idx: T.int32 = block_idx
@@ -647,8 +663,10 @@ def _kernel(
                     else:
                         umma_job_block_idx = T.cast(umma_next_job, "int32")
                     umma_outer_loop_phase = umma_outer_loop_phase ^ 1
+            iket.range_end(mma_token)
 
         elif warp_idx == 9:
+            valid_mask_token = iket.range_start("h128-small-valid-mask")
             if lane_idx < B_TOPK // 8:
                 lane_indices = T.alloc_local((8,), "int32")
                 valid_job_valid: T.int32 = 1
@@ -696,8 +714,12 @@ def _kernel(
                     else:
                         valid_job_block_idx = T.cast(valid_next_job, "int32")
                     valid_outer_loop_phase = valid_outer_loop_phase ^ 1
+            iket.range_end(valid_mask_token)
 
         elif warp_idx >= 10:
+            clc_token = iket.sentinel_token("h128-small-clc")
+            if warp_idx == 10:
+                clc_token = iket.range_start("h128-small-clc")
             if T.ptx.elect_sync():
                 if warp_idx == 10:
                     clc_job_valid: T.int32 = 1
@@ -720,9 +742,11 @@ def _kernel(
                         if clc_next_job == T.uint32(0xFFFFFFFF):
                             clc_job_valid = 0
                         clc_outer_loop_phase = clc_outer_loop_phase ^ 1
+            iket.range_end(clc_token)
 
     else:
         # CUDA phase1.cuh:788-921. Scale/exp warpgroup.
+        softmax_token = iket.range_start("h128-small-softmax")
         T.ptx.setmaxnreg(True, 160)
         local_warp_idx: T.let = warp_idx - 12
         wg3_job_valid: T.int32 = 1
@@ -936,6 +960,7 @@ def _kernel(
             else:
                 wg3_job_block_idx = T.cast(wg3_next_job, "int32")
             wg3_outer_loop_phase = wg3_outer_loop_phase ^ 1
+        iket.range_end(softmax_token)
 
     T.cuda.cluster_sync()
 

@@ -14,6 +14,7 @@ from tirx_kernels.flashmla._tma import leader_mbar, tma_config
 from tvm.backend.cuda.operator.tile_primitive.tma_utils import SwizzleMode
 from tvm.script import tirx as T
 from tvm.script.tirx import tile as Tx
+from tvm.tirx.cuda.iket import IketProfiler
 from tvm.tirx.lang.pipeline import MBarrier, TCGen05Bar, TMABar
 from tvm.tirx.layout import S, TileLayout, laneid, wid_in_wg
 
@@ -25,6 +26,16 @@ NUM_THREADS = 512
 MAX_INIT_VAL = -1.0e30
 LOG_2_E = math.log2(math.e)
 LN_2 = math.log(2.0)
+
+IKET_EVENT_NAMES = (
+    "h128-prologue",
+    "h128-softmax-tile",
+    "h128-epilogue",
+    "h128-k-gather",
+    "h128-v-gather",
+    "h128-mma",
+    "h128-valid-mask",
+)
 
 LAUNCH_TAGS = ("blockIdx.x", "clusterCtaIdx.x", "threadIdx.x", "tirx.use_dyn_shared_memory")
 
@@ -256,6 +267,7 @@ def _kernel(
 ):
     T.device_entry()
     T.attr({"tirx.launch_bounds_min_blocks_per_sm": 1})
+    iket = IketProfiler()
     # CUDA_TRANSCRIBE_START: run_fwd_phase1_kernel line 622, then sparse_attn_fwd_kernel_devfunc
     # line 68. One CTA pair per query-row; upstream source-order TMA/MMA/softmax warp layout.
     block_idx = T.cta_id([2 * s_q])
@@ -354,6 +366,7 @@ def _kernel(
     T.cuda.cluster_sync()
 
     if warp_idx == 0:
+        prologue_token = iket.range_start("h128-prologue")
         if T.ptx.elect_sync():
             Tx.copy_async(
                 q_full[:, :],
@@ -368,6 +381,7 @@ def _kernel(
         T.ptx.tcgen05.alloc(T.address_of(tmem_start_addr[0]), n_cols=512, cta_group=2)
         T.cuda.trap_when_assert_failed(tmem_start_addr[0] == T.uint32(0))
         T.ptx.tcgen05.relinquish_alloc_permit(cta_group=2)
+        iket.range_end(prologue_token)
 
     T.cuda.cta_sync()
 
@@ -395,6 +409,7 @@ def _kernel(
         scale_pair: T.let = T.cuda.make_float2(sm_scale_div_log2, sm_scale_div_log2)
 
         for k in T.serial(0, num_k_blocks, unroll=False):
+            softmax_token = iket.range_start("h128-softmax-tile")
             cur_buf: T.let = k % NUM_BUFS
             cur_phase: T.let = (k // NUM_BUFS) & 1
             bar_qk_done.wait(cur_buf, cur_phase)
@@ -501,7 +516,9 @@ def _kernel(
 
             T.ptx.fence.proxy_async("shared::cta")
             bar_so_ready.arrive(cur_buf, remote=T.uint32(0))
+            iket.range_end(softmax_token)
 
+        epilogue_token = iket.range_start("h128-epilogue")
         if real_mi == T.float32(-float("inf")):
             li = 0.0
             mi = T.float32(-float("inf"))
@@ -579,9 +596,11 @@ def _kernel(
 
         if warp_idx == 0:
             T.ptx.tcgen05.dealloc(T.uint32(0), n_cols=512, cta_group=2)
+        iket.range_end(epilogue_token)
 
     elif warpgroup_idx == 1:
         # CUDA phase1.cuh:387-446.  K producer warpgroup.
+        k_gather_token = iket.range_start("h128-k-gather")
         T.ptx.setmaxnreg(False, 96)
         wg1_warp_idx: T.let = warp_idx - 4
         if T.ptx.elect_sync():
@@ -646,9 +665,11 @@ def _kernel(
                     prev_phase: T.let = ((k - 1) // NUM_BUFS) & 1
                     bar_qk_done.wait(prev_buf, prev_phase)
                 gather_k_part(num_sq_tiles, num_qk_tiles - num_sq_tiles, D_TQ, bar_k_part1_ready)
+        iket.range_end(k_gather_token)
 
     elif warpgroup_idx == 2:
         # CUDA phase1.cuh:447-489.  V producer warpgroup.
+        v_gather_token = iket.range_start("h128-v-gather")
         T.ptx.setmaxnreg(False, 96)
         wg2_warp_idx: T.let = warp_idx - 8
         if T.ptx.elect_sync():
@@ -697,11 +718,13 @@ def _kernel(
                     bar_sv_done.wait(prev_buf, prev_phase)
                 token_idxs_part1 = T.alloc_local((WG2_ROWS_PER_PART, 4), "int32")
                 gather_v_part(WG2_ROWS_PER_PART, 1, token_idxs_part1, bar_v_part1_ready)
+        iket.range_end(v_gather_token)
 
     else:
         # CUDA phase1.cuh:490-606.  MMA warp and KV-valid loading warp.
         T.ptx.setmaxnreg(True, 168)
         if (cta_idx == 0) & (warp_idx == 12):
+            mma_token = iket.range_start("h128-mma")
             if T.ptx.elect_sync():
                 bar_prologue_q.arrive(0, tx_count=B_H * d_qk * BF16_BYTES)
                 bar_prologue_q.wait(0, 0)
@@ -804,8 +827,10 @@ def _kernel(
                         )
                         mma_o_accumulate = T.uint32(1)
                         bar_sv_done.arrive(cur_buf_prev, cta_group=2, cta_mask=3)
+            iket.range_end(mma_token)
 
         elif warp_idx == 13:
+            valid_mask_token = iket.range_start("h128-valid-mask")
             if lane_idx < B_TOPK // 8:
                 lane_indices = T.alloc_local((8,), "int32")
                 for k in T.serial(0, num_k_blocks, unroll=False):
@@ -828,6 +853,7 @@ def _kernel(
                     bar_k_valid_free.wait(cur_buf, cur_phase ^ 1)
                     is_k_valid[cur_buf, lane_idx] = is_ks_valid_mask
                     bar_k_valid_ready.arrive(cur_buf)
+            iket.range_end(valid_mask_token)
 
 
 def get_kernel(**kwargs: Any):
