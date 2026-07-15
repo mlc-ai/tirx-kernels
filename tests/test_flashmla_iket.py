@@ -36,7 +36,45 @@ CASES = (
     (head128, {"s_q": 1, "s_kv": 8192, "topk": 2048, "d_qk": 576, "h_q": 128}),
     (head128_small, {"s_q": 1, "s_kv": 8192, "topk": 1280, "h_q": 128}),
 )
-EXPECTED_EVENT_SETS = {frozenset(module.IKET_EVENT_NAMES) for module, _ in CASES}
+EXPECTED_EVENT_NAMES = {
+    head64: frozenset(
+        {
+            "h64-q-load",
+            "h64-softmax-tile",
+            "h64-output",
+            "h64-kv-nope-load",
+            "h64-qk-pv-issue",
+            "h64-qk-wait",
+            "h64-pv-wait",
+            "h64-valid-mask",
+            "h64-k-rope-load",
+        }
+    ),
+    head128: frozenset(
+        {
+            "h128-q-load",
+            "h128-softmax-tile",
+            "h128-output",
+            "h128-k-load",
+            "h128-v-load",
+            "h128-qk-pv-issue",
+            "h128-qk-wait",
+            "h128-pv-wait",
+            "h128-valid-mask",
+        }
+    ),
+    head128_small: frozenset(
+        {
+            "h128-small-q-load-output",
+            "h128-small-kv-load",
+            "h128-small-qk-pv-issue",
+            "h128-small-valid-mask",
+            "h128-small-clc",
+            "h128-small-softmax",
+        }
+    ),
+}
+EXPECTED_EVENT_SETS = set(EXPECTED_EVENT_NAMES.values())
 
 
 def _sources(root) -> str:
@@ -65,7 +103,8 @@ def test_sparse_flashmla_declares_expected_warp_uniform_ranges(module, config) -
     assert len(func.params) == 8
     script = func.script(show_meta=False)
     declarations = set(re.findall(r'T\.cuda\.iket\.range_start\("([^"]+)"', script))
-    assert declarations == set(module.IKET_EVENT_NAMES)
+    assert frozenset(module.IKET_EVENT_NAMES) == EXPECTED_EVENT_NAMES[module]
+    assert declarations == EXPECTED_EVENT_NAMES[module]
     assert "profiler_buffer" not in script
     assert "clock64" not in script
 

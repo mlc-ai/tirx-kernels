@@ -28,12 +28,14 @@ LOG_2_E = math.log2(math.e)
 LN_2 = math.log(2.0)
 
 IKET_EVENT_NAMES = (
-    "h128-prologue",
+    "h128-q-load",
     "h128-softmax-tile",
-    "h128-epilogue",
-    "h128-k-gather",
-    "h128-v-gather",
-    "h128-mma",
+    "h128-output",
+    "h128-k-load",
+    "h128-v-load",
+    "h128-qk-pv-issue",
+    "h128-qk-wait",
+    "h128-pv-wait",
     "h128-valid-mask",
 )
 
@@ -366,7 +368,7 @@ def _kernel(
     T.cuda.cluster_sync()
 
     if warp_idx == 0:
-        prologue_token = iket.range_start("h128-prologue")
+        prologue_token = iket.range_start("h128-q-load")
         if T.ptx.elect_sync():
             Tx.copy_async(
                 q_full[:, :],
@@ -412,7 +414,9 @@ def _kernel(
             softmax_token = iket.range_start("h128-softmax-tile")
             cur_buf: T.let = k % NUM_BUFS
             cur_phase: T.let = (k // NUM_BUFS) & 1
+            qk_wait_token = iket.range_start("h128-qk-wait")
             bar_qk_done.wait(cur_buf, cur_phase)
+            iket.range_end(qk_wait_token)
             T.ptx.tcgen05.fence.after_thread_sync()
 
             p_frag = T.alloc_tcgen05_ldst_frag("32x32b", (128, P_TMEM_COLS), "uint32")
@@ -495,7 +499,9 @@ def _kernel(
             if k > 0:
                 prev_buf: T.let = (k - 1) % NUM_BUFS
                 prev_phase: T.let = ((k - 1) // NUM_BUFS) & 1
+                pv_wait_token = iket.range_start("h128-pv-wait")
                 bar_sv_done.wait(prev_buf, prev_phase)
+                iket.range_end(pv_wait_token)
 
             Tx.wg.copy(s_smem_gemm[:, :], s_frag[:, :])
 
@@ -518,7 +524,7 @@ def _kernel(
             bar_so_ready.arrive(cur_buf, remote=T.uint32(0))
             iket.range_end(softmax_token)
 
-        epilogue_token = iket.range_start("h128-epilogue")
+        epilogue_token = iket.range_start("h128-output")
         if real_mi == T.float32(-float("inf")):
             li = 0.0
             mi = T.float32(-float("inf"))
@@ -600,7 +606,7 @@ def _kernel(
 
     elif warpgroup_idx == 1:
         # CUDA phase1.cuh:387-446.  K producer warpgroup.
-        k_gather_token = iket.range_start("h128-k-gather")
+        k_gather_token = iket.range_start("h128-k-load")
         T.ptx.setmaxnreg(False, 96)
         wg1_warp_idx: T.let = warp_idx - 4
         if T.ptx.elect_sync():
@@ -669,7 +675,7 @@ def _kernel(
 
     elif warpgroup_idx == 2:
         # CUDA phase1.cuh:447-489.  V producer warpgroup.
-        v_gather_token = iket.range_start("h128-v-gather")
+        v_gather_token = iket.range_start("h128-v-load")
         T.ptx.setmaxnreg(False, 96)
         wg2_warp_idx: T.let = warp_idx - 8
         if T.ptx.elect_sync():
@@ -724,7 +730,7 @@ def _kernel(
         # CUDA phase1.cuh:490-606.  MMA warp and KV-valid loading warp.
         T.ptx.setmaxnreg(True, 168)
         if (cta_idx == 0) & (warp_idx == 12):
-            mma_token = iket.range_start("h128-mma")
+            mma_token = iket.range_start("h128-qk-pv-issue")
             if T.ptx.elect_sync():
                 bar_prologue_q.arrive(0, tx_count=B_H * d_qk * BF16_BYTES)
                 bar_prologue_q.wait(0, 0)

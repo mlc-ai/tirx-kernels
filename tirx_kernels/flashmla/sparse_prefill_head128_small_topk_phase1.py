@@ -31,9 +31,9 @@ LOG_2_E = math.log2(math.e)
 LN_2 = math.log(2.0)
 
 IKET_EVENT_NAMES = (
-    "h128-small-q-o",
-    "h128-small-kv-gather",
-    "h128-small-mma",
+    "h128-small-q-load-output",
+    "h128-small-kv-load",
+    "h128-small-qk-pv-issue",
     "h128-small-valid-mask",
     "h128-small-clc",
     "h128-small-softmax",
@@ -378,7 +378,7 @@ def _kernel(
 
     if warpgroup_idx == 0:
         # CUDA phase1.cuh:192-396. Q fetching and O write-back warpgroup.
-        q_o_token = iket.range_start("h128-small-q-o")
+        q_o_token = iket.range_start("h128-small-q-load-output")
         T.ptx.setmaxnreg(True, 160)
 
         @T.inline
@@ -506,7 +506,7 @@ def _kernel(
 
     elif warpgroup_idx == 1:
         # CUDA phase1.cuh:397-451. Prefill KV gather producer.
-        kv_gather_token = iket.range_start("h128-small-kv-gather")
+        kv_gather_token = iket.range_start("h128-small-kv-load")
         T.ptx.setmaxnreg(False, 80)
         # Source uses canonical_warp_idx() here, not canonical_warp_idx_sync().
         wg1_warp_idx: T.let = thread_idx // 32 - 4
@@ -579,7 +579,7 @@ def _kernel(
         T.ptx.setmaxnreg(False, 80)
 
         if (warp_idx == 8) & (cta_idx == 0):
-            mma_token = iket.range_start("h128-small-mma")
+            mma_token = iket.range_start("h128-small-qk-pv-issue")
             if T.ptx.elect_sync():
                 umma_job_valid: T.int32 = 1
                 umma_job_block_idx: T.int32 = block_idx
