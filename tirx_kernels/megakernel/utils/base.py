@@ -22,7 +22,7 @@ from typing import Literal
 import tvm
 from tvm.script import ir as I
 from tvm.script import tirx as T
-from tvm.tirx import PrimExpr
+from tvm.tirx import Expr
 from tvm.tirx.bench import CudaProfiler
 from tvm.tirx.expr import Var
 
@@ -415,7 +415,7 @@ class TileSchedulerBase:
     def __init__(self):
         pass
 
-    def get_idx_and_task_type(self) -> tuple[list[PrimExpr], PrimExpr]:
+    def get_idx_and_task_type(self) -> tuple[list[Expr], Expr]:
         raise NotImplementedError
 
     @T.inline

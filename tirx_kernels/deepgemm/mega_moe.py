@@ -2564,65 +2564,71 @@ def get_kernel(
             T.evaluate(prefetch_tensormap(tensor_map_l2_acts_sf))
             T.evaluate(prefetch_tensormap(tensor_map_l2_weights))
             T.evaluate(prefetch_tensormap(tensor_map_l2_weights_sf))
-        input_topk_idx_data: T.let[
-            T.Var(name="input_topk_idx_data", dtype=PointerType(PrimType("int64")))
-        ] = T.reinterpret("handle", symm_buffer.ptr_to([symm_buffer_layout.input_topk_idx_offset]))
-        l1_acts_sf_data: T.let[
-            T.Var(name="l1_acts_sf_data", dtype=PointerType(PrimType("int32")))
-        ] = T.reinterpret("handle", symm_buffer.ptr_to([symm_buffer_layout.l1_sf_offset]))
-        workspace_expert_send_count_data: T.let[
-            T.Var(name="workspace_expert_send_count_data", dtype=PointerType(PrimType("uint64")))
-        ] = T.reinterpret("handle", symm_buffer.ptr_to([workspace_layout.expert_send_count_offset]))
-        workspace_grid_sync_count_data: T.let[
-            T.Var(name="workspace_grid_sync_count_data", dtype=PointerType(PrimType("uint32")))
-        ] = T.reinterpret("handle", symm_buffer.ptr_to([workspace_layout.barrier_offset]))
-        workspace_nvl_barrier_counter_data: T.let[
-            T.Var(name="workspace_nvl_barrier_counter_data", dtype=PointerType(PrimType("uint32")))
-        ] = T.reinterpret("handle", symm_buffer.ptr_to([workspace_layout.barrier_offset + 16]))
-        workspace_nvl_barrier_signal_data: T.let[
-            T.Var(name="workspace_nvl_barrier_signal_data", dtype=PointerType(PrimType("int32")))
-        ] = T.reinterpret("handle", symm_buffer.ptr_to([workspace_layout.barrier_offset + 20]))
-        workspace_expert_recv_count_data: T.let[
-            T.Var(name="workspace_expert_recv_count_data", dtype=PointerType(PrimType("uint64")))
-        ] = T.reinterpret("handle", symm_buffer.ptr_to([workspace_layout.expert_recv_count_offset]))
-        workspace_expert_recv_count_sum_data: T.let[
-            T.Var(
-                name="workspace_expert_recv_count_sum_data", dtype=PointerType(PrimType("uint64"))
-            )
-        ] = T.reinterpret(
-            "handle", symm_buffer.ptr_to([workspace_layout.expert_recv_count_sum_offset])
+        input_topk_idx_data: T.let = T.reinterpret(
+            PointerType(PrimType("int64")),
+            symm_buffer.ptr_to([symm_buffer_layout.input_topk_idx_offset]),
         )
-        workspace_src_token_topk_idx_data: T.let[
-            T.Var(name="workspace_src_token_topk_idx_data", dtype=PointerType(PrimType("uint32")))
-        ] = T.reinterpret(
-            "handle", symm_buffer.ptr_to([workspace_layout.src_token_topk_idx_offset])
+        l1_acts_sf_data: T.let = T.reinterpret(
+            PointerType(PrimType("int32")), symm_buffer.ptr_to([symm_buffer_layout.l1_sf_offset])
         )
-        workspace_token_src_metadata_data: T.let[
-            T.Var(name="workspace_token_src_metadata_data", dtype=PointerType(PrimType("uint32")))
-        ] = T.reinterpret(
-            "handle", symm_buffer.ptr_to([workspace_layout.token_src_metadata_offset])
+        workspace_expert_send_count_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint64")),
+            symm_buffer.ptr_to([workspace_layout.expert_send_count_offset]),
         )
-        workspace_l1_full_count_data: T.let[
-            T.Var(name="workspace_l1_full_count_data", dtype=PointerType(PrimType("uint32")))
-        ] = T.reinterpret("handle", symm_buffer.ptr_to([workspace_layout.l1_full_count_offset]))
-        workspace_l1_empty_count_data: T.let[
-            T.Var(name="workspace_l1_empty_count_data", dtype=PointerType(PrimType("uint32")))
-        ] = T.reinterpret("handle", symm_buffer.ptr_to([workspace_layout.l1_empty_count_offset]))
-        workspace_l2_full_count_data: T.let[
-            T.Var(name="workspace_l2_full_count_data", dtype=PointerType(PrimType("uint32")))
-        ] = T.reinterpret("handle", symm_buffer.ptr_to([workspace_layout.l2_full_count_offset]))
-        workspace_l2_empty_count_data: T.let[
-            T.Var(name="workspace_l2_empty_count_data", dtype=PointerType(PrimType("uint32")))
-        ] = T.reinterpret("handle", symm_buffer.ptr_to([workspace_layout.l2_empty_count_offset]))
-        l1_topk_weights_data: T.let[
-            T.Var(name="l1_topk_weights_data", dtype=PointerType(PrimType("float32")))
-        ] = T.reinterpret("handle", symm_buffer.ptr_to([symm_buffer_layout.l1_topk_weights_offset]))
-        l2_acts_sf_data: T.let[
-            T.Var(name="l2_acts_sf_data", dtype=PointerType(PrimType("int32")))
-        ] = T.reinterpret("handle", symm_buffer.ptr_to([symm_buffer_layout.l2_sf_offset]))
-        combine_tokens_data: T.let[
-            T.Var(name="combine_tokens_data", dtype=PointerType(PrimType("uint16")))
-        ] = T.reinterpret("handle", symm_buffer.ptr_to([symm_buffer_layout.combine_token_offset]))
+        workspace_grid_sync_count_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint32")), symm_buffer.ptr_to([workspace_layout.barrier_offset])
+        )
+        workspace_nvl_barrier_counter_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint32")),
+            symm_buffer.ptr_to([workspace_layout.barrier_offset + 16]),
+        )
+        workspace_nvl_barrier_signal_data: T.let = T.reinterpret(
+            PointerType(PrimType("int32")),
+            symm_buffer.ptr_to([workspace_layout.barrier_offset + 20]),
+        )
+        workspace_expert_recv_count_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint64")),
+            symm_buffer.ptr_to([workspace_layout.expert_recv_count_offset]),
+        )
+        workspace_expert_recv_count_sum_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint64")),
+            symm_buffer.ptr_to([workspace_layout.expert_recv_count_sum_offset]),
+        )
+        workspace_src_token_topk_idx_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint32")),
+            symm_buffer.ptr_to([workspace_layout.src_token_topk_idx_offset]),
+        )
+        workspace_token_src_metadata_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint32")),
+            symm_buffer.ptr_to([workspace_layout.token_src_metadata_offset]),
+        )
+        workspace_l1_full_count_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint32")),
+            symm_buffer.ptr_to([workspace_layout.l1_full_count_offset]),
+        )
+        workspace_l1_empty_count_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint32")),
+            symm_buffer.ptr_to([workspace_layout.l1_empty_count_offset]),
+        )
+        workspace_l2_full_count_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint32")),
+            symm_buffer.ptr_to([workspace_layout.l2_full_count_offset]),
+        )
+        workspace_l2_empty_count_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint32")),
+            symm_buffer.ptr_to([workspace_layout.l2_empty_count_offset]),
+        )
+        l1_topk_weights_data: T.let = T.reinterpret(
+            PointerType(PrimType("float32")),
+            symm_buffer.ptr_to([symm_buffer_layout.l1_topk_weights_offset]),
+        )
+        l2_acts_sf_data: T.let = T.reinterpret(
+            PointerType(PrimType("int32")), symm_buffer.ptr_to([symm_buffer_layout.l2_sf_offset])
+        )
+        combine_tokens_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint16")),
+            symm_buffer.ptr_to([symm_buffer_layout.combine_token_offset]),
+        )
         input_topk_idx = T.decl_buffer(
             (workspace_layout.num_max_tokens_per_rank, num_topk),
             "int64",
@@ -2742,39 +2748,39 @@ def get_kernel(
         )
 
         smem = T.alloc_buffer([smem_total_bytes], "uint8", scope="shared.dyn")
-        smem_expert_count_data: T.let[
-            T.Var(name="smem_expert_count_data", dtype=PointerType(PrimType("int32")))
-        ] = T.reinterpret("handle", smem.ptr_to([smem_expert_count_offset]))
-        smem_send_buffer_data: T.let[
-            T.Var(name="smem_send_buffer_data", dtype=PointerType(PrimType("int8")))
-        ] = T.reinterpret("handle", smem.ptr_to([smem_send_buffer_offset]))
-        smem_a_data: T.let[T.Var(name="smem_a_data", dtype=PointerType(PrimType("int8")))] = (
-            T.reinterpret("handle", smem.ptr_to([smem_a_offset]))
+        smem_expert_count_data: T.let = T.reinterpret(
+            PointerType(PrimType("int32")), smem.ptr_to([smem_expert_count_offset])
         )
-        smem_b_data: T.let[T.Var(name="smem_b_data", dtype=PointerType(PrimType("uint8")))] = (
-            T.reinterpret("handle", smem.ptr_to([smem_b_offset]))
+        smem_send_buffer_data: T.let = T.reinterpret(
+            PointerType(PrimType("int8")), smem.ptr_to([smem_send_buffer_offset])
         )
-        smem_sfa_data: T.let[T.Var(name="smem_sfa_data", dtype=PointerType(PrimType("int32")))] = (
-            T.reinterpret("handle", smem.ptr_to([smem_sfa_offset]))
+        smem_a_data: T.let = T.reinterpret(
+            PointerType(PrimType("int8")), smem.ptr_to([smem_a_offset])
         )
-        smem_sfb_data: T.let[T.Var(name="smem_sfb_data", dtype=PointerType(PrimType("int32")))] = (
-            T.reinterpret("handle", smem.ptr_to([smem_sfb_offset]))
+        smem_b_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint8")), smem.ptr_to([smem_b_offset])
         )
-        smem_amax_reduction_data: T.let[
-            T.Var(name="smem_amax_reduction_data", dtype=PointerType(PrimType("float32")))
-        ] = T.reinterpret("handle", smem.ptr_to([smem_amax_reduction_offset]))
-        smem_cd_data: T.let[T.Var(name="smem_cd_data", dtype=PointerType(PrimType("uint8")))] = (
-            T.reinterpret("handle", smem.ptr_to([smem_cd_offset]))
+        smem_sfa_data: T.let = T.reinterpret(
+            PointerType(PrimType("int32")), smem.ptr_to([smem_sfa_offset])
         )
-        smem_barrier_data: T.let[
-            T.Var(name="smem_barrier_data", dtype=PointerType(PrimType("uint64")))
-        ] = T.reinterpret("handle", smem.ptr_to([smem_barrier_offset]))
-        smem_tmem_ptr_data: T.let[
-            T.Var(name="smem_tmem_ptr_data", dtype=PointerType(PrimType("uint32")))
-        ] = T.reinterpret("handle", smem.ptr_to([smem_tmem_ptr_offset]))
-        smem_symm_rank_bases_data: T.let[
-            T.Var(name="smem_symm_rank_bases_data", dtype=PointerType(PrimType("uint64")))
-        ] = T.reinterpret("handle", smem.ptr_to([smem_symm_rank_bases_offset]))
+        smem_sfb_data: T.let = T.reinterpret(
+            PointerType(PrimType("int32")), smem.ptr_to([smem_sfb_offset])
+        )
+        smem_amax_reduction_data: T.let = T.reinterpret(
+            PointerType(PrimType("float32")), smem.ptr_to([smem_amax_reduction_offset])
+        )
+        smem_cd_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint8")), smem.ptr_to([smem_cd_offset])
+        )
+        smem_barrier_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint64")), smem.ptr_to([smem_barrier_offset])
+        )
+        smem_tmem_ptr_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint32")), smem.ptr_to([smem_tmem_ptr_offset])
+        )
+        smem_symm_rank_bases_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint64")), smem.ptr_to([smem_symm_rank_bases_offset])
+        )
         smem_expert_count = T.decl_buffer(
             (num_experts,),
             "int32",

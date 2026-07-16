@@ -209,10 +209,9 @@ def tirx_dispatch_rmsnorm(dim: int, batch_size: int, SMEM_PER_CTA=220, MAX_THREA
             T.cuda.cluster_sync()
             if t_idy == 0:
                 if t_idx < CLUSTER_N:
-                    remote_ptr: T.Var(name="remote_ptr", dtype=PointerType(PrimType("float32"))) = (
-                        T.reinterpret(
-                            "handle", T.ptx.map_shared_rank(cluster_reduce_smem.ptr_to([0]), t_idx)
-                        )
+                    remote_ptr: T.let = T.reinterpret(
+                        PointerType(PrimType("float32")),
+                        T.ptx.map_shared_rank(cluster_reduce_smem.ptr_to([0]), t_idx),
                     )
                     remote_buf = T.decl_buffer([1], "float32", scope="shared", data=remote_ptr)
                     sum_sq = remote_buf[0]
@@ -303,10 +302,9 @@ def tirx_dispatch_rmsnorm(dim: int, batch_size: int, SMEM_PER_CTA=220, MAX_THREA
             T.cuda.cluster_sync()
             if t_idy == 0:
                 if t_idx < CLUSTER_N:
-                    remote_ptr: T.Var(name="remote_ptr", dtype=PointerType(PrimType("float32"))) = (
-                        T.reinterpret(
-                            "handle", T.ptx.map_shared_rank(cluster_reduce_smem.ptr_to([0]), t_idx)
-                        )
+                    remote_ptr: T.let = T.reinterpret(
+                        PointerType(PrimType("float32")),
+                        T.ptx.map_shared_rank(cluster_reduce_smem.ptr_to([0]), t_idx),
                     )
                     remote_buf = T.decl_buffer([1], "float32", scope="shared", data=remote_ptr)
                     sum_sq = remote_buf[0]
@@ -535,11 +533,9 @@ def tirx_input_DSMEM_write_TMA_wts_GMEM(
         if CLUSTER_N > 1:
             if t_idy == 0:
                 if t_idx < CLUSTER_N:
-                    remote_ptr: T.Var(name="remote_ptr", dtype=PointerType(PrimType("float32"))) = (
-                        T.reinterpret(
-                            "handle",
-                            T.ptx.map_shared_rank(cluster_reduce_smem.ptr_to([cta_rank]), t_idx),
-                        )
+                    remote_ptr: T.let = T.reinterpret(
+                        PointerType(PrimType("float32")),
+                        T.ptx.map_shared_rank(cluster_reduce_smem.ptr_to([cta_rank]), t_idx),
                     )
                     remote_buf = T.decl_buffer([1], "float32", scope="shared", data=remote_ptr)
                     remote_buf[0] = sum_sq_smem[0]

@@ -21,11 +21,11 @@ import numpy as np
 
 import tvm
 from tvm.script import tirx as T
-from tvm.tirx import PrimExpr
+from tvm.tirx import Expr
 
 
 def ceildiv(a, b):
-    if isinstance(a, PrimExpr) or isinstance(b, PrimExpr):
+    if isinstance(a, Expr) or isinstance(b, Expr):
         return T.truncdiv(a + b - 1, b)
     return (a + b - 1) // b
 

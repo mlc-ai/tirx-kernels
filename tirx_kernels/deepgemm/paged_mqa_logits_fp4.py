@@ -419,6 +419,19 @@ def prepare_data(**kwargs: Any) -> dict[str, Any]:
     schedule_meta = deep_gemm.get_paged_mqa_logits_metadata(
         context_lens, config.page_size, runtime_config.num_sms, indices
     )
+    tirx_schedule_meta = schedule_meta
+    if not config.varlen and config.next_n >= 2:
+        num_q_atoms = _align_up(config.next_n, 2) // 2
+        atom_context_lens = context_lens[:, -1:].expand(config.batch_size, num_q_atoms).contiguous()
+        tirx_schedule_meta = deep_gemm.get_paged_mqa_logits_metadata(
+            atom_context_lens, config.page_size, runtime_config.num_sms
+        )
+        expected_end = config.batch_size * num_q_atoms
+        if int(tirx_schedule_meta[-1, 0]) != expected_end:
+            raise RuntimeError(
+                f"TIRx schedule metadata ends at {int(tirx_schedule_meta[-1, 0])}, "
+                f"expected {expected_end} q atoms"
+            )
     reference = _ref_paged_mqa_logits(
         q_simulated.to(torch.bfloat16), kv_dequant, weights, context_lens, block_table, config
     )
@@ -433,6 +446,7 @@ def prepare_data(**kwargs: Any) -> dict[str, Any]:
         "block_table": block_table,
         "indices": indices,
         "schedule_meta": schedule_meta,
+        "tirx_schedule_meta": tirx_schedule_meta,
         "reference": reference,
         "deep_gemm": deep_gemm,
     }
@@ -789,27 +803,27 @@ def get_kernel(**kwargs: Any):
         T.static_assert(num_tmem_cols <= 512, "Too many tensor memory")
 
         smem = T.alloc_buffer([smem_total_bytes], "uint8", scope="shared.dyn", align=smem_alignment)
-        smem_q_data: T.let[T.Var(name="smem_q_data", dtype=PointerType(PrimType("uint8")))] = (
-            T.reinterpret("handle", smem.ptr_to([smem_q_offset]))
+        smem_q_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint8")), smem.ptr_to([smem_q_offset])
         )
-        smem_kv_data: T.let[T.Var(name="smem_kv_data", dtype=PointerType(PrimType("uint8")))] = (
-            T.reinterpret("handle", smem.ptr_to([smem_kv_offset]))
+        smem_kv_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint8")), smem.ptr_to([smem_kv_offset])
         )
-        smem_sf_q_data: T.let[
-            T.Var(name="smem_sf_q_data", dtype=PointerType(PrimType("uint32")))
-        ] = T.reinterpret("handle", smem.ptr_to([smem_sf_q_offset]))
-        smem_sf_kv_data: T.let[
-            T.Var(name="smem_sf_kv_data", dtype=PointerType(PrimType("uint32")))
-        ] = T.reinterpret("handle", smem.ptr_to([smem_sf_kv_offset]))
-        smem_weights_data: T.let[
-            T.Var(name="smem_weights_data", dtype=PointerType(PrimType("float32")))
-        ] = T.reinterpret("handle", smem.ptr_to([smem_weights_offset]))
-        smem_barrier_data: T.let[
-            T.Var(name="smem_barrier_data", dtype=PointerType(PrimType("uint64")))
-        ] = T.reinterpret("handle", smem.ptr_to([smem_barrier_offset]))
-        smem_tmem_ptr_data: T.let[
-            T.Var(name="smem_tmem_ptr_data", dtype=PointerType(PrimType("uint32")))
-        ] = T.reinterpret("handle", smem.ptr_to([smem_tmem_ptr_offset]))
+        smem_sf_q_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint32")), smem.ptr_to([smem_sf_q_offset])
+        )
+        smem_sf_kv_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint32")), smem.ptr_to([smem_sf_kv_offset])
+        )
+        smem_weights_data: T.let = T.reinterpret(
+            PointerType(PrimType("float32")), smem.ptr_to([smem_weights_offset])
+        )
+        smem_barrier_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint64")), smem.ptr_to([smem_barrier_offset])
+        )
+        smem_tmem_ptr_data: T.let = T.reinterpret(
+            PointerType(PrimType("uint32")), smem.ptr_to([smem_tmem_ptr_offset])
+        )
         smem_q = T.decl_buffer(
             (num_q_stages, next_n_atom * num_heads, head_dim // 2),
             "uint8",
@@ -1428,9 +1442,7 @@ def get_kernel(**kwargs: Any):
                     mbarrier_wait_phase(
                         smem_barriers.ptr_to([full_q_barrier_base + q_stage_idx]), q_phase
                     )
-                    sfq_stage_ptr: T.let[
-                        T.Var(name="sfq_stage_ptr", dtype=PointerType(PrimType("uint32")))
-                    ] = T.ptr_byte_offset(
+                    sfq_stage_ptr: T.let = T.ptr_byte_offset(
                         smem_sf_q.data, q_stage_idx * T.uint32(num_sfq_atom * 4), "uint32"
                     )
                     sfq_stage = T.decl_buffer(
@@ -1463,9 +1475,7 @@ def get_kernel(**kwargs: Any):
                 mbarrier_wait_phase(
                     smem_barriers.ptr_to([full_kv_barrier_base + kv_stage_idx]), kv_phase
                 )
-                sfkv_stage_ptr: T.let[
-                    T.Var(name="sfkv_stage_ptr", dtype=PointerType(PrimType("uint32")))
-                ] = T.ptr_byte_offset(
+                sfkv_stage_ptr: T.let = T.ptr_byte_offset(
                     smem_sf_kv.data, kv_stage_idx * T.uint32(num_sfkv * 4), "uint32"
                 )
                 sfkv_stage = T.decl_buffer(
@@ -2111,7 +2121,9 @@ def _run_tirx_invocation(data: dict[str, Any], invocation: dict[str, Any]) -> to
     logits = invocation["logits"]
     indices = data["indices"]
     if indices is None:
-        indices = torch.empty((config.batch_size,), dtype=torch.int32, device="cuda")
+        indices = torch.empty(
+            (config.batch_size,), dtype=torch.int32, device=data["context_lens"].device
+        )
     _prepare_global_barrier(executable)
     executable.mod(
         config.batch_size,
@@ -2121,7 +2133,7 @@ def _run_tirx_invocation(data: dict[str, Any], invocation: dict[str, Any]) -> to
         logits,
         data["block_table"],
         indices,
-        data["schedule_meta"],
+        data["tirx_schedule_meta"],
         tensor_maps["tensor_map_q"].ptr,
         tensor_maps["tensor_map_sf_q"].ptr,
         tensor_maps["tensor_map_kv"].ptr,
