@@ -155,8 +155,6 @@ class SmemManager:
         strides=None,
         scope="shared.dyn",
         align=1,
-        buffer_type="",
-        axis_separators=None,
         layout="default",
         split=1,
         method: Literal["shared", "exclusive", "persistent"] = "shared",
@@ -168,9 +166,7 @@ class SmemManager:
             beg = (beg + align - 1) // align * align
         if self.fusion_mode and method == "persistent":
             scope = "shared.persistent"
-        buf = pool_allocator.alloc(
-            shape, dtype, strides, scope, align, buffer_type, axis_separators, layout
-        )
+        buf = pool_allocator.alloc(shape, dtype, strides, scope, align, layout)
         end = pool_allocator.offset
         size = end - beg
         assert size % split == 0
