@@ -391,13 +391,14 @@ def _kernel(
                 if k_tile % 4 == 0:
                     Tx.copy_async(SFA_tmem[tmem_idx], SFA_smem_fp8[ks], cta_group=CTA_GROUP)
                     Tx.copy_async(SFB_tmem[tmem_idx], SFB_smem_fp8[ks], cta_group=CTA_GROUP)
+                scale_k = T.meta_var((k_tile % 4) * K_ITERS)
                 if SWAP_AB:
                     Tx.gemm_async(
                         acc[tmem_idx],
                         B_smem[ks],
                         A_smem[ks],
-                        SFA=SFB_tmem[tmem_idx],
-                        SFB=SFA_tmem[tmem_idx],
+                        SFA=SFB_tmem[tmem_idx, :, scale_k : scale_k + K_ITERS],
+                        SFB=SFA_tmem[tmem_idx, :, scale_k : scale_k + K_ITERS],
                         accum=accum,
                         dispatch="tcgen05",
                         cta_group=CTA_GROUP,
@@ -407,8 +408,8 @@ def _kernel(
                         acc[tmem_idx],
                         A_smem[ks],
                         B_smem[ks],
-                        SFA=SFA_tmem[tmem_idx],
-                        SFB=SFB_tmem[tmem_idx],
+                        SFA=SFA_tmem[tmem_idx, :, scale_k : scale_k + K_ITERS],
+                        SFB=SFB_tmem[tmem_idx, :, scale_k : scale_k + K_ITERS],
                         accum=accum,
                         dispatch="tcgen05",
                         cta_group=CTA_GROUP,
@@ -525,7 +526,21 @@ def tir_kernel(M: int, N: int, K: int):
 
 KERNEL_META = {"name": "fp8_blockwise_gemm", "category": "gemm", "compute_capability": 10}
 CONFIGS = [
-    {"M": s, "N": s, "K": s, "label": f"{s}x{s}x{s}"} for s in [1024, 2048, 4096, 8192, 16384]
+    {
+        "M": 16,
+        "N": 256,
+        "K": 512,
+        "verify_scale_slices": True,
+        "label": "scale_slices_swap_ab_m16_n256_k512",
+    },
+    {
+        "M": 512,
+        "N": 608,
+        "K": 512,
+        "verify_scale_slices": True,
+        "label": "scale_slices_direct_ab_m512_n608_k512",
+    },
+    *[{"M": s, "N": s, "K": s, "label": f"{s}x{s}x{s}"} for s in [1024, 2048, 4096, 8192, 16384]],
 ]
 BENCH_CONFIGS = [
     {"M": 1024, "N": 1024, "K": 1024, "label": "smoke_1024x1024x1024"},
@@ -544,7 +559,45 @@ def get_kernel(M, N, K):
     return tir_kernel(M, N, K)
 
 
-def run_test(M=1024, N=1024, K=1024):
+def _prepare_scale_slice_test_data(M: int, N: int, K: int):
+    if K % 512 != 0:
+        raise ValueError("scale-slice validation requires K to be divisible by 512")
+
+    operand_values = torch.tensor([-2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0])
+    a_rows = torch.arange(M)[:, None]
+    b_rows = torch.arange(N)[:, None]
+    k_values = torch.arange(K)[None, :]
+    A_fp8 = operand_values[(3 * a_rows + 5 * k_values + 1) % operand_values.numel()].to(
+        torch.float8_e4m3fn
+    )
+    B_fp8 = operand_values[(7 * b_rows + 2 * k_values + 4) % operand_values.numel()].to(
+        torch.float8_e4m3fn
+    )
+
+    scale_blocks = K // 128
+    scale_block = torch.arange(scale_blocks)[None, :]
+    sfa_exponents = ((a_rows + 2 * scale_block) % 3 - 1).to(torch.int16)
+    sfb_exponents = ((2 * b_rows + scale_block) % 3 - 1).to(torch.int16)
+    sfa_pack = (sfa_exponents + 127).to(torch.uint8).view(torch.uint32).T.contiguous()
+    sfb_pack = (sfb_exponents + 127).to(torch.uint8).view(torch.uint32).T.contiguous()
+
+    A_fp8 = A_fp8.to("cuda")
+    B_fp8 = B_fp8.to("cuda")
+    sfa_pack = sfa_pack.to("cuda")
+    sfb_pack = sfb_pack.to("cuda")
+    A_dequant = (
+        A_fp8.float().reshape(M, scale_blocks, 128)
+        * torch.exp2(sfa_exponents.float().to("cuda"))[:, :, None]
+    ).reshape(M, K)
+    B_dequant = (
+        B_fp8.float().reshape(N, scale_blocks, 128)
+        * torch.exp2(sfb_exponents.float().to("cuda"))[:, :, None]
+    ).reshape(N, K)
+    C_ref = (A_dequant @ B_dequant.T).to(torch.bfloat16)
+    return A_fp8, B_fp8, sfa_pack, sfb_pack, C_ref
+
+
+def run_test(M=1024, N=1024, K=1024, verify_scale_slices=False):
     """Compile, run, and verify kernel."""
     import torch
     import torch.nn.functional as F
@@ -552,10 +605,16 @@ def run_test(M=1024, N=1024, K=1024):
     from tirx_kernels.runner import compile_kernel
 
     kernel = tir_kernel(M, N, K)
-    A_fp8, B_fp8, sfa, sfb, sfa_pack, sfb_pack, C_ref, A_origin, B_origin = prepare_data(M, N, K)
+    if verify_scale_slices:
+        A_fp8, B_fp8, sfa_pack, sfb_pack, C_ref = _prepare_scale_slice_test_data(M, N, K)
+    else:
+        A_fp8, B_fp8, _, _, sfa_pack, sfb_pack, C_ref, _, _ = prepare_data(M, N, K)
     C_tvm = torch.zeros_like(C_ref).to(torch.bfloat16).to("cuda")
     ex = compile_kernel(kernel)
     ex(A_fp8, B_fp8, sfa_pack, sfb_pack, C_tvm)
+    if verify_scale_slices:
+        torch.testing.assert_close(C_tvm, C_ref, rtol=0, atol=0)
+        return
     cosine_sim = F.cosine_similarity(C_tvm.reshape(-1).float(), C_ref.reshape(-1).float(), dim=0)
     assert cosine_sim > 0.97, f"fp8_blockwise_gemm cosine_sim {cosine_sim:.6f} <= 0.97"
 
