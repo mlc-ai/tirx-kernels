@@ -731,10 +731,14 @@ def _kernel(
                 if apply_mask:
                     apply_causal_mask(s_chunk_buf, m_block_idx, i_kv)
                 row_max_old: T.f32
-                row_max_old = row_max[0]
                 if is_first:
                     Tx.max(tile_max, s_chunk_buf)
                 else:
+                    # row_max is initialized by the first softmax step.  Keep
+                    # its load inside the non-first specialization so the
+                    # first step does not read an uninitialized local value
+                    # whose result is dead on that path.
+                    row_max_old = row_max[0]
                     tile_max[0] = row_max_old
                     Tx.max(tile_max, s_chunk_buf, accum=True)
                 row_max_new: T.f32
