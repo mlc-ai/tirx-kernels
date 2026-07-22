@@ -234,9 +234,7 @@ def _kernel(
     tid_in_wg = T.thread_id_in_wg([128])
     lane_id = T.lane_id([32])
     pool = T.SMEMPool()
-    barrier_leader = T.bitwise_and(T.cast(warp_id == 1, "uint32"), T.ptx.elect_sync()) != T.uint32(
-        0
-    )
+    barrier_leader = (wg_id == 0) & (warp_id == 1) & (T.ptx.elect_sync() != T.uint32(0))
     tmem_pool = T.TMEMPool(
         pool,
         total_cols=512,
